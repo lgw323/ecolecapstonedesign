@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알고리즘 8문제: Java, Python, JS 풀이 분석</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+        html,
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .code-container {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            visibility: hidden;
+        }
+
+        .code-container.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lang-indicator {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .code-block::-webkit-scrollbar,
+        .problem-detail-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .code-block::-webkit-scrollbar-track,
+        .problem-detail-box::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .code-block::-webkit-scrollbar-thumb,
+        .problem-detail-box::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+
+        .code-block.dark-scrollbar::-webkit-scrollbar-track {
+            background: #282c34;
+        }
+
+        .code-block.dark-scrollbar::-webkit-scrollbar-thumb {
+            background: #5c6370;
+        }
+
+        .code-block.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+
+        .toc-item {
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .toc-item:hover {
+            color: #0369a1;
+            /* text-sky-700 */
+        }
+    </style>
+</head>
+
+<body class="bg-white text-black">
+
+    <div id="presentation-root" class="relative w-screen h-screen">
+        <div id="presentation-container" class="w-full h-full bg-white flex flex-col overflow-hidden">
+        </div>
+    </div>
+
+    <script>
+        // --- 데이터 시작 ---
+        const presentationData = [
+            // --- 표지 & 목차 ---
+            {
+                type: 'title',
+                title: '알고리즘 8문제',
+                author: '경성대학교 소프트웨어학과',
+                author_detail: '2021663046 이건우'
+            },
+            {
+                type: 'toc',
+                title: '발표 순서',
+                items: [
+                    '버블 정렬 (BOJ 2750)', '선택 정렬 (BOJ 1427)', '삽입 정렬 (BOJ 11399)',
+                    '퀵 선택 (BOJ 11004)', '병합 정렬 (BOJ 2751)', '기수 정렬 (BOJ 10989)',
+                    'DFS (BOJ 11724)', 'DFS와 BFS (BOJ 1260)'
+                ]
+            },
+            // --- 문제 1: 버블 정렬 ---
+            {
+                type: 'problem_detail',
+                title: '문제 1: 수 정렬하기 (BOJ 2750)',
+                problem: 'N개의 수가 주어졌을 때, 이를 오름차순으로 정렬하는 프로그램을 작성하시오.',
+                input: '첫째 줄에 수의 개수 N(1 ≤ N ≤ 1,000)이 주어진다. 둘째 줄부터 N개의 줄에는 수가 주어진다. 이 수는 절댓값이 1,000보다 작거나 같은 정수이며, 중복되지 않는다.',
+                output: '첫째 줄부터 N개의 줄에 오름차순으로 정렬한 결과를 한 줄에 하나씩 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 버블 정렬',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = Integer.parseInt(br.readLine());
+        }
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - 1 - i; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    int tmp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = tmp;
+                }
+            }
+        }
+        for (int i : arr) {
+            System.out.println(i);
+        }
+    }
+}`,
+                    python: `import sys
+n = int(sys.stdin.readline())
+arr = [int(sys.stdin.readline()) for _ in range(n)]
+
+for i in range(n - 1):
+    for j in range(n - 1 - i):
+        if arr[j] > arr[j + 1]:
+            arr[j], arr[j + 1] = arr[j + 1], arr[j]
+
+for i in arr:
+    print(i)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+const n = parseInt(input[0]);
+const arr = input.slice(1).map(Number);
+
+for (let i = 0; i < n - 1; i++) {
+    for (let j = 0; j < n - 1 - i; j++) {
+        if (arr[j] > arr[j + 1]) {
+            [arr[j], arr[j+1]] = [arr[j+1], arr[j]];
+        }
+    }
+}
+console.log(arr.join('\\n'));`
+                }
+            },
+            // --- 문제 2: 선택 정렬 ---
+            {
+                type: 'problem_detail',
+                title: '문제 2: 소트인사이드 (BOJ 1427)',
+                problem: '배열을 정렬하는 것은 쉽다. 수가 주어지면, 그 수의 각 자리수를 내림차순으로 정렬하시오.',
+                input: '첫째 줄에 정렬하려고 하는 수 N이 주어진다. N은 1,000,000,000보다 작거나 같은 자연수이다.',
+                output: '첫째 줄에 자리수를 내림차순으로 정렬한 수를 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 선택 정렬',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String lines = br.readLine();
+        int[] arr = new int[lines.length()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = Integer.parseInt(lines.substring(i, i + 1));
+        }
+//---SPLIT---
+        int max = 0;
+        int tmp = 0;
+        for (int i = 0; i < arr.length; i++) {
+            max = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] > arr[max]) {
+                    max = j;
+                }
+            }
+            tmp = arr[i];
+            arr[i] = arr[max];
+            arr[max] = tmp;
+        }
+        for (int i : arr) {
+            System.out.print(i);
+        }
+    }
+}`,
+                    python: `import sys
+
+lines = sys.stdin.readline().strip()
+arr = [int(char) for char in lines]
+
+for i in range(len(arr)):
+    max_idx = i
+    for j in range(i + 1, len(arr)):
+        if arr[j] > arr[max_idx]:
+            max_idx = j
+    arr[i], arr[max_idx] = arr[max_idx], arr[i]
+
+for i in arr:
+    print(i, end="")`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim();
+
+const arr = input.split('').map(Number);
+
+for (let i = 0; i < arr.length; i++) {
+    let maxIdx = i;
+    for (let j = i + 1; j < arr.length; j++) {
+        if (arr[j] > arr[maxIdx]) {
+            maxIdx = j;
+        }
+    }
+    let temp = arr[i];
+    arr[i] = arr[maxIdx];
+    arr[maxIdx] = temp;
+}
+
+console.log(arr.join(''));`
+                }
+            },
+            // --- 문제 3: 삽입 정렬 ---
+            {
+                type: 'problem_detail',
+                title: '문제 3: ATM (BOJ 11399)',
+                problem: 'N명의 사람이 ATM 앞에 줄을 서있다. 각 사람이 돈을 인출하는데 걸리는 시간 P(i)가 주어질 때, 모든 사람이 돈을 인출하는데 필요한 시간의 합의 최솟값을 구하시오.',
+                input: '첫째 줄에 사람의 수 N(1 ≤ N ≤ 1,000)이 주어진다. 둘째 줄에는 각 사람이 돈을 인출하는데 걸리는 시간 P(i)가 주어진다.',
+                output: '첫째 줄에 모든 사람이 돈을 인출하는데 필요한 시간의 합의 최솟값을 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 삽입 정렬',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+        for (int i = 1; i < arr.length; i++) {
+            int key = arr[i];
+            int j = i - 1;
+            while (j >= 0 && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+//---SPLIT---
+        int[] times = new int[n];
+        times[0] = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            times[i] = times[i - 1] + arr[i];
+        }
+        int result = 0;
+        for (int i = 0; i < times.length; i++) {
+            result += times[i];
+        }
+        System.out.println(result);
+    }
+}`,
+                    python: `import sys
+
+n = int(sys.stdin.readline())
+arr = list(map(int, sys.stdin.readline().split()))
+
+for i in range(1, len(arr)):
+    key = arr[i]
+    j = i - 1
+    while j >= 0 and arr[j] > key:
+        arr[j + 1] = arr[j]
+        j -= 1
+    arr[j + 1] = key
+#---SPLIT---
+times = [0] * n
+times[0] = arr[0]
+for i in range(1, len(arr)):
+    times[i] = times[i - 1] + arr[i]
+
+result = 0
+for time in times:
+    result += time
+
+print(result)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+
+const n = parseInt(input[0]);
+const arr = input[1].split(' ').map(Number);
+
+for (let i = 1; i < arr.length; i++) {
+    let key = arr[i];
+    let j = i - 1;
+    while (j >= 0 && arr[j] > key) {
+        arr[j + 1] = arr[j];
+        j--;
+    }
+    arr[j + 1] = key;
+}
+//---SPLIT---
+const times = new Array(n);
+times[0] = arr[0];
+for (let i = 1; i < arr.length; i++) {
+    times[i] = times[i - 1] + arr[i];
+}
+
+let result = 0;
+for (let i = 0; i < times.length; i++) {
+    result += times[i];
+}
+
+console.log(result);`
+                }
+            },
+            // --- 문제 4: 퀵 선택 ---
+            {
+                type: 'problem_detail',
+                title: '문제 4: K번째 수 (BOJ 11004)',
+                problem: '수 N개 A1, A2, ..., AN이 주어진다. A를 오름차순 정렬했을 때, K번째에 오는 수를 구하는 프로그램을 작성하시오.',
+                input: '첫째 줄에 N(1 ≤ N ≤ 5,000,000)과 K(1 ≤ K ≤ N)가 주어진다. 둘째 줄에 A1, A2, ..., AN이 주어진다.',
+                output: 'A를 오름차순 정렬했을 때, K번째 수를 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 퀵 선택',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int want = Integer.parseInt(st.nextToken());
+        st = new StringTokenizer(br.readLine());
+        int[] arr = new int[n];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+        quickSort(arr, 0, n - 1, want - 1);
+        System.out.println(arr[want - 1]);
+    }
+
+    public static void quickSort(int[] arr, int left, int right, int want) {
+        if (left >= right) return;
+        int pivotIndex = partition(arr, left, right);
+        if (want == pivotIndex) return;
+        else if (pivotIndex > want) quickSort(arr, left, pivotIndex - 1, want);
+        else if (pivotIndex < want) quickSort(arr, pivotIndex + 1, right, want);
+    }
+//---SPLIT---
+    public static int partition(int[] arr, int left, int right) {
+        int pivot = arr[right];
+        int i = left - 1;
+        int tmp = 0;
+        for (int j = left; j < right; j++) {
+            if (arr[j] < pivot) {
+                i++;
+                tmp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = tmp;
+            }
+        }
+        tmp = arr[i + 1];
+        arr[i + 1] = arr[right];
+        arr[right] = tmp;
+        return i + 1;
+    }
+}`,
+                    python: `import sys
+sys.setrecursionlimit(10**6)
+
+def partition(arr, left, right):
+    pivot = arr[right]
+    i = left - 1
+    for j in range(left, right):
+        if arr[j] < pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[right] = arr[right], arr[i + 1]
+    return i + 1
+
+def quick_sort(arr, left, right, want):
+    if left >= right:
+        return
+    pivot_index = partition(arr, left, right)
+#---SPLIT---
+    if want == pivot_index:
+        return
+    elif pivot_index > want:
+        quick_sort(arr, left, pivot_index - 1, want)
+    else:
+        quick_sort(arr, pivot_index + 1, right, want)
+        
+n, want = map(int, sys.stdin.readline().split())
+arr = list(map(int, sys.stdin.readline().split()))
+
+quick_sort(arr, 0, n - 1, want - 1)
+print(arr[want - 1])`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+
+const [n, want] = input[0].split(' ').map(Number);
+const arr = input[1].split(' ').map(Number);
+
+function partition(arr, left, right) {
+    const pivot = arr[right];
+    let i = left - 1;
+    for (let j = left; j < right; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+    }
+    [arr[i + 1], arr[right]] = [arr[right], arr[i + 1]];
+    return i + 1;
+}
+
+function quickSort(arr, left, right, k) {
+    if (left >= right) return;
+    const pivotIndex = partition(arr, left, right);
+    if (k === pivotIndex) return;
+    else if (pivotIndex > k) quickSort(arr, left, pivotIndex - 1, k);
+    else quickSort(arr, pivotIndex + 1, right, k);
+}
+
+quickSort(arr, 0, n - 1, want - 1);
+console.log(arr[want - 1]);`
+                }
+            },
+            // --- 문제 5: 병합 정렬 ---
+            {
+                type: 'problem_detail',
+                title: '문제 5: 수 정렬하기 2 (BOJ 2751)',
+                problem: 'N개의 수가 주어졌을 때, 이를 오름차순으로 정렬하는 프로그램을 작성하시오. 시간 복잡도 O(N log N)을 만족해야 합니다.',
+                input: '첫째 줄에 수의 개수 N(1 ≤ N ≤ 1,000,000)이 주어진다. 둘째 줄부터 N개의 줄에는 수가 주어진다.',
+                output: '첫째 줄부터 N개의 줄에 오름차순으로 정렬한 결과를 한 줄에 하나씩 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 병합 정렬',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
+public class Main {
+    private static int[] temp;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        int n = Integer.parseInt(br.readLine());
+        int[] arr = new int[n];
+        temp = new int[n];
+        for (int i = 0; i < n; i++) arr[i] = Integer.parseInt(br.readLine());
+        mergeSort(arr, 0, n - 1);
+        for (int value : arr) bw.write(value + "\\n");
+        bw.flush();
+        bw.close();
+        br.close();
+    }
+    private static void mergeSort(int[] arr, int left, int right) {
+        if (left >= right) return;
+        int mid = (left + right) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+//---SPLIT---
+    private static void merge(int[] arr, int left, int mid, int right) {
+        int i = left, j = mid + 1, k = left;
+        while (i <= mid && j <= right) {
+            if (arr[i] <= arr[j]) temp[k++] = arr[i++];
+            else temp[k++] = arr[j++];
+        }
+        while (i <= mid) temp[k++] = arr[i++];
+        while (j <= right) temp[k++] = arr[j++];
+        for (int l = left; l <= right; l++) arr[l] = temp[l];
+    }
+}`,
+                    python: `import sys
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    i, j, k = 0, 0, 0
+    merged_arr = [0] * (len(left) + len(right))
+#---SPLIT---
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            merged_arr[k] = left[i]
+            i += 1
+        else:
+            merged_arr[k] = right[j]
+            j += 1
+        k += 1
+
+    while i < len(left):
+        merged_arr[k] = left[i]
+        i += 1; k += 1
+    while j < len(right):
+        merged_arr[k] = right[j]
+        j += 1; k += 1
+    return merged_arr
+
+n = int(sys.stdin.readline())
+arr = [int(sys.stdin.readline()) for _ in range(n)]
+sorted_arr = merge_sort(arr)
+for val in sorted_arr:
+    print(val)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+
+const n = parseInt(input[0]);
+const arr = input.slice(1).map(Number);
+
+function merge(left, right) {
+    const result = [];
+    let i = 0;
+    let j = 0;
+    while (i < left.length && j < right.length) {
+        if (left[i] <= right[j]) result.push(left[i++]);
+        else result.push(right[j++]);
+    }
+    while (i < left.length) result.push(left[i++]);
+    while (j < right.length) result.push(right[j++]);
+    return result;
+}
+function mergeSort(arr) {
+    if (arr.length <= 1) return arr;
+    const mid = Math.floor(arr.length / 2);
+    const left = mergeSort(arr.slice(0, mid));
+    const right = mergeSort(arr.slice(mid));
+    return merge(left, right);
+}
+
+const sortedArr = mergeSort(arr);
+console.log(sortedArr.join('\\n'));`
+                }
+            },
+            // --- 문제 6: 기수 정렬 ---
+            {
+                type: 'problem_detail',
+                title: '문제 6: 수 정렬하기 3 (BOJ 10989)',
+                problem: 'N개의 수가 주어졌을 때, 이를 오름차순으로 정렬하는 프로그램을 작성하시오. 메모리 제한에 유의해야 합니다.',
+                input: '첫째 줄에 수의 개수 N(1 ≤ N ≤ 10,000,000)이 주어진다. 둘째 줄부터 N개의 줄에는 수가 주어진다. 이 수는 10,000보다 작거나 같은 자연수이다.',
+                output: '첫째 줄부터 N개의 줄에 오름차순으로 정렬한 결과를 한 줄에 하나씩 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 카운팅/기수 정렬',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        int n = Integer.parseInt(br.readLine());
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) arr[i] = Integer.parseInt(br.readLine());
+        br.close();
+        radixSort(arr, 5);
+        for (int val : arr) bw.write(val + "\\n");
+        bw.flush();
+        bw.close();
+    }
+//---SPLIT---
+    private static void radixSort(int[] arr, int maxDigit) {
+        int[] result = new int[arr.length];
+        int radix = 1;
+        for (int d = 0; d < maxDigit; d++) {
+            int[] count = new int[10];
+            for (int i = 0; i < arr.length; i++) count[(arr[i] / radix) % 10]++;
+            for (int i = 1; i < 10; i++) count[i] += count[i - 1];
+            for (int i = arr.length - 1; i >= 0; i--) {
+                int digit = (arr[i] / radix) % 10;
+                result[count[digit] - 1] = arr[i];
+                count[digit]--;
+            }
+            System.arraycopy(result, 0, arr, 0, arr.length);
+            radix *= 10;
+        }
+    }
+}`,
+                    python: `import sys
+
+def radix_sort(arr):
+    max_val = max(arr) if arr else 0
+    max_digit = len(str(max_val))
+    radix = 1
+    for _ in range(max_digit):
+        buckets = [[] for _ in range(10)]
+        for num in arr:
+            digit = (num // radix) % 10
+            buckets[digit].append(num)
+#---SPLIT---
+        arr = []
+        for bucket in buckets:
+            arr.extend(bucket)
+        radix *= 10
+    return arr
+
+n = int(sys.stdin.readline())
+arr = [int(sys.stdin.readline()) for _ in range(n)]
+sorted_arr = radix_sort(arr)
+for val in sorted_arr:
+    print(val)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+
+const n = parseInt(input[0]);
+const arr = input.slice(1).map(Number);
+
+function radixSort(arr) {
+    if (arr.length === 0) return [];
+    const maxVal = Math.max(...arr);
+    const maxDigit = String(maxVal).length;
+
+    let radix = 1;
+    for (let i = 0; i < maxDigit; i++) {
+        const buckets = Array.from({ length: 10 }, () => []);
+        for (let j = 0; j < arr.length; j++) {
+            const digit = Math.floor(arr[j] / radix) % 10;
+            buckets[digit].push(arr[j]);
+        }
+        arr = [].concat(...buckets);
+        radix *= 10;
+    }
+    return arr;
+}
+
+const sortedArr = radixSort(arr);
+console.log(sortedArr.join('\\n'));`
+                }
+            },
+            // --- 문제 7: DFS ---
+            {
+                type: 'problem_detail',
+                title: '문제 7: 연결 요소의 개수 (BOJ 11724)',
+                problem: '방향 없는 그래프가 주어졌을 때, 연결 요소(Connected Component)의 개수를 구하는 프로그램을 작성하시오.',
+                input: '첫째 줄에 정점의 개수 N과 간선의 개수 M이 주어진다. (1 ≤ N ≤ 1,000, 0 ≤ M ≤ N×(N-1)/2) 둘째 줄부터 M개의 줄에 간선의 양 끝점 u와 v가 주어진다.',
+                output: '첫째 줄에 연결 요소의 개수를 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: DFS',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+public class Main {
+    static ArrayList<Integer>[] adjList;
+    static boolean[] visited;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        adjList = new ArrayList[n + 1];
+        visited = new boolean[n + 1];
+        for (int i = 1; i <= n; i++) adjList[i] = new ArrayList<>();
+        for (int i = 0; i < m; i++) {
+            st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            adjList[u].add(v);
+            adjList[v].add(u);
+        }
+//---SPLIT---
+        int componentCount = 0;
+        for (int i = 1; i <= n; i++) {
+            if (!visited[i]) {
+                componentCount++;
+                dfs(i);
+            }
+        }
+        System.out.println(componentCount);
+    }
+    private static void dfs(int node) {
+        visited[node] = true;
+        for (int neighbor : adjList[node]) {
+            if (!visited[neighbor]) {
+                dfs(neighbor);
+            }
+        }
+    }
+}`,
+                    python: `import sys
+sys.setrecursionlimit(10**6)
+
+def dfs(node):
+    visited[node] = True
+    for neighbor in adj_list[node]:
+        if not visited[neighbor]:
+            dfs(neighbor)
+
+n, m = map(int, sys.stdin.readline().split())
+
+adj_list = [[] for _ in range(n + 1)]
+visited = [False] * (n + 1)
+
+for _ in range(m):
+    u, v = map(int, sys.stdin.readline().split())
+    adj_list[u].append(v)
+    adj_list[v].append(u)
+#---SPLIT---
+component_count = 0
+for i in range(1, n + 1):
+    if not visited[i]:
+        component_count += 1
+        dfs(i)
+
+print(component_count)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+
+const [n, m] = input[0].split(' ').map(Number);
+const edges = input.slice(1);
+
+const adjList = Array.from({ length: n + 1 }, () => []);
+const visited = new Array(n + 1).fill(false);
+
+for (let i = 0; i < m; i++) {
+    const [u, v] = edges[i].split(' ').map(Number);
+    adjList[u].push(v);
+    adjList[v].push(u);
+}
+
+function dfs(node) {
+    visited[node] = true;
+    for (const neighbor of adjList[node]) {
+        if (!visited[neighbor]) {
+            dfs(neighbor);
+        }
+    }
+}
+//---SPLIT---
+let componentCount = 0;
+for (let i = 1; i <= n; i++) {
+    if (!visited[i]) {
+        componentCount++;
+        dfs(i);
+    }
+}
+
+console.log(componentCount);`
+                }
+            },
+            // --- 문제 8: DFS와 BFS ---
+            {
+                type: 'problem_detail',
+                title: '문제 8: DFS와 BFS (BOJ 1260)',
+                problem: '그래프를 DFS로 탐색한 결과와 BFS로 탐색한 결과를 출력하는 프로그램을 작성하시오. 단, 방문할 수 있는 정점이 여러 개인 경우에는 정점 번호가 작은 것을 먼저 방문하고, 더 이상 방문할 수 있는 점이 없는 경우 종료한다.',
+                input: '첫째 줄에 정점의 개수 N, 간선의 개수 M, 탐색을 시작할 정점의 번호 V가 주어진다. 다음 M개의 줄에는 간선이 연결하는 두 정점의 번호가 주어진다.',
+                output: '첫째 줄에 DFS를 수행한 결과를, 그 다음 줄에는 BFS를 수행한 결과를 출력한다. V부터 방문된 점을 순서대로 출력하면 된다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: DFS와 BFS',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class Main {
+    static ArrayList<Integer>[] adjList;
+    static boolean[] visited;
+    static StringBuilder sb = new StringBuilder();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        int v = Integer.parseInt(st.nextToken());
+        adjList = new ArrayList[n + 1];
+        for (int i = 1; i <= n; i++) adjList[i] = new ArrayList<>();
+        for (int i = 0; i < m; i++) {
+            st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());
+            int w = Integer.parseInt(st.nextToken());
+            adjList[u].add(w);
+            adjList[w].add(u);
+        }
+        for (int i = 1; i <= n; i++) Collections.sort(adjList[i]);
+        visited = new boolean[n + 1];
+        dfs(v);
+//---SPLIT---
+        sb.append("\\n");
+        visited = new boolean[n + 1];
+        bfs(v);
+        System.out.println(sb.toString());
+    }
+    private static void dfs(int node) {
+        visited[node] = true;
+        sb.append(node).append(" ");
+        for (int neighbor : adjList[node]) {
+            if (!visited[neighbor]) dfs(neighbor);
+        }
+    }
+    private static void bfs(int startNode) {
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(startNode);
+        visited[startNode] = true;
+        while (!queue.isEmpty()) {
+            int node = queue.poll();
+            sb.append(node).append(" ");
+            for (int neighbor : adjList[node]) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    queue.add(neighbor);
+                }
+            }
+        }
+    }
+}`,
+                    python: `import sys
+from collections import deque
+
+def dfs(node):
+    visited[node] = True
+    dfs_result.append(node)
+    for neighbor in adj_list[node]:
+        if not visited[neighbor]:
+            dfs(neighbor)
+
+def bfs(start_node):
+    queue = deque([start_node])
+    visited[start_node] = True
+    while queue:
+        node = queue.popleft()
+        bfs_result.append(node)
+        for neighbor in adj_list[node]:
+            if not visited[neighbor]:
+                visited[neighbor] = True
+                queue.append(neighbor)
+
+n, m, v = map(int, sys.stdin.readline().split())
+adj_list = [[] for _ in range(n + 1)]
+for _ in range(m):
+    u, w = map(int, sys.stdin.readline().split())
+    adj_list[u].append(w)
+    adj_list[w].append(u)
+for i in range(1, n + 1):
+    adj_list[i].sort()
+#---SPLIT---
+visited = [False] * (n + 1)
+dfs_result = []
+dfs(v)
+print(*dfs_result)
+
+visited = [False] * (n + 1)
+bfs_result = []
+bfs(v)
+print(*bfs_result)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+const [n, m, v] = input[0].split(' ').map(Number);
+const edges = input.slice(1);
+const adjList = Array.from({ length: n + 1 }, () => []);
+for (let i = 0; i < m; i++) {
+    const [u, w] = edges[i].split(' ').map(Number);
+    adjList[u].push(w);
+    adjList[w].push(u);
+}
+for (let i = 1; i <= n; i++) adjList[i].sort((a, b) => a - b);
+
+let visited = new Array(n + 1).fill(false);
+const dfsResult = [];
+function dfs(node) {
+    visited[node] = true;
+    dfsResult.push(node);
+    for (const neighbor of adjList[node]) {
+        if (!visited[neighbor]) dfs(neighbor);
+    }
+}
+dfs(v);
+console.log(dfsResult.join(' '));
+//---SPLIT---
+visited = new Array(n + 1).fill(false);
+const bfsResult = [];
+function bfs(startNode) {
+    const queue = [startNode];
+    visited[startNode] = true;
+    while (queue.length > 0) {
+        const node = queue.shift();
+        bfsResult.push(node);
+        for (const neighbor of adjList[node]) {
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                queue.push(neighbor);
+            }
+        }
+    }
+}
+bfs(v);
+console.log(bfsResult.join(' '));`
+                }
+            }
+        ];
+        // --- 데이터 끝 ---
+
+        const container = document.getElementById('presentation-container');
+        let currentSlide = 0;
+        let currentLang = 0; // 0: Java, 1: Python, 2: JS
+
+        function renderSlides() {
+            container.innerHTML = '';
+            presentationData.forEach((data, index) => {
+                let slideHtml = '';
+
+                if (data.type === 'title') {
+                    slideHtml = `<div class="slide flex-col items-center justify-center p-8 text-center" data-slide-index="${index}">
+                        <h1 class="text-7xl md:text-8xl font-bold text-gray-800 mb-16">${data.title}</h1>
+                        <div class="mt-8 text-3xl md:text-4xl text-gray-600">
+                           <p>${data.author}</p>
+                           <p class="mt-2 font-semibold text-gray-700">${data.author_detail}</p>
+                        </div>
+                    </div>`;
+                } else if (data.type === 'toc') {
+                    slideHtml = `<div class="slide flex-col items-center justify-center p-8" data-slide-index="${index}">
+                        <h2 class="text-6xl md:text-7xl font-bold mb-16 text-gray-800">${data.title}</h2>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-8 text-3xl md:text-4xl text-gray-700">
+                            ${data.items.map((item, i) => `<li class="toc-item flex items-center" data-goto-slide="${(i * 2) + 2}"><span class="text-gray-500 font-bold mr-4">${i + 1}.</span>${item}</li>`).join('')}
+                        </ul></div>`;
+                } else if (data.type === 'problem_detail') {
+                    slideHtml = `
+                        <div class="slide flex-col p-8 md:p-12 bg-gray-50" data-slide-index="${index}">
+                            <h2 class="text-4xl md:text-5xl font-bold mb-8 text-gray-800 self-start">${data.title}</h2>
+                            <div class="w-full flex-1 grid grid-rows-3 gap-6 overflow-hidden">
+                                <div class="bg-white p-6 rounded-xl border border-gray-200 overflow-auto problem-detail-box shadow-sm">
+                                    <h3 class="text-2xl font-semibold text-sky-700 mb-3">문제</h3>
+                                    <p class="text-xl text-gray-700 leading-relaxed">${data.problem}</p>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl border border-gray-200 overflow-auto problem-detail-box shadow-sm">
+                                    <h3 class="text-2xl font-semibold text-sky-700 mb-3">입력</h3>
+                                    <p class="text-xl text-gray-700 leading-relaxed">${data.input}</p>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl border border-gray-200 overflow-auto problem-detail-box shadow-sm">
+                                    <h3 class="text-2xl font-semibold text-sky-700 mb-3">출력</h3>
+                                    <p class="text-xl text-gray-700 leading-relaxed">${data.output}</p>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+                else if (data.type === 'problem') {
+                    const languages = ['java', 'python', 'javascript'];
+                    let codeBlocksHtml = '';
+
+                    languages.forEach(lang => {
+                        const codeString = data.codes[lang] || '';
+                        const splitMarker = lang === 'python' ? '#---SPLIT---' : '//---SPLIT---';
+
+                        let innerHtml = '';
+                        if (codeString.includes(splitMarker)) {
+                            const parts = codeString.split(splitMarker);
+                            // split 후 앞부분의 마지막 줄바꿈과 뒷부분의 첫 줄바꿈을 제거하여 정렬을 맞춤
+                            const part1 = parts[0].trimEnd();
+                            const part2 = parts[1].trimStart();
+
+                            innerHtml = `
+                                <div class="grid grid-cols-2 gap-4 h-full">
+                                    <div class="code-block dark-scrollbar bg-[#282c34] rounded-xl shadow-lg p-4 text-lg h-full overflow-auto">
+                                        <pre><code class="language-${lang}">${part1}</code></pre>
+                                    </div>
+                                    <div class="code-block dark-scrollbar bg-[#282c34] rounded-xl shadow-lg p-4 text-lg h-full overflow-auto">
+                                        <pre><code class="language-${lang}">${part2}</code></pre>
+                                    </div>
+                                </div>`;
+                        } else {
+                            innerHtml = `
+                                <div class="code-block dark-scrollbar bg-[#282c34] rounded-xl shadow-lg p-4 text-lg h-full overflow-auto">
+                                    <pre><code class="language-${lang}">${codeString.trim()}</code></pre>
+                                </div>`;
+                        }
+
+                        codeBlocksHtml += `<div class="code-container h-full" data-lang="${lang}">${innerHtml}</div>`;
+                    });
+
+                    slideHtml = `
+                        <div class="slide flex-col p-8 md:p-12" data-slide-index="${index}" data-is-problem="true">
+                            <div class="flex-shrink-0">
+                                <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800">${data.title}</h2>
+                            </div>
+                            <div class="flex-1 mt-4 flex flex-col min-h-0">
+                                <div class="flex items-center justify-center space-x-4 mb-4">
+                                    <span class="lang-indicator java text-2xl font-bold p-2 cursor-pointer">Java</span>
+                                    <span class="lang-indicator python text-2xl font-bold p-2 cursor-pointer">Python</span>
+                                    <span class="lang-indicator javascript text-2xl font-bold p-2 cursor-pointer">JavaScript</span>
+                                </div>
+                                <div class="flex-1 relative min-h-0">${codeBlocksHtml}</div>
+                            </div>
+                        </div>`;
+                }
+                container.insertAdjacentHTML('beforeend', slideHtml);
+            });
+            document.querySelectorAll('pre code').forEach(block => {
+                // highlight.js가 HTML 엔티티를 이스케이프 처리하도록 설정
+                block.innerHTML = block.innerHTML.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                hljs.highlightElement(block);
+            });
+            // 목차 이동 이벤트 리스너 추가
+            document.querySelectorAll('.toc-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const slideIndex = parseInt(e.currentTarget.dataset.gotoSlide, 10);
+                    if (!isNaN(slideIndex)) {
+                        currentSlide = slideIndex;
+                        currentLang = 0;
+                        updateSlideState();
+                    }
+                });
+            });
+        }
+
+        function updateSlideState() {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, index) => slide.classList.toggle('active', index === currentSlide));
+
+            const activeSlide = slides[currentSlide];
+            if (activeSlide && activeSlide.dataset.isProblem) {
+                const languages = ['java', 'python', 'javascript'];
+                const currentLangName = languages[currentLang];
+
+                activeSlide.querySelectorAll('.lang-indicator').forEach((indicator, index) => {
+                    const isActive = index === currentLang;
+                    indicator.classList.toggle('text-sky-600', isActive);
+                    indicator.classList.toggle('text-gray-300', !isActive);
+                    indicator.style.transform = isActive ? 'scale(1.15)' : 'scale(1.0)';
+                    indicator.onclick = () => {
+                        currentLang = index;
+                        updateSlideState();
+                    };
+                });
+
+                activeSlide.querySelectorAll('.code-container').forEach(container => {
+                    const isActive = container.dataset.lang === currentLangName;
+                    container.classList.toggle('visible', isActive);
+                });
+            }
+        }
+
+        const goNext = () => {
+            const activeSlide = document.querySelector('.slide.active');
+            if (!activeSlide) return;
+
+            if (activeSlide.dataset.isProblem && currentLang < 2) {
+                currentLang++;
+            } else {
+                if (currentSlide < presentationData.length - 1) {
+                    currentSlide++;
+                    currentLang = 0;
+                }
+            }
+            updateSlideState();
+        };
+
+        const goPrev = () => {
+            const activeSlide = document.querySelector('.slide.active');
+            if (!activeSlide) return;
+
+            if (activeSlide.dataset.isProblem && currentLang > 0) {
+                currentLang--;
+            } else {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    const prevSlide = document.querySelector(`[data-slide-index="${currentSlide}"]`);
+                    if (prevSlide.dataset.isProblem) {
+                        currentLang = 2;
+                    } else {
+                        currentLang = 0;
+                    }
+                }
+            }
+            updateSlideState();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSlides();
+            updateSlideState();
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') goNext();
+                if (e.key === 'ArrowLeft' || e.key === 'PageUp') goPrev();
+            });
+        });
+    </script>
+</body>
+
+</html>
