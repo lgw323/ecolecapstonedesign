@@ -81,3 +81,27 @@ body {
     color: #0369a1;
     /* text-sky-700 */
 }
+
+/* --- 사용자 요청: 글자 크기 확대를 위한 스타일 추가 --- */
+/* 아래 스타일은 Tailwind CSS 클래스를 덮어쓰기 위해 !important를 사용합니다. */
+
+/* 문제 설명 부분 (원본: 1.5rem -> 2배: 3rem) */
+.lg\:col-span-3 .problem-detail-box p {
+    font-size: 3rem !important;
+    /* 48px */
+    line-height: 1.5 !important;
+}
+
+/* 입출력 형식 설명 부분 (원본: 1.25rem -> 2배: 2.5rem) */
+.lg\:col-span-2 .problem-detail-box p {
+    font-size: 2.5rem !important;
+    /* 40px */
+    line-height: 1.5 !important;
+}
+
+/* 예제 입출력 부분 (원본: 1.25rem -> 2배: 2.5rem) */
+.example-box pre {
+    font-size: 2.5rem !important;
+    /* 40px */
+    line-height: 1.5 !important;
+}

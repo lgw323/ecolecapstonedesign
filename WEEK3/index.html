@@ -35,6 +35,19 @@
             z-index: 50;
             overflow-y: auto;
         }
+
+        .example-box pre {
+            white-space: pre-wrap;
+            word-break: break-all;
+            background-color: #f3f4f6;
+            /* bg-gray-100 */
+            padding: 0.75rem;
+            /* p-3 */
+            border-radius: 0.5rem;
+            /* rounded-lg */
+            height: 100%;
+            overflow-y: auto;
+        }
     </style>
 </head>
 
@@ -85,7 +98,16 @@
                 title: '문제 1: 수 찾기 (BOJ 1920)',
                 problem: 'N개의 정수 A[1], A[2], …, A[N]이 주어져 있을 때, 이 안에 X라는 정수가 존재하는지 알아내는 프로그램을 작성하시오.',
                 input: '첫째 줄에 자연수 N(1 ≤ N ≤ 100,000)이 주어진다. 다음 줄에는 N개의 정수 A[1], A[2], …, A[N]이 주어진다. 다음 줄에는 M(1 ≤ M ≤ 100,000)이 주어진다. 다음 줄에는 M개의 수들이 주어지는데, 이 수들이 A안에 존재하는지 알아내야 한다. 모든 정수의 범위는 -2^31 보다 크거나 같고 2^31보다 작다.',
-                output: 'M개의 줄에 답을 출력한다. 존재하면 1, 존재하지 않으면 0을 출력한다.'
+                output: 'M개의 줄에 답을 출력한다. 존재하면 1, 존재하지 않으면 0을 출력한다.',
+                example_input_1: `5
+4 1 5 2 3
+5
+1 3 7 9 5`,
+                example_output_1: `1
+1
+0
+0
+1`
             },
             {
                 type: 'problem',
@@ -185,7 +207,10 @@ console.log(result.join('\\n'));`
                 title: '문제 2: 기타 레슨 (BOJ 2343)',
                 problem: '강토는 자신의 기타 강의를 블루레이로 만들어 판매하려고 한다. 블루레이에는 총 N개의 강의가 들어가는데, 블루레이를 녹화할 때, 강의의 순서가 바뀌면 안 된다. 순서가 뒤바뀌는 경우에는 강의의 흐름이 끊겨, 학생들이 혼란에 빠질 수 있기 때문이다. 즉, i번 강의와 j번 강의를 같은 블루레이에 녹화하려면 i와 j 사이의 모든 강의도 같은 블루레이에 녹화해야 한다. 또한 M개의 블루레이를 모두 사용하지 않아도 된다. 이때, 블루레이의 크기(녹화 가능한 길이)를 최소로 하려고 한다.',
                 input: '첫째 줄에 강의의 수 N (1 ≤ N ≤ 100,000)과 M (1 ≤ M ≤ N)이 주어진다. 다음 줄에는 강토의 기타 강의의 길이가 N개 주어진다. 강의의 길이는 10,000분을 넘지 않는 자연수이다.',
-                output: '첫째 줄에 가능한 블루레이 크기중 최소를 출력한다.'
+                output: '첫째 줄에 가능한 블루레이 크기중 최소를 출력한다.',
+                example_input_1: `9 3
+1 2 3 4 5 6 7 8 9`,
+                example_output_1: `17`
             },
             {
                 type: 'problem',
@@ -240,7 +265,7 @@ lectures = list(map(int, sys.stdin.readline().split()))
 left, right = max(lectures), sum(lectures)
 result = right
 
-while left <= right) {
+while left <= right:
     mid = (left + right) // 2
     count = 1
     current_sum = 0
@@ -298,7 +323,19 @@ console.log(result);`
                 title: '문제 3: 동전 0 (BOJ 11047)',
                 problem: '준규가 가지고 있는 동전은 총 N종류이고, 각각의 동전을 매우 많이 가지고 있다. 동전을 적절히 사용해서 그 가치의 합을 K로 만들려고 한다. 이때 필요한 동전 개수의 최솟값을 구하는 프로그램을 작성하시오.',
                 input: '첫째 줄에 N과 K가 주어진다. (1 ≤ N ≤ 10, 1 ≤ K ≤ 100,000,000) 둘째 줄부터 N개의 줄에 동전의 가치 Ai가 오름차순으로 주어진다. (1 ≤ Ai ≤ 1,000,000, A1 = 1, i ≥ 2인 경우에 Ai는 Ai-1의 배수)',
-                output: '첫째 줄에 K원을 만드는데 필요한 동전 개수의 최솟값을 출력한다.'
+                output: '첫째 줄에 K원을 만드는데 필요한 동전 개수의 최솟값을 출력한다.',
+                example_input_1: `10 4200
+1
+5
+10
+50
+100
+500
+1000
+5000
+10000
+50000`,
+                example_output_1: `6`
             },
             {
                 type: 'problem',
@@ -371,7 +408,12 @@ console.log(count);`
                 title: '문제 4: 카드 정렬하기 (BOJ 1715)',
                 problem: '정렬된 두 묶음의 숫자 카드가 있다고 하자. 각 묶음의 카드의 수를 A, B라 하면 보통 두 묶음을 합쳐서 하나로 만드는 데에는 A+B 번의 비교를 해야 한다. N개의 숫자 카드 묶음의 각각의 크기가 주어질 때, 최소한 몇 번의 비교가 필요한지를 구하는 프로그램을 작성하시오.',
                 input: '첫째 줄에 N이 주어진다. (1 ≤ N ≤ 100,000) 이어서 N개의 줄에 걸쳐 숫자 카드 묶음의 각각의 크기가 주어진다. 숫자 카드 묶음의 크기는 1,000보다 작거나 같은 양의 정수이다.',
-                output: '첫째 줄에 최소 비교 횟수를 출력한다.'
+                output: '첫째 줄에 최소 비교 횟수를 출력한다.',
+                example_input_1: `3
+10
+20
+40`,
+                example_output_1: `100`
             },
             {
                 type: 'problem',
@@ -476,7 +518,20 @@ console.log(totalSum);`
                 title: '문제 5: 회의실 배정 (BOJ 1931)',
                 problem: '한 개의 회의실이 있는데 이를 사용하고자 하는 N개의 회의에 대하여 회의실 사용표를 만들려고 한다. 각 회의 I에 대해 시작시간과 끝나는 시간이 주어져 있고, 각 회의가 겹치지 않게 하면서 회의실을 사용할 수 있는 회의의 최대 개수를 찾아보자. 단, 회의는 한번 시작하면 중간에 중단될 수 없으며 한 회의가 끝나는 것과 동시에 다음 회의가 시작될 수 있다.',
                 input: '첫째 줄에 회의의 수 N(1 ≤ N ≤ 100,000)이 주어진다. 둘째 줄부터 N+1 줄까지 각 회의의 정보가 주어지는데 이것은 공백을 사이에 두고 회의의 시작시간과 끝나는 시간이 주어진다. 시작 시간과 끝나는 시간은 2^31-1보다 작거나 같은 자연수 또는 0이다.',
-                output: '첫째 줄에 최대 사용할 수 있는 회의의 최대 개수를 출력한다.'
+                output: '첫째 줄에 최대 사용할 수 있는 회의의 최대 개수를 출력한다.',
+                example_input_1: `11
+1 4
+3 5
+0 6
+5 7
+3 8
+5 9
+6 10
+8 11
+8 12
+2 13
+12 14`,
+                example_output_1: `4`
             },
             {
                 type: 'problem',
@@ -570,7 +625,9 @@ console.log(count);`
                 title: '문제 6: 잃어버린 괄호 (BOJ 1541)',
                 problem: '세준이는 양수와 +, -, 그리고 괄호를 가지고 식을 만들었다. 그리고 나서 세준이는 괄호를 모두 지웠다. 그리고 나서 세준이는 괄호를 적절히 쳐서 이 식의 값을 최소로 만들려고 한다.',
                 input: '첫째 줄에 식이 주어진다. 식은 ‘0’~‘9’, ‘+’, 그리고 ‘-’만으로 이루어져 있고, 가장 처음과 마지막 문자는 숫자이다. 그리고 연속해서 두 개 이상의 연산자가 나타나지 않고, 5자리보다 많이 연속되는 숫자는 없다. 수는 0으로 시작할 수 있다. 식의 길이는 50보다 작거나 같다.',
-                output: '첫째 줄에 정답을 출력한다.'
+                output: '첫째 줄에 정답을 출력한다.',
+                example_input_1: `55-50+40`,
+                example_output_1: `-35`
             },
             {
                 type: 'problem',
@@ -638,7 +695,13 @@ console.log(result);`
                 title: '문제 7: 소수 구하기 (BOJ 1929)',
                 problem: 'M이상 N이하의 소수를 모두 출력하는 프로그램을 작성하시오.',
                 input: '첫째 줄에 자연수 M과 N이 빈 칸을 사이에 두고 주어진다. (1 ≤ M ≤ N ≤ 1,000,000) M과 N사이의 소수가 하나 이상 있는 입력만 주어진다.',
-                output: '한 줄에 하나씩, 증가하는 순서대로 소수를 출력한다.'
+                output: '한 줄에 하나씩, 증가하는 순서대로 소수를 출력한다.',
+                example_input_1: `3 16`,
+                example_output_1: `3
+5
+7
+11
+13`
             },
             {
                 type: 'problem',
@@ -721,7 +784,9 @@ console.log(result.join('\\n'));`
                 problem: '자연수 n이 주어졌을 때, GCD(n, k) = 1을 만족하는 자연수 1 ≤ k ≤ n의 개수를 구하는 프로그램을 작성하시오.',
                 input: '첫째 줄에 자연수 n (1 ≤ n ≤ 10^12)이 주어진다.',
                 output: 'GCD(n, k) = 1을 만족하는 자연수 1 ≤ k ≤ n의 개수를 출력한다.',
-                problemId: 'bj11689' // 각 문제에 대한 고유 ID 추가
+                problemId: 'bj11689', // 각 문제에 대한 고유 ID 추가
+                example_input_1: `10`,
+                example_output_1: `4`
             },
             {
                 type: 'problem',
@@ -795,7 +860,14 @@ console.log(phi.toString());`
                 title: '문제 9: 최소공배수 (BOJ 1934)',
                 problem: '두 자연수 A와 B가 주어졌을 때, A와 B의 최소공배수를 구하는 프로그램을 작성하시오.',
                 input: '첫째 줄에 테스트 케이스의 개수 T(1 ≤ T ≤ 1,000)가 주어진다. 둘째 줄부터 T개의 줄에 걸쳐서 A와 B가 주어진다. (1 ≤ A, B ≤ 45,000)',
-                output: '첫째 줄부터 T개의 줄에 A와 B의 최소공배수를 각각 출력한다.'
+                output: '첫째 줄부터 T개의 줄에 A와 B의 최소공배수를 각각 출력한다.',
+                example_input_1: `3
+1 45000
+6 10
+13 17`,
+                example_output_1: `45000
+30
+221`
             },
             {
                 type: 'problem',
@@ -875,7 +947,9 @@ console.log(result.trim());`
                 title: '문제 10: Ax + By = C (BOJ 21568)',
                 problem: '정수 a, b, c가 주어졌을 때, ax + by = c를 만족하는 정수 x, y를 구하는 프로그램을 작성하시오.',
                 input: '첫째 줄에 세 정수 a, b, c가 주어진다. (1 ≤ a, b, c ≤ 1,000,000,000) 문제의 답이 항상 존재하는 경우만 입력으로 주어진다.',
-                output: 'ax + by = c를 만족하는 정수 x, y를 순서대로 공백으로 구분해 출력한다. 답이 여러 개인 경우 아무거나 하나 출력한다.'
+                output: 'ax + by = c를 만족하는 정수 x, y를 순서대로 공백으로 구분해 출력한다. 답이 여러 개인 경우 아무거나 하나 출력한다.',
+                example_input_1: `2 3 5`,
+                example_output_1: `1 1`
             },
             {
                 type: 'problem',
@@ -954,103 +1028,123 @@ console.log(\`\${x0 * k} \${y0 * k}\`);`
         // 상세 설명 데이터
         const explanationData = {
             'bj11689': {
-                title: 'BOJ 11689: GCD(n, k) = 1 상세 풀이',
+                title: 'BOJ 11689: 서로소는 몇 개일까? - 오일러 피 함수 완전 정복',
                 steps: [
                     {
                         step: 1,
-                        icon: '🤔',
-                        title: '문제 다시 보기',
+                        icon: '🧱',
+                        title: "문제 이해하기 - '서로소'란?",
                         content: `
-                            <p class="text-xl text-gray-700 leading-relaxed">
-                                자연수 n이 주어졌을 때, 1부터 n까지의 자연수 k 중에서 <strong>GCD(n, k) = 1</strong>을 만족하는 k의 개수를 찾는 문제입니다.
-                            </p>
-                            <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                                <h4 class="font-semibold text-red-800">🚨 가장 큰 함정: 시간 초과</h4>
-                                <p class="text-gray-600">
-                                    입력값 n이 최대 10<sup>12</sup> (1조)입니다. 1부터 n까지 모든 k에 대해 일일이 최대공약수(GCD)를 계산하는 방식으로는 절대 시간 안에 풀 수 없습니다. O(N) 알고리즘조차 불가능하며, 수학적인 접근이 반드시 필요합니다.
-                                </p>
-                            </div>
-                        `
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="text-xl space-y-4 text-slate-700">
+                        <p>이 문제에서 <strong>'서로소'</strong>는 수학 용어를 의미합니다.</p>
+                        <p class="font-semibold bg-sky-50 p-4 rounded-lg border border-sky-200">두 숫자의 공통된 약수가 1밖에 없는 관계를 말해요.</p>
+                        <p>예를 들어, <strong>6</strong>(약수: 1,2,3,6)과 <strong>35</strong>(약수: 1,5,7,35)는 공통 약수가 1뿐이므로 '서로소 '입니다.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-lg border">
+                        <h3 class="font-bold text-2xl text-slate-800 mb-3">블록 비유</h3>
+                        <ul class="list-disc list-inside text-lg space-y-2">
+                            <li><strong>숫자 6</strong> = <span class="font-bold text-red-500">'2번'</span> 블록 + <span class="font-bold text-blue-500">'3번'</span> 블록</li>
+                            <li><strong>숫자 10</strong> = <span class="font-bold text-red-500">'2번'</span> 블록 + <span class="font-bold text-green-500">'5번'</span> 블록<br><span class="text-sm text-red-600 ml-4">➡️ '2번' 블록이 겹치니 서로소 아님!</span></li>
+                            <li><strong>숫자 35</strong> = <span class="font-bold text-green-500">'5번'</span> 블록 + <span class="font-bold text-yellow-500">'7번'</span> 블록<br><span class="text-sm text-green-600 ml-4">➡️ 6과 35는 겹치는 블록이 없으니 서로소!</span></li>
+                        </ul>
+                    </div>
+                </div>
+            `
                     },
                     {
                         step: 2,
                         icon: '💡',
-                        title: '천재적인 아이디어: 오일러 피 함수',
+                        title: '어떻게 풀까? - 발상의 전환',
                         content: `
-                            <p class="text-xl text-gray-700 leading-relaxed">
-                                이 문제는 '오일러 피 함수(Euler's Totient Function)'의 정의와 정확히 일치합니다. 이 함수의 기호는 <span class="font-serif font-bold text-sky-600">φ(n)</span> 입니다.
-                            </p>
-                            <div class="mt-4 p-4 bg-sky-50 border border-sky-200 rounded-lg">
-                                <h4 class="font-semibold text-sky-800">💡 오일러의 생각 뒤집기</h4>
-                                <p class="text-gray-600">
-                                    "n과 서로소인 친구들(GCD=1)을 어떻게 세지?" 라는 질문 대신, "<strong>n과 서로소가 아닌 녀석들(GCD≠1)을 전부 쫓아내면 남는 게 친구들 아닐까?</strong>" 라고 접근하는 것입니다.
-                                </p>
-                            </div>
-                            <p class="mt-4 text-xl text-gray-700 leading-relaxed">
-                            n과 서로소가 아닌 k는, n의 소인수 중 적어도 하나를 공통으로 가지고 있습니다. 예를 들어 n=12 (소인수: 2, 3)라면, 12와 서로소가 아닌 애들은 모두 2의 배수이거나 3의 배수입니다.
-                            </p>
-                        `
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-red-50 p-6 rounded-lg border border-red-200">
+                        <h3 class="font-bold text-2xl text-red-700 mb-3">단순한 방법 (그리고 한계) 💀</h3>
+                        <p class="text-xl text-slate-700">1부터 N까지 모든 수에 대해 최대공약수를 구해 서로소인지 확인하면 됩니다.</p>
+                        <p class="mt-4 text-center font-bold text-2xl text-red-600 p-4 bg-white rounded-lg shadow-inner">🚨 N이 1조면? 시간 초과! 🚨</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg border border-green-200">
+                        <h3 class="font-bold text-2xl text-green-700 mb-3">오일러의 아이디어 ✨</h3>
+                        <p class="text-xl text-slate-700">"서로소를 세지 말고, <br><strong>전체에서 서로소가 아닌 애들을 쫓아내자!</strong>"</p>
+                        <p class="mt-4 text-xl font-semibold">서로소가 아닌 애들 = N과 공통된 소인수를 가진 숫자들.</p>
+                    </div>
+                </div>
+            `
                     },
                     {
                         step: 3,
                         icon: '🧪',
-                        title: '아이디어 실험: 체로 걸러내기 (n=30)',
+                        title: '아이디어를 공식으로! (feat. 체)',
                         content: `
-                            <p class="text-xl text-gray-700 leading-relaxed">
-                                n=30 (소인수 2, 3, 5) 일 때, 이 아이디어가 어떻게 작동하는지 봅시다.
-                            </p>
-                            <ol class="mt-4 space-y-3 list-decimal list-inside text-gray-600">
-                                <li><strong>전체 30개에서 시작:</strong> 30개 중 2의 배수가 아닌 것의 비율은 1/2 입니다. <br>
-                                    <span class="font-mono text-sky-600">30 * (1/2) = 15개</span>가 남습니다.
-                                </li>
-                                <li><strong>남은 15개 중에서:</strong> 신기하게도, 남은 숫자들 중에서도 3의 배수가 아닌 것의 비율은 정확히 2/3 입니다.<br>
-                                    <span class="font-mono text-sky-600">15 * (2/3) = 10개</span>가 남습니다.
-                                </li>
-                                <li><strong>다시 남은 10개 중에서:</strong> 이번에도, 5의 배수가 아닌 것의 비율은 정확히 4/5 입니다.<br>
-                                    <span class="font-mono text-sky-600">10 * (4/5) = 8개</span>가 최종적으로 남습니다.
-                                </li>
-                            </ol>
-                            <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                                <p class="text-green-800">
-                                    이 과정은 마치 고운 가루를 만들기 위해 여러 개의 체로 순서대로 걸러내는 것과 같습니다. 각 소인수가 하나의 '체' 역할을 하는 셈이죠.
-                                </p>
-                            </div>
-                        `
+                <p class="text-xl text-slate-600 mb-6">N=30 (소인수: 2, 3, 5)을 예로 들어, '체로 거르는' 과정을 따라가 봅시다.</p>
+                <div class="bg-slate-50 p-6 rounded-xl border space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-slate-200 text-slate-800 text-2xl font-bold rounded-full w-16 h-16 flex items-center justify-center">30</div>
+                        <div class="text-xl text-slate-700"><strong>시작:</strong> 30개의 숫자가 있습니다.</div>
+                    </div>
+                    <div class="flex items-center space-x-4 pl-4 border-l-4 border-red-300">
+                        <div class="text-2xl font-bold text-red-500">× (1 - <sup>1</sup>&frasl;<sub>2</sub>)</div>
+                        <div>
+                            <p class="text-xl text-slate-700"><strong>1차 필터링:</strong> 2의 배수(절반)를 걷어냅니다. 남은 비율은 1/2.</p>
+                            <p class="text-lg font-mono text-slate-500">30 × (1/2) = 15개가 남습니다.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 pl-4 border-l-4 border-blue-300">
+                        <div class="text-2xl font-bold text-blue-500">× (1 - <sup>1</sup>&frasl;<sub>3</sub>)</div>
+                        <div>
+                            <p class="text-xl text-slate-700"><strong>2차 필터링:</strong> 남은 숫자들 중 3의 배수(1/3)를 또 걷어냅니다. 남는 비율은 2/3.</p>
+                            <p class="text-lg font-mono text-slate-500">15 × (2/3) = 10개가 남습니다.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 pl-4 border-l-4 border-green-300">
+                        <div class="text-2xl font-bold text-green-500">× (1 - <sup>1</sup>&frasl;<sub>5</sub>)</div>
+                        <div>
+                            <p class="text-xl text-slate-700"><strong>3차 필터링:</strong> 또 남은 숫자들 중 5의 배수(1/5)를 걷어냅니다. 남는 비율은 4/5.</p>
+                            <p class="text-lg font-mono text-slate-500">10 × (4/5) = 8개가 남습니다.</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-xl mt-6 p-4 bg-teal-50 border border-teal-200 rounded-lg">
+                    이 과정을 합치면, <strong><code class="text-teal-700">30 × (1 - 1/2) × (1 - 1/3) × (1 - 1/5) = 8</code></strong> 이라는 공식이 자연스럽게 완성됩니다!
+                </p>
+            `
                     },
                     {
                         step: 4,
                         icon: '📜',
-                        title: '공식으로 변환하기',
+                        title: '공식을 코드로 변환하기',
                         content: `
-                            <p class="text-xl text-gray-700 leading-relaxed">
-                                앞선 '체로 걸러내기' 과정을 하나의 수학 공식으로 정리할 수 있습니다.
+                 <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="font-bold text-2xl text-slate-800 mb-3">오일러 피(φ) 함수 공식</h3>
+                        <p class="text-xl text-slate-700 mb-4">방금 우리가 유도한 공식의 일반적인 형태입니다.</p>
+                        <div class="bg-slate-50 p-6 rounded-lg border text-center">
+                            <p class="font-serif text-3xl font-semibold text-slate-800">
+                                φ(n) = n × (1 - <sup>1</sup>&frasl;<sub>p₁</sub>) × (1 - <sup>1</sup>&frasl;<sub>p₂</sub>) × ...
                             </p>
-                            <div class="my-4 p-4 bg-gray-100 rounded-lg text-center">
-                                <p class="text-2xl font-serif text-gray-800">
-                                    φ(n) = n × (1 - 1/p₁) × (1 - 1/p₂) × ...
-                                </p>
-                                <p class="mt-2 text-gray-600">(여기서 p₁, p₂, ... 는 n의 모든 고유한 소인수들입니다.)</p>
-                            </div>
-                            <p class="text-xl text-gray-700 leading-relaxed">
-                                하지만 컴퓨터는 분수 계산을 싫어합니다. 정수 계산으로만 이루어지도록 공식을 살짝 변형해봅시다.
-                            </p>
-                            <div class="my-4 p-4 bg-indigo-50 border border-indigo-200 rounded-lg text-center">
-                                <p class="text-2xl font-serif text-indigo-800">
-                                    φ(n) = n × (p₁-1)/p₁ × (p₂-1)/p₂ × ...
-                                </p>
-                                <p class="mt-2 text-gray-600">이 형태가 바로 우리가 코드에 적용할 최종 공식입니다.</p>
-                            </div>
-                        `
+                            <p class="text-base text-slate-500 mt-2">(여기서 p₁, p₂ 등은 n의 각 소인수입니다)</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-2xl text-slate-800 mb-3">컴퓨터를 위한 공식 변환</h3>
+                        <p class="text-xl text-slate-700 mb-4">컴퓨터는 분수 계산을 싫어하죠. 그래서 공식을 정수 계산이 가능하게 살짝 바꿉니다.</p>
+                        <div class="bg-slate-50 p-4 rounded-lg border text-lg space-y-2">
+                           <p>원래 계산: <code class="bg-slate-200 px-2 py-1 rounded">phi = phi * (1 - 1/p)</code></p>
+                           <p>통분하기: <code class="bg-slate-200 px-2 py-1 rounded">phi = phi * ((p-1)/p)</code></p>
+                           <p>순서 바꾸기: <code class="bg-slate-200 px-2 py-1 rounded">phi = (phi / p) * (p-1)</code></p>
+                           <p class="font-bold text-purple-700 text-center pt-2">이게 바로 코드에 쓰인 형태입니다!</p>
+                        </div>
+                    </div>
+                </div>
+            `
                     },
                     {
                         step: 5,
                         icon: '💻',
-                        title: 'Java 코드로 구현하기',
+                        title: '코드와 원리 최종 연결',
                         content: `
-                            <p class="text-xl text-gray-700 leading-relaxed">
-                                이제 최종 공식을 코드로 옮겨보겠습니다. 코드를 보면서 각 부분이 어떤 역할을 하는지 설명하겠습니다.
-                            </p>
-                        `,
+                 <p class="text-xl text-slate-600 mb-6">변환된 공식을 이제 코드로 구현해봅시다. 핵심은 <strong>"N의 소인수(p)를 찾고, 변환된 공식으로 결과(phi)를 갱신하는 것"</strong> 입니다.</p>
+            `,
                         code: `// 1. 결과(phi)를 n으로 초기화
 long phi = n;
 
@@ -1074,15 +1168,15 @@ if (n > 1) {
     phi = phi / n * (n - 1);
 }`,
                         code_explanation: `
-                            <ol class="space-y-4 text-gray-700">
-                                <li><strong>1. 결과 변수 초기화:</strong> 최종 결과를 담을 <code>phi</code> 변수를 만들고, 공식의 시작점인 <code>n</code>으로 초기화합니다.</li>
-                                <li><strong>2. 효율적인 탐색:</strong> <code>p</code>를 2부터 1씩 증가시키며 <code>n</code>의 소인수를 찾습니다. 1조의 모든 수를 확인할 수 없으니, <code>n</code>의 제곱근까지만 확인하면 모든 소인수를 찾을 수 있다는 수학적 원리를 이용합니다.</li>
-                                <li><strong>3. 소인수 발견:</strong> <code>if (n % p == 0)</code>. 만약 <code>p</code>로 <code>n</code>이 나누어 떨어진다면, <code>p</code>는 <code>n</code>의 가장 작은 소인수입니다.</li>
-                                <li><strong>4. 공식 적용:</strong> <code>phi = phi / p * (p - 1)</code>. 이것이 바로 <code>φ(n) = φ(n) × (p-1)/p</code> 공식을 코드로 옮긴 것입니다. 나눗셈을 먼저 해서 오버플로우를 방지합니다.</li>
-                                <li><strong>5. 소인수 제거 (while문):</strong> 이 코드가 가장 중요합니다. 찾은 소인수 <code>p</code>를 <code>n</code>에서 완전히 제거합니다. 예를 들어 <code>n=12</code>일 때 <code>p=2</code>를 찾았다면, 12를 2로 계속 나눠 3으로 만들어 버립니다. 이렇게 해야 나중에 <code>p=4</code>일 때 또다시 계산하는 실수를 막을 수 있습니다.</li>
-                                <li><strong>6. 마지막 처리:</strong> 루프가 끝났을 때 <code>n</code>이 1보다 크다면, 그 자체가 마지막 소인수라는 의미입니다. (예: n=998244353). 이 남은 소인수에 대해서도 공식을 한 번 더 적용해줍니다.</li>
-                            </ol>
-                        `
+                <div class="space-y-3 text-lg">
+                    <div class="p-3 bg-slate-50 rounded-md border"><strong>1. 초기 설정:</strong> 전체 학생 수(n)로 시작합니다.</div>
+                    <div class="p-3 bg-slate-50 rounded-md border"><strong>2. 소인수 탐색:</strong> 2부터 차례대로 \`n\`을 나눌 수 있는지 검사합니다. (p*p <= n 은 효율을 위함)</div>
+                    <div class="p-3 bg-slate-50 rounded-md border"><strong>3. 소인수 발견:</strong> \`n\`이 \`p\`로 나누어 떨어진다면, \`p\`는 \`n\`의 소인수입니다!</div>
+                    <div class="p-3 bg-purple-50 rounded-md border border-purple-300"><strong>4. 공식 적용:</strong> 서로소가 아닌 \`p\`의 배수들을 걷어냅니다. <code>(결과 / p) * (p-1)</code></div>
+                    <div class="p-3 bg-amber-50 rounded-md border border-amber-300"><strong>5. 소인수 제거(청소):</strong> <strong>가장 중요!</strong> \`n\`에서 \`p\`라는 재료를 완전히 소진시켜, \`p\`의 다른 배수(예: 4, 6)가 실수로 검사되는 것을 막습니다.</div>
+                    <div class="p-3 bg-slate-50 rounded-md border"><strong>6. 최종 처리:</strong> \`while\`문으로 다 정리하고도 \`n\`이 1보다 크다면, 그 자체가 마지막 소인수이므로 한 번 더 공식을 적용해줍니다.</div>
+                </div>
+            `
                     }
                 ]
             }
@@ -1124,23 +1218,49 @@ if (n > 1) {
 
                     slideHtml = `
                         <div class="slide flex-col p-8 md:p-12 bg-gray-50 relative" data-slide-index="${index}">
-                            ${detailButtonHtml}
-                            <h2 class="text-6xl md:text-7xl font-bold mb-10 text-gray-800 self-start">${data.title}</h2>
-                            <div class="w-full flex-1 grid grid-rows-3 gap-8 overflow-hidden">
-                                <div class="bg-white p-8 rounded-xl border border-gray-200 overflow-auto problem-detail-box shadow-sm">
-                                    <h3 class="text-4xl font-semibold text-sky-700 mb-4">문제</h3>
-                                    <p class="text-3xl text-gray-700 leading-relaxed whitespace-pre-line">${data.problem}</p>
+                             ${detailButtonHtml}
+                            <h2 class="text-5xl md:text-6xl font-bold mb-8 text-gray-800 self-start">${data.title}</h2>
+                            <div class="w-full flex-1 grid grid-cols-1 lg:grid-cols-5 gap-6 overflow-hidden">
+                                
+                                <div class="lg:col-span-3 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                                    <h3 class="text-3xl font-semibold text-sky-700 mb-4 flex-shrink-0">문제 설명</h3>
+                                    <div class="overflow-auto problem-detail-box flex-1">
+                                      <p class="text-2xl text-gray-700 leading-relaxed whitespace-pre-line">${data.problem}</p>
+                                    </div>
                                 </div>
-                                <div class="bg-white p-8 rounded-xl border border-gray-200 overflow-auto problem-detail-box shadow-sm">
-                                    <h3 class="text-4xl font-semibold text-sky-700 mb-4">입력</h3>
-                                    <p class="text-3xl text-gray-700 leading-relaxed whitespace-pre-line">${data.input}</p>
-                                </div>
-                                <div class="bg-white p-8 rounded-xl border border-gray-200 overflow-auto problem-detail-box shadow-sm">
-                                    <h3 class="text-4xl font-semibold text-sky-700 mb-4">출력</h3>
-                                    <p class="text-3xl text-gray-700 leading-relaxed whitespace-pre-line">${data.output}</p>
+                                
+                                <div class="lg:col-span-2 flex flex-col gap-6">
+                                    <div class="flex-1 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                                        <h3 class="text-3xl font-semibold text-sky-700 mb-4 flex-shrink-0">입출력 형식</h3>
+                                        <div class="grid grid-cols-1 gap-4 overflow-auto problem-detail-box flex-1">
+                                            <div>
+                                                <h4 class="text-2xl font-semibold text-gray-600 mb-2">입력</h4>
+                                                <p class="text-xl text-gray-600 leading-relaxed whitespace-pre-line">${data.input}</p>
+                                            </div>
+                                            <hr class="my-2">
+                                            <div>
+                                                <h4 class="text-2xl font-semibold text-gray-600 mb-2">출력</h4>
+                                                <p class="text-xl text-gray-600 leading-relaxed whitespace-pre-line">${data.output}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                                        <h3 class="text-3xl font-semibold text-sky-700 mb-4 flex-shrink-0">예제</h3>
+                                        <div class="grid grid-cols-2 gap-4 flex-1 overflow-hidden">
+                                            <div class="example-box">
+                                                <h4 class="text-2xl font-semibold text-gray-600 mb-2">입력</h4>
+                                                <pre class="text-xl">${data.example_input_1 || ''}</pre>
+                                            </div>
+                                            <div class="example-box">
+                                                <h4 class="text-2xl font-semibold text-gray-600 mb-2">출력</h4>
+                                                <pre class="text-xl">${data.example_output_1 || ''}</pre>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>`;
+
                 } else if (data.type === 'problem') {
                     const languages = ['java', 'python', 'javascript'];
                     let codeBlocksHtml = '';
