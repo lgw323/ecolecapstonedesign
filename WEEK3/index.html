@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알고리즘 10문제: Java, Python, JS 풀이 분석 (WEEK3)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-white text-black">
+
+    <div id="presentation-root" class="relative w-screen h-screen">
+        <div id="presentation-container" class="w-full h-full bg-white flex flex-col overflow-hidden">
+        </div>
+    </div>
+
+    <script>
+        // --- 데이터 시작 ---
+        const presentationData = [
+            // --- 표지 & 목차 ---
+            {
+                type: 'title',
+                title: '알고리즘 10문제 (3주차)',
+                author: '경성대학교 소프트웨어학과',
+                author_detail: '2021663046 이건우'
+            },
+            {
+                type: 'toc',
+                title: '발표 순서 (3주차)',
+                items: [
+                    '수 찾기 (BOJ 1920)', '기타 레슨 (BOJ 2343)', '동전 0 (BOJ 11047)',
+                    '카드 정렬하기 (BOJ 1715)', '회의실 배정 (BOJ 1931)', '잃어버린 괄호 (BOJ 1541)',
+                    '소수 구하기 (BOJ 1929)', 'GCD(n, k) = 1 (BOJ 11689)', '최소공배수 (BOJ 1934)',
+                    'Ax + By = C (BOJ 21568)'
+                ]
+            },
+            // --- 문제 1: 이진 탐색 ---
+            {
+                type: 'problem_detail',
+                title: '문제 1: 수 찾기 (BOJ 1920)',
+                problem: 'N개의 정수 A[1], A[2], …, A[N]이 주어져 있을 때, 이 안에 X라는 정수가 존재하는지 알아내는 프로그램을 작성하시오.',
+                input: '첫째 줄에 자연수 N(1 ≤ N ≤ 100,000)이 주어진다. 다음 줄에는 N개의 정수 A[1], A[2], …, A[N]이 주어진다. 다음 줄에는 M(1 ≤ M ≤ 100,000)이 주어진다. 다음 줄에는 M개의 수들이 주어지는데, 이 수들이 A안에 존재하는지 알아내야 한다. 모든 정수의 범위는 -2^31 보다 크거나 같고 2^31보다 작다.',
+                output: 'M개의 줄에 답을 출력한다. 존재하면 1, 존재하지 않으면 0을 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 이진 탐색',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class bj1_1920 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int arr[] = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
+        Arrays.sort(arr);
+
+        int m = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine());
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < m; i++) {
+            int target = Integer.parseInt(st.nextToken());
+            if (binarySearch(arr, target)) {
+                sb.append(1).append("\\n");
+            } else {
+                sb.append(0).append("\\n");
+            }
+        }
+        System.out.print(sb);
+    }
+    
+    private static boolean binarySearch(int[] arr, int target) {
+        int start = 0;
+        int end = arr.length - 1;
+        while (start <= end) {
+            int mid = (start + end) / 2;
+            if (arr[mid] == target) return true;
+            if (arr[mid] < target) start = mid + 1;
+            else end = mid - 1;
+        }
+        return false;
+    }
+}`,
+                    python: `import sys
+
+def binary_search(arr, target):
+    start, end = 0, len(arr) - 1
+    while start <= end:
+        mid = (start + end) // 2
+        if arr[mid] == target:
+            return 1
+        elif arr[mid] < target:
+            start = mid + 1
+        else:
+            end = mid - 1
+    return 0
+
+n = int(sys.stdin.readline())
+arr_n = sorted(list(map(int, sys.stdin.readline().split())))
+m = int(sys.stdin.readline())
+arr_m = list(map(int, sys.stdin.readline().split()))
+
+for target in arr_m:
+    print(binary_search(arr_n, target))`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+
+const n = parseInt(input[0]);
+const arrN = input[1].split(' ').map(Number).sort((a, b) => a - b);
+const m = parseInt(input[2]);
+const arrM = input[3].split(' ').map(Number);
+
+function binarySearch(arr, target) {
+    let start = 0;
+    let end = arr.length - 1;
+    while (start <= end) {
+        let mid = Math.floor((start + end) / 2);
+        if (arr[mid] === target) return 1;
+        if (arr[mid] < target) start = mid + 1;
+        else end = mid - 1;
+    }
+    return 0;
+}
+
+const result = arrM.map(target => binarySearch(arrN, target));
+console.log(result.join('\\n'));`
+                }
+            },
+            // --- 문제 2: 파라메트릭 서치 ---
+            {
+                type: 'problem_detail',
+                title: '문제 2: 기타 레슨 (BOJ 2343)',
+                problem: '강토는 자신의 기타 강의를 블루레이로 만들어 판매하려고 한다. 블루레이에는 총 N개의 강의가 들어가는데, 블루레이를 녹화할 때, 강의의 순서가 바뀌면 안 된다. 순서가 뒤바뀌는 경우에는 강의의 흐름이 끊겨, 학생들이 혼란에 빠질 수 있기 때문이다. 즉, i번 강의와 j번 강의를 같은 블루레이에 녹화하려면 i와 j 사이의 모든 강의도 같은 블루레이에 녹화해야 한다. 또한 M개의 블루레이를 모두 사용하지 않아도 된다. 이때, 블루레이의 크기(녹화 가능한 길이)를 최소로 하려고 한다.',
+                input: '첫째 줄에 강의의 수 N (1 ≤ N ≤ 100,000)과 M (1 ≤ M ≤ N)이 주어진다. 다음 줄에는 강토의 기타 강의의 길이가 N개 주어진다. 강의의 길이는 10,000분을 넘지 않는 자연수이다.',
+                output: '첫째 줄에 가능한 블루레이 크기중 최소를 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 파라메트릭 서치',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class bj2_2343 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        int[] lectures = new int[n];
+        st = new StringTokenizer(br.readLine());
+        long sum = 0;
+        int maxLecture = 0;
+        for (int i = 0; i < n; i++) {
+            lectures[i] = Integer.parseInt(st.nextToken());
+            sum += lectures[i];
+            if (lectures[i] > maxLecture) maxLecture = lectures[i];
+        }
+
+        long left = maxLecture, right = sum;
+        while (left <= right) {
+            long mid = (left + right) / 2;
+            int count = 1;
+            long currentSum = 0;
+            for (int lecture : lectures) {
+                if (currentSum + lecture > mid) {
+                    count++;
+                    currentSum = lecture;
+                } else {
+                    currentSum += lecture;
+                }
+            }
+            if (count <= m) right = mid - 1;
+            else left = mid + 1;
+        }
+        System.out.println(left);
+    }
+}`,
+                    python: `import sys
+
+n, m = map(int, sys.stdin.readline().split())
+lectures = list(map(int, sys.stdin.readline().split()))
+
+left, right = max(lectures), sum(lectures)
+result = right
+
+while left <= right:
+    mid = (left + right) // 2
+    count = 1
+    current_sum = 0
+    for lecture in lectures:
+        if current_sum + lecture > mid:
+            count += 1
+            current_sum = lecture
+        else:
+            current_sum += lecture
+    
+    if count <= m:
+        result = mid
+        right = mid - 1
+    else:
+        left = mid + 1
+
+print(result)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+
+const [n, m] = input[0].split(' ').map(Number);
+const lectures = input[1].split(' ').map(Number);
+
+let left = Math.max(...lectures);
+let right = lectures.reduce((a, b) => a + b, 0);
+let result = right;
+
+while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    let count = 1;
+    let currentSum = 0;
+    for (const lecture of lectures) {
+        if (currentSum + lecture > mid) {
+            count++;
+            currentSum = lecture;
+        } else {
+            currentSum += lecture;
+        }
+    }
+
+    if (count <= m) {
+        result = mid;
+        right = mid - 1;
+    } else {
+        left = mid + 1;
+    }
+}
+
+console.log(result);`
+                }
+            },
+            // --- 문제 3: 그리디 ---
+            {
+                type: 'problem_detail',
+                title: '문제 3: 동전 0 (BOJ 11047)',
+                problem: '준규가 가지고 있는 동전은 총 N종류이고, 각각의 동전을 매우 많이 가지고 있다. 동전을 적절히 사용해서 그 가치의 합을 K로 만들려고 한다. 이때 필요한 동전 개수의 최솟값을 구하는 프로그램을 작성하시오.',
+                input: '첫째 줄에 N과 K가 주어진다. (1 ≤ N ≤ 10, 1 ≤ K ≤ 100,000,000) 둘째 줄부터 N개의 줄에 동전의 가치 Ai가 오름차순으로 주어진다. (1 ≤ Ai ≤ 1,000,000, A1 = 1, i ≥ 2인 경우에 Ai는 Ai-1의 배수)',
+                output: '첫째 줄에 K원을 만드는데 필요한 동전 개수의 최솟값을 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 그리디',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class bj3_11047 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int n = Integer.parseInt(st.nextToken());
+        int k = Integer.parseInt(st.nextToken());
+
+        int[] coins = new int[n];
+        for (int i = 0; i < n; i++) {
+            coins[i] = Integer.parseInt(br.readLine());
+        }
+
+        int count = 0;
+        for (int i = n - 1; i >= 0; i--) {
+            if (coins[i] <= k) {
+                count += (k / coins[i]);
+                k %= coins[i];
+            }
+        }
+        System.out.println(count);
+    }
+}`,
+                    python: `import sys
+
+n, k = map(int, sys.stdin.readline().split())
+coins = [int(sys.stdin.readline()) for _ in range(n)]
+
+count = 0
+for i in range(n - 1, -1, -1):
+    if coins[i] <= k:
+        count += k // coins[i]
+        k %= coins[i]
+
+print(count)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+
+let [n, k] = input[0].split(' ').map(Number);
+const coins = [];
+for (let i = 1; i <= n; i++) {
+    coins.push(Number(input[i]));
+}
+
+let count = 0;
+for (let i = n - 1; i >= 0; i--) {
+    if (coins[i] <= k) {
+        count += Math.floor(k / coins[i]);
+        k %= coins[i];
+    }
+    if (k === 0) break;
+}
+
+console.log(count);`
+                }
+            },
+            // --- 문제 4: 우선순위 큐 ---
+            {
+                type: 'problem_detail',
+                title: '문제 4: 카드 정렬하기 (BOJ 1715)',
+                problem: '정렬된 두 묶음의 숫자 카드가 있다고 하자. 각 묶음의 카드의 수를 A, B라 하면 보통 두 묶음을 합쳐서 하나로 만드는 데에는 A+B 번의 비교를 해야 한다. N개의 숫자 카드 묶음의 각각의 크기가 주어질 때, 최소한 몇 번의 비교가 필요한지를 구하는 프로그램을 작성하시오.',
+                input: '첫째 줄에 N이 주어진다. (1 ≤ N ≤ 100,000) 이어서 N개의 줄에 걸쳐 숫자 카드 묶음의 각각의 크기가 주어진다. 숫자 카드 묶음의 크기는 1,000보다 작거나 같은 양의 정수이다.',
+                output: '첫째 줄에 최소 비교 횟수를 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 그리디 (우선순위 큐)',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.PriorityQueue;
+
+public class bj4_1715 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+
+        PriorityQueue<Long> pq = new PriorityQueue<>();
+        for (int i = 0; i < n; i++) {
+            pq.add(Long.parseLong(br.readLine()));
+        }
+
+        long sum = 0;
+        while (pq.size() > 1) {
+            long temp1 = pq.poll();
+            long temp2 = pq.poll();
+
+            sum += temp1 + temp2;
+            pq.add(temp1 + temp2);
+        }
+
+        System.out.println(sum);
+    }
+}`,
+                    python: `import sys
+import heapq
+
+n = int(sys.stdin.readline())
+cards = []
+for _ in range(n):
+    heapq.heappush(cards, int(sys.stdin.readline()))
+
+total_sum = 0
+while len(cards) > 1:
+    temp1 = heapq.heappop(cards)
+    temp2 = heapq.heappop(cards)
+
+    current_sum = temp1 + temp2
+    total_sum += current_sum
+    heapq.heappush(cards, current_sum)
+
+print(total_sum)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n').map(Number);
+const n = input[0];
+const cards = input.slice(1);
+
+class MinHeap {
+    constructor() { this.heap = []; }
+    size() { return this.heap.length; }
+    push(v) { this.heap.push(v); this.bubbleUp(); }
+    pop() {
+        const val = this.heap[0];
+        this.heap[0] = this.heap.pop();
+        if (this.size() > 0) this.bubbleDown();
+        return val;
+    }
+    bubbleUp() {
+        let i = this.size() - 1;
+        while (i > 0) {
+            const p = Math.floor((i - 1) / 2);
+            if (this.heap[p] <= this.heap[i]) break;
+            [this.heap[p], this.heap[i]] = [this.heap[i], this.heap[p]];
+            i = p;
+        }
+    }
+    bubbleDown() {
+        let i = 0;
+        while (true) {
+            let l = 2*i + 1, r = 2*i + 2, s = i;
+            if (l < this.size() && this.heap[l] < this.heap[s]) s = l;
+            if (r < this.size() && this.heap[r] < this.heap[s]) s = r;
+            if (s === i) break;
+            [this.heap[s], this.heap[i]] = [this.heap[i], this.heap[s]];
+            i = s;
+        }
+    }
+}
+
+const pq = new MinHeap();
+for (const card of cards) pq.push(card);
+let totalSum = 0;
+while (pq.size() > 1) {
+    const s = pq.pop() + pq.pop();
+    totalSum += s;
+    pq.push(s);
+}
+console.log(totalSum);`
+                }
+            },
+            // --- 문제 5: 그리디 ---
+            {
+                type: 'problem_detail',
+                title: '문제 5: 회의실 배정 (BOJ 1931)',
+                problem: '한 개의 회의실이 있는데 이를 사용하고자 하는 N개의 회의에 대하여 회의실 사용표를 만들려고 한다. 각 회의 I에 대해 시작시간과 끝나는 시간이 주어져 있고, 각 회의가 겹치지 않게 하면서 회의실을 사용할 수 있는 회의의 최대 개수를 찾아보자. 단, 회의는 한번 시작하면 중간에 중단될 수 없으며 한 회의가 끝나는 것과 동시에 다음 회의가 시작될 수 있다.',
+                input: '첫째 줄에 회의의 수 N(1 ≤ N ≤ 100,000)이 주어진다. 둘째 줄부터 N+1 줄까지 각 회의의 정보가 주어지는데 이것은 공백을 사이에 두고 회의의 시작시간과 끝나는 시간이 주어진다. 시작 시간과 끝나는 시간은 2^31-1보다 작거나 같은 자연수 또는 0이다.',
+                output: '첫째 줄에 최대 사용할 수 있는 회의의 최대 개수를 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 그리디 (정렬)',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class bj5_1931 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        int[][] meetings = new int[n][2];
+
+        for (int i = 0; i < n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            meetings[i][0] = Integer.parseInt(st.nextToken());
+            meetings[i][1] = Integer.parseInt(st.nextToken());
+        }
+
+        Arrays.sort(meetings, (o1, o2) -> {
+            if (o1[1] == o2[1]) {
+                return o1[0] - o2[0];
+            }
+            return o1[1] - o2[1];
+        });
+
+        int count = 0;
+        int endTime = 0;
+        for (int i = 0; i < n; i++) {
+            if (meetings[i][0] >= endTime) {
+                endTime = meetings[i][1];
+                count++;
+            }
+        }
+        System.out.println(count);
+    }
+}`,
+                    python: `import sys
+
+n = int(sys.stdin.readline())
+meetings = []
+for _ in range(n):
+    start, end = map(int, sys.stdin.readline().split())
+    meetings.append((start, end))
+
+meetings.sort(key=lambda x: (x[1], x[0]))
+
+count = 0
+end_time = 0
+for meeting in meetings:
+    if meeting[0] >= end_time:
+        end_time = meeting[1]
+        count += 1
+
+print(count)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+
+const n = Number(input[0]);
+const meetings = [];
+for (let i = 1; i <= n; i++) {
+    meetings.push(input[i].split(' ').map(Number));
+}
+
+meetings.sort((a, b) => {
+    if (a[1] === b[1]) {
+        return a[0] - b[0];
+    }
+    return a[1] - b[1];
+});
+
+let count = 0;
+let endTime = 0;
+for (const meeting of meetings) {
+    if (meeting[0] >= endTime) {
+        endTime = meeting[1];
+        count++;
+    }
+}
+
+console.log(count);`
+                }
+            },
+            // --- 문제 6: 그리디 ---
+            {
+                type: 'problem_detail',
+                title: '문제 6: 잃어버린 괄호 (BOJ 1541)',
+                problem: '세준이는 양수와 +, -, 그리고 괄호를 가지고 식을 만들었다. 그리고 나서 세준이는 괄호를 모두 지웠다. 그리고 나서 세준이는 괄호를 적절히 쳐서 이 식의 값을 최소로 만들려고 한다.',
+                input: '첫째 줄에 식이 주어진다. 식은 ‘0’~‘9’, ‘+’, 그리고 ‘-’만으로 이루어져 있고, 가장 처음과 마지막 문자는 숫자이다. 그리고 연속해서 두 개 이상의 연산자가 나타나지 않고, 5자리보다 많이 연속되는 숫자는 없다. 수는 0으로 시작할 수 있다. 식의 길이는 50보다 작거나 같다.',
+                output: '첫째 줄에 정답을 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 그리디 (문자열 처리)',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class bj6_1541 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String[] subtraction = br.readLine().split("-");
+        int result = 0;
+
+        for (int i = 0; i < subtraction.length; i++) {
+            int tempSum = 0;
+            String[] addition = subtraction[i].split("\\\\+");
+            for (String s : addition) {
+                tempSum += Integer.parseInt(s);
+            }
+
+            if (i == 0) {
+                result += tempSum;
+            } else {
+                result -= tempSum;
+            }
+        }
+        System.out.println(result);
+    }
+}`,
+                    python: `import sys
+
+expression = sys.stdin.readline().strip().split("-")
+result = 0
+
+first_part = list(map(int, expression[0].split("+")))
+result += sum(first_part)
+
+for i in range(1, len(expression)):
+    other_part = list(map(int, expression[i].split("+")))
+    result -= sum(other_part)
+
+print(result)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim();
+
+const parts = input.split('-');
+let result = 0;
+
+const firstPartSum = parts[0].split('+').map(Number).reduce((a, b) => a + b, 0);
+result += firstPartSum;
+
+for (let i = 1; i < parts.length; i++) {
+    const otherPartSum = parts[i].split('+').map(Number).reduce((a, b) => a + b, 0);
+    result -= otherPartSum;
+}
+
+console.log(result);`
+                }
+            },
+            // --- 문제 7: 소수 ---
+            {
+                type: 'problem_detail',
+                title: '문제 7: 소수 구하기 (BOJ 1929)',
+                problem: 'M이상 N이하의 소수를 모두 출력하는 프로그램을 작성하시오.',
+                input: '첫째 줄에 자연수 M과 N이 빈 칸을 사이에 두고 주어진다. (1 ≤ M ≤ N ≤ 1,000,000) M과 N사이의 소수가 하나 이상 있는 입력만 주어진다.',
+                output: '한 줄에 하나씩, 증가하는 순서대로 소수를 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 에라토스테네스의 체',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class bj7_1929 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int m = Integer.parseInt(st.nextToken());
+        int n = Integer.parseInt(st.nextToken());
+
+        boolean[] isPrime = new boolean[n + 1];
+        for (int i = 2; i <= n; i++) isPrime[i] = true;
+
+        for (int i = 2; i * i <= n; i++) {
+            if (isPrime[i]) {
+                for (int j = i * i; j <= n; j += i) {
+                    isPrime[j] = false;
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = m; i <= n; i++) {
+            if (isPrime[i]) sb.append(i).append('\\n');
+        }
+        System.out.print(sb);
+    }
+}`,
+                    python: `import sys
+import math
+
+m, n = map(int, sys.stdin.readline().split())
+
+is_prime = [True] * (n + 1)
+if n >= 0:
+    if len(is_prime) > 0: is_prime[0] = False
+    if len(is_prime) > 1: is_prime[1] = False
+
+for i in range(2, int(math.sqrt(n)) + 1):
+    if is_prime[i]:
+        for j in range(i * i, n + 1, i):
+            is_prime[j] = False
+
+for i in range(m, n + 1):
+    if is_prime[i]:
+        print(i)`,
+                    javascript: `const fs = require('fs');
+const [m, n] = fs.readFileSync('/dev/stdin').toString().trim().split(' ').map(Number);
+
+const isPrime = new Array(n + 1).fill(true);
+isPrime[0] = false;
+isPrime[1] = false;
+
+for (let i = 2; i * i <= n; i++) {
+    if (isPrime[i]) {
+        for (let j = i * i; j <= n; j += i) {
+            isPrime[j] = false;
+        }
+    }
+}
+
+const result = [];
+for (let i = m; i <= n; i++) {
+    if (isPrime[i]) result.push(i);
+}
+console.log(result.join('\\n'));`
+                }
+            },
+            // --- 문제 8: 오일러 피 ---
+            {
+                type: 'problem_detail',
+                title: '문제 8: GCD(n, k) = 1 (BOJ 11689)',
+                problem: '자연수 n이 주어졌을 때, GCD(n, k) = 1을 만족하는 자연수 1 ≤ k ≤ n의 개수를 구하는 프로그램을 작성하시오.',
+                input: '첫째 줄에 자연수 n (1 ≤ n ≤ 10^12)이 주어진다.',
+                output: 'GCD(n, k) = 1을 만족하는 자연수 1 ≤ k ≤ n의 개수를 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 오일러 피 함수',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class bj8_11689 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        long n = Long.parseLong(br.readLine());
+        long phi = n;
+
+        for (long p = 2; p * p <= n; p++) {
+            if (n % p == 0) {
+                phi = phi / p * (p - 1);
+                while (n % p == 0) {
+                    n /= p;
+                }
+            }
+        }
+
+        if (n > 1) {
+            phi = phi / n * (n - 1);
+        }
+
+        System.out.println(phi);
+    }
+}`,
+                    python: `import sys
+
+n = int(sys.stdin.readline())
+phi = n
+p = 2
+while p * p <= n:
+    if n % p == 0:
+        phi = phi // p * (p - 1)
+        while n % p == 0:
+            n //= p
+    p += 1
+
+if n > 1:
+    phi = phi // n * (n - 1)
+
+print(phi)`,
+                    javascript: `const fs = require('fs');
+let n = BigInt(fs.readFileSync('/dev/stdin').toString().trim());
+
+let phi = n;
+for (let p = 2n; p * p <= n; p++) {
+    if (n % p === 0n) {
+        phi = phi / p * (p - 1n);
+        while (n % p === 0n) {
+            n /= p;
+        }
+    }
+}
+
+if (n > 1n) {
+    phi = phi / n * (n - 1n);
+}
+
+console.log(phi.toString());`
+                }
+            },
+            // --- 문제 9: 최소공배수 ---
+            {
+                type: 'problem_detail',
+                title: '문제 9: 최소공배수 (BOJ 1934)',
+                problem: '두 자연수 A와 B가 주어졌을 때, A와 B의 최소공배수를 구하는 프로그램을 작성하시오.',
+                input: '첫째 줄에 테스트 케이스의 개수 T(1 ≤ T ≤ 1,000)가 주어진다. 둘째 줄부터 T개의 줄에 걸쳐서 A와 B가 주어진다. (1 ≤ A, B ≤ 45,000)',
+                output: '첫째 줄부터 T개의 줄에 A와 B의 최소공배수를 각각 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 유클리드 호제법',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class bj9_1934 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int t = Integer.parseInt(br.readLine());
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < t; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            long result = (long) a * b / gcd(a, b);
+            sb.append(result).append('\\n');
+        }
+        System.out.print(sb);
+    }
+
+    private static int gcd(int a, int b) {
+        while (b != 0) {
+            int r = a % b;
+            a = b;
+            b = r;
+        }
+        return a;
+    }
+}`,
+                    python: `import sys
+import math
+
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+
+def lcm(a, b):
+    return (a * b) // gcd(a, b)
+
+t = int(sys.stdin.readline())
+for _ in range(t):
+    a, b = map(int, sys.stdin.readline().split())
+    print(lcm(a, b))`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+
+const t = Number(input[0]);
+
+function gcd(a, b) {
+    while (b) { [a, b] = [b, a % b]; }
+    return a;
+}
+
+function lcm(a, b) {
+    return (a * b) / gcd(a, b);
+}
+
+let result = '';
+for (let i = 1; i <= t; i++) {
+    const [a, b] = input[i].split(' ').map(Number);
+    result += lcm(a, b) + '\\n';
+}
+
+console.log(result.trim());`
+                }
+            },
+            // --- 문제 10: 확장 유클리드 ---
+            {
+                type: 'problem_detail',
+                title: '문제 10: Ax + By = C (BOJ 21568)',
+                problem: '정수 a, b, c가 주어졌을 때, ax + by = c를 만족하는 정수 x, y를 구하는 프로그램을 작성하시오.',
+                input: '첫째 줄에 세 정수 a, b, c가 주어진다. (1 ≤ a, b, c ≤ 1,000,000,000) 문제의 답이 항상 존재하는 경우만 입력으로 주어진다.',
+                output: 'ax + by = c를 만족하는 정수 x, y를 순서대로 공백으로 구분해 출력한다. 답이 여러 개인 경우 아무거나 하나 출력한다.'
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 확장 유클리드 호제법',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class bj10_21568 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        long a = Long.parseLong(st.nextToken());
+        long b = Long.parseLong(st.nextToken());
+        long c = Long.parseLong(st.nextToken());
+
+        long[] result = extendedGcd(a, b);
+        long gcd = result[0];
+        long x0 = result[1];
+        
+        if (c % gcd != 0) {
+             // 답이 항상 존재하는 경우만 입력으로 주어짐
+        } else {
+            long k = c / gcd;
+            System.out.println(x0 * k + " " + (c - a * x0 * k) / b);
+        }
+    }
+
+    private static long[] extendedGcd(long a, long b) {
+        if (b == 0) return new long[] { a, 1, 0 };
+        long[] temp = extendedGcd(b, a % b);
+        long gcd = temp[0];
+        long x = temp[2];
+        long y = temp[1] - (a / b) * temp[2];
+        return new long[] { gcd, x, y };
+    }
+}`,
+                    python: `import sys
+
+def extended_gcd(a, b):
+    if b == 0:
+        return a, 1, 0
+    gcd, x1, y1 = extended_gcd(b, a % b)
+    x = y1
+    y = x1 - (a // b) * y1
+    return gcd, x, y
+
+a, b, c = map(int, sys.stdin.readline().split())
+gcd_val, x0, y0 = extended_gcd(a, b)
+
+k = c // gcd_val
+print(x0 * k, y0 * k)`,
+                    javascript: `const fs = require('fs');
+const [a, b, c] = fs.readFileSync('/dev/stdin').toString().trim().split(' ').map(BigInt);
+
+function extendedGcd(a, b) {
+    if (b === 0n) {
+        return [a, 1n, 0n];
+    }
+    const [gcd, x1, y1] = extendedGcd(b, a % b);
+    const x = y1;
+    const y = x1 - (a / b) * y1;
+    return [gcd, x, y];
+}
+
+const [gcd_val, x0, y0] = extendedGcd(a, b);
+
+const k = c / gcd_val;
+console.log(\`\${x0 * k} \${y0 * k}\`);`
+                }
+            }
+        ];
+        // --- 데이터 끝 ---
+
+        const container = document.getElementById('presentation-container');
+        let currentSlide = 0;
+        let currentLang = 0; // 0: Java, 1: Python, 2: JS
+
+        function renderSlides() {
+            container.innerHTML = '';
+            presentationData.forEach((data, index) => {
+                let slideHtml = '';
+
+                if (data.type === 'title') {
+                    slideHtml = `<div class="slide flex-col items-center justify-center p-8 text-center" data-slide-index="${index}">
+                        <h1 class="text-8xl md:text-9xl font-bold text-gray-800 mb-16">${data.title}</h1>
+                        <div class="mt-8 text-4xl md:text-5xl text-gray-600">
+                           <p>${data.author}</p>
+                           <p class="mt-2 font-semibold text-gray-700">${data.author_detail}</p>
+                        </div>
+                    </div>`;
+                } else if (data.type === 'toc') {
+                    slideHtml = `<div class="slide flex-col items-center justify-center p-8" data-slide-index="${index}">
+                        <h2 class="text-7xl md:text-8xl font-bold mb-16 text-gray-800">${data.title}</h2>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-10 text-4xl md:text-5xl text-gray-700">
+                            ${data.items.map((item, i) => `<li class="toc-item flex items-center" data-goto-slide="${(i * 2) + 2}"><span class="text-gray-500 font-bold mr-6">${i + 1}.</span>${item}</li>`).join('')}
+                        </ul></div>`;
+                } else if (data.type === 'problem_detail') {
+                    slideHtml = `
+                        <div class="slide flex-col p-8 md:p-12 bg-gray-50" data-slide-index="${index}">
+                            <h2 class="text-6xl md:text-7xl font-bold mb-10 text-gray-800 self-start">${data.title}</h2>
+                            <div class="w-full flex-1 grid grid-rows-3 gap-8 overflow-hidden">
+                                <div class="bg-white p-8 rounded-xl border border-gray-200 overflow-auto problem-detail-box shadow-sm">
+                                    <h3 class="text-4xl font-semibold text-sky-700 mb-4">문제</h3>
+                                    <p class="text-3xl text-gray-700 leading-relaxed whitespace-pre-line">${data.problem}</p>
+                                </div>
+                                <div class="bg-white p-8 rounded-xl border border-gray-200 overflow-auto problem-detail-box shadow-sm">
+                                    <h3 class="text-4xl font-semibold text-sky-700 mb-4">입력</h3>
+                                    <p class="text-3xl text-gray-700 leading-relaxed whitespace-pre-line">${data.input}</p>
+                                </div>
+                                <div class="bg-white p-8 rounded-xl border border-gray-200 overflow-auto problem-detail-box shadow-sm">
+                                    <h3 class="text-4xl font-semibold text-sky-700 mb-4">출력</h3>
+                                    <p class="text-3xl text-gray-700 leading-relaxed whitespace-pre-line">${data.output}</p>
+                                </div>
+                            </div>
+                        </div>`;
+                } else if (data.type === 'problem') {
+                    const languages = ['java', 'python', 'javascript'];
+                    let codeBlocksHtml = '';
+
+                    languages.forEach(lang => {
+                        const codeString = data.codes[lang] || '';
+                        const splitMarker = '/*---SPLIT---*/';
+                        const langSpecificCode = codeString.replace(/\/\/---SPLIT---|#---SPLIT---/g, splitMarker);
+
+                        let innerHtml = '';
+                        if (langSpecificCode.includes(splitMarker)) {
+                            const parts = langSpecificCode.split(splitMarker);
+                            innerHtml = `
+                                <div class="grid grid-cols-2 gap-4 h-full">
+                                    <div class="code-block dark-scrollbar bg-[#282c34] rounded-xl shadow-lg p-4 text-2xl h-full overflow-auto">
+                                        <pre><code class="language-${lang}">${parts[0].trim()}</code></pre>
+                                    </div>
+                                    <div class="code-block dark-scrollbar bg-[#282c34] rounded-xl shadow-lg p-4 text-2xl h-full overflow-auto">
+                                        <pre><code class="language-${lang}">${parts[1].trim()}</code></pre>
+                                    </div>
+                                </div>`;
+                        } else {
+                            innerHtml = `
+                                <div class="code-block dark-scrollbar bg-[#282c34] rounded-xl shadow-lg p-4 text-2xl h-full overflow-auto">
+                                    <pre><code class="language-${lang}">${langSpecificCode.trim()}</code></pre>
+                                </div>`;
+                        }
+
+                        codeBlocksHtml += `<div class="code-container h-full" data-lang="${lang}">${innerHtml}</div>`;
+                    });
+
+                    slideHtml = `
+                        <div class="slide flex-col p-8 md:p-12" data-slide-index="${index}" data-is-problem="true">
+                            <div class="flex-shrink-0">
+                                <h2 class="text-6xl md:text-7xl font-bold mb-4 text-gray-800">${data.title}</h2>
+                            </div>
+                            <div class="flex-1 mt-4 flex flex-col min-h-0">
+                                <div class="flex items-center justify-center space-x-6 mb-4">
+                                    <span class="lang-indicator java text-4xl font-bold p-2 cursor-pointer">Java</span>
+                                    <span class="lang-indicator python text-4xl font-bold p-2 cursor-pointer">Python</span>
+                                    <span class="lang-indicator javascript text-4xl font-bold p-2 cursor-pointer">JavaScript</span>
+                                </div>
+                                <div class="flex-1 relative min-h-0">${codeBlocksHtml}</div>
+                            </div>
+                        </div>`;
+                }
+                container.insertAdjacentHTML('beforeend', slideHtml);
+            });
+            document.querySelectorAll('pre code').forEach(block => {
+                block.innerHTML = block.innerHTML.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                hljs.highlightElement(block);
+            });
+            document.querySelectorAll('.toc-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const slideIndex = parseInt(e.currentTarget.dataset.gotoSlide, 10);
+                    if (!isNaN(slideIndex)) {
+                        currentSlide = slideIndex;
+                        currentLang = 0;
+                        updateSlideState();
+                    }
+                });
+            });
+        }
+
+        function updateSlideState() {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, index) => slide.classList.toggle('active', index === currentSlide));
+
+            const activeSlide = slides[currentSlide];
+            if (activeSlide && activeSlide.dataset.isProblem) {
+                const languages = ['java', 'python', 'javascript'];
+                const currentLangName = languages[currentLang];
+
+                activeSlide.querySelectorAll('.lang-indicator').forEach((indicator, index) => {
+                    const isActive = index === currentLang;
+                    indicator.classList.toggle('text-sky-600', isActive);
+                    indicator.classList.toggle('text-gray-300', !isActive);
+                    indicator.style.transform = isActive ? 'scale(1.15)' : 'scale(1.0)';
+                    indicator.onclick = () => {
+                        currentLang = index;
+                        updateSlideState();
+                    };
+                });
+
+                activeSlide.querySelectorAll('.code-container').forEach(container => {
+                    const isActive = container.dataset.lang === currentLangName;
+                    container.classList.toggle('visible', isActive);
+                });
+            }
+        }
+
+        const goNext = () => {
+            const activeSlide = document.querySelector('.slide.active');
+            if (!activeSlide) return;
+
+            if (activeSlide.dataset.isProblem && currentLang < 2) {
+                currentLang++;
+            } else {
+                if (currentSlide < presentationData.length - 1) {
+                    currentSlide++;
+                    currentLang = 0;
+                }
+            }
+            updateSlideState();
+        };
+
+        const goPrev = () => {
+            const activeSlide = document.querySelector('.slide.active');
+            if (!activeSlide) return;
+
+            if (activeSlide.dataset.isProblem && currentLang > 0) {
+                currentLang--;
+            } else {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    const prevSlide = document.querySelector(`[data-slide-index="\${currentSlide}"]`);
+                    if (prevSlide.dataset.isProblem) {
+                        currentLang = 2;
+                    } else {
+                        currentLang = 0;
+                    }
+                }
+            }
+            updateSlideState();
+        };
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSlides();
+            updateSlideState();
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') goNext();
+                if (e.key === 'ArrowLeft' || e.key === 'PageUp') goPrev();
+            });
+        });
+    </script>
+</body>
+
+</html>
