@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+html,
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.slide {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.slide.active {
+    display: flex;
+    opacity: 1;
+    z-index: 1;
+}
+
+.code-container {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    visibility: hidden;
+}
+
+.code-container.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.lang-indicator {
+    transition: all 0.3s ease-in-out;
+}
+
+.code-block::-webkit-scrollbar,
+.problem-detail-box::-webkit-scrollbar {
+    width: 8px;
+}
+
+.code-block::-webkit-scrollbar-track,
+.problem-detail-box::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    /* bg-slate-100 */
+}
+
+.code-block::-webkit-scrollbar-thumb,
+.problem-detail-box::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    /* bg-slate-400 */
+    border-radius: 4px;
+}
+
+.code-block.dark-scrollbar::-webkit-scrollbar-track {
+    background: #282c34;
+    /* 코드 블록 배경색 */
+}
+
+.code-block.dark-scrollbar::-webkit-scrollbar-thumb {
+    background: #5c6370;
+    /* 약간 밝은 회색 */
+}
+
+.code-block.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+    /* 더 밝은 회색 */
+}
+
+.toc-item {
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.toc-item:hover {
+    color: #0369a1;
+    /* text-sky-700 */
+}
+
+.example-box pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    background-color: #f3f4f6;
+    /* bg-gray-100 */
+    padding: 0.75rem;
+    /* p-3 */
+    border-radius: 0.5rem;
+    /* rounded-lg */
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* --- 상세 설명을 위한 모달 UI 스타일 --- */
+#modal-backdrop {
+    display: none;
+    /* 기본 숨김 */
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    /* 반투명 검정 배경 */
+    z-index: 40;
+}
+
+/* [요청사항 반영] 모달을 전체 화면 페이지 스타일로 변경 */
+#modal-content {
+    display: none;
+    /* 기본 숨김 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    /* 전체 너비 */
+    height: 100vh;
+    /* 전체 높이 */
+    transform: none;
+    /* 중앙 정렬 제거 */
+    background-color: #f9fafb;
+    /* bg-gray-50 */
+    z-index: 50;
+    overflow-y: auto;
+    /* 내용 많으면 스크롤 */
+    border-radius: 0;
+    /* 둥근 모서리 제거 */
+    padding: 2rem 4rem;
+    /* 콘텐츠를 위한 내부 여백 (위아래 2rem, 좌우 4rem) */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    /* 그림자 효과 */
+}
+
+#modal-close-btn {
+    position: fixed;
+    /* 스크롤해도 고정되도록 변경 */
+    top: 1.5rem;
+    /* 위쪽 여백 */
+    right: 2.5rem;
+    /* 오른쪽 여백 */
+    font-size: 3rem;
+    /* 크기 키움 */
+    font-weight: bold;
+    color: #6b7280;
+    /* text-gray-500 */
+    cursor: pointer;
+    line-height: 1;
+    z-index: 51;
+    /* 모달 내용보다 위에 오도록 */
+    padding: 0.5rem;
+}
+
+#modal-close-btn:hover {
+    color: #1f2937;
+    /* text-gray-800 */
+}
+
+/* 모달 내부 콘텐츠 스타일 */
+#explanation-container h1 {
+    margin-bottom: 2rem;
+    /* 제목 아래 여백 */
+}
+
+#explanation-container h2 {
+    margin-bottom: 1rem;
+    /* 부제목 아래 여백 */
+}
+
+#explanation-container .prose p,
+#explanation-container .prose ul,
+#explanation-container .prose li {
+    font-size: 1.25rem;
+    /* 기본 텍스트 크기 */
+    line-height: 1.75;
+}
+
+#explanation-container .code-block pre code {
+    font-size: 1rem;
+    /* 코드 폰트 크기 조정 */
+}
