@@ -9,34 +9,25 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <!-- 분리된 CSS 파일 링크 -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="bg-white text-black">
 
-    <!-- 메인 프레젠테이션 컨테이너 -->
     <div id="presentation-root" class="relative w-screen h-screen">
         <div id="presentation-container" class="w-full h-full bg-white flex flex-col overflow-hidden">
-            <!-- 슬라이드 내용은 JavaScript로 동적 생성됩니다 -->
         </div>
     </div>
 
-    <!-- 상세 설명을 위한 모달 UI -->
     <div id="modal-backdrop"></div>
     <div id="modal-content">
         <button id="modal-close-btn">&times;</button>
         <div id="explanation-container">
-            <!-- 동적 콘텐츠가 여기에 삽입됩니다. -->
         </div>
     </div>
 
     <script>
-        // --- 데이터 시작 ---
-
-        // 메인 슬라이드 데이터 (1부: 표지, 목차, 문제 1 ~ 문제 3)
         const presentationData_part1 = [
-            // --- 표지 & 목차 ---
             {
                 type: 'title',
                 title: '알고리즘 7문제 (4주차)',
@@ -56,7 +47,6 @@
                     'K번째 최단 경로 (BOJ 1854)'
                 ]
             },
-            // --- 문제 1: BFS ---
             {
                 type: 'problem_detail',
                 title: '문제 1: 특정 거리의 도시 찾기 (BOJ 18352)',
@@ -138,7 +128,7 @@ public class bj1_18352 {
             Collections.sort(result);
             StringBuilder sb = new StringBuilder();
             for (int city : result) {
-                sb.append(city).append("\n");
+                sb.append(city).append("\\n");
             }
             System.out.print(sb);
         }
@@ -174,7 +164,7 @@ for i in range(1, n + 1):
 if not result:
     print(-1)
 else:
-    result.sort() # 오름차순 정렬 추가
+    result.sort()
     for city in result:
         print(city)`,
                     javascript: `const fs = require('fs');
@@ -190,12 +180,12 @@ for (let i = 1; i <= m; i++) {
 
 const distance = new Array(n + 1).fill(-1);
 const queue = [];
-let head = 0; // 큐 포인터
+let head = 0;
 
 queue.push(x);
 distance[x] = 0;
 
-while (head < queue.length) { // shift 대신 포인터 이동
+while (head < queue.length) {
     const current = queue[head++];
 
     for (const neighbor of adjList[current]) {
@@ -216,12 +206,11 @@ for (let i = 1; i <= n; i++) {
 if (result.length === 0) {
     console.log(-1);
 } else {
-    result.sort((a, b) => a - b); // 오름차순 정렬 추가
+    result.sort((a, b) => a - b);
     console.log(result.join('\\n'));
 }`
                 }
             },
-            // --- 문제 2: 이분 그래프 판별 ---
             {
                 type: 'problem_detail',
                 title: '문제 2: 이분 그래프 (BOJ 1707)',
@@ -255,7 +244,7 @@ import java.util.StringTokenizer;
 public class bj2_1707 {
 
     static ArrayList<Integer>[] adjList;
-    static int[] groups; // 0: 방문 안함, 1: 그룹 A, 2: 그룹 B
+    static int[] groups;
     static final int GROUP_A = 1;
     static final int GROUP_B = 2;
 
@@ -284,71 +273,67 @@ public class bj2_1707 {
             }
 
             boolean isBipartite = true;
-            // 연결되지 않은 그래프 컴포넌트들을 모두 확인
             for (int i = 1; i <= v; i++) {
-                if (groups[i] == 0) { // 아직 방문(그룹 할당) 안 된 노드에서 시작
+                if (groups[i] == 0) {
                     if (!bfsCheck(i)) {
                         isBipartite = false;
                         break;
                     }
                 }
             }
-            sb.append(isBipartite ? "YES" : "NO").append("\n");
+            sb.append(isBipartite ? "YES" : "NO").append("\\n");
         }
         System.out.print(sb);
     }
 
-    // BFS를 이용한 이분 그래프 판별
     private static boolean bfsCheck(int startNode) {
         Queue<Integer> queue = new LinkedList<>();
         queue.add(startNode);
-        groups[startNode] = GROUP_A; // 시작 노드를 그룹 A로 설정
+        groups[startNode] = GROUP_A;
 
         while (!queue.isEmpty()) {
             int current = queue.poll();
             int nextGroup = (groups[current] == GROUP_A) ? GROUP_B : GROUP_A;
 
             for (int neighbor : adjList[current]) {
-                if (groups[neighbor] == 0) { // 아직 그룹 할당 안 된 이웃
-                    groups[neighbor] = nextGroup; // 다음 그룹으로 할당
+                if (groups[neighbor] == 0) {
+                    groups[neighbor] = nextGroup;
                     queue.add(neighbor);
-                } else if (groups[neighbor] == groups[current]) { // 이웃이 이미 같은 그룹이면 이분 그래프 아님
+                } else if (groups[neighbor] == groups[current]) {
                     return false;
                 }
-                // 이웃이 이미 다른 그룹이면 OK, 계속 진행
             }
         }
-        return true; // 모든 검사를 통과하면 이분 그래프
+        return true;
     }
 }`,
                     python: `import sys
 from collections import deque
 
 input = sys.stdin.readline
-# 재귀 깊이 제한 늘리기 (DFS 사용 시 필요할 수 있음)
 # sys.setrecursionlimit(200000)
 
 def bfs(start_node, v, adjList, groups):
     queue = deque([start_node])
-    groups[start_node] = 1 # 시작 노드를 그룹 1로 설정
+    groups[start_node] = 1
 
     while queue:
         current = queue.popleft()
         next_group = 2 if groups[current] == 1 else 1
 
         for neighbor in adjList[current]:
-            if groups[neighbor] == 0: # 아직 방문 안 한 이웃
+            if groups[neighbor] == 0:
                 groups[neighbor] = next_group
                 queue.append(neighbor)
-            elif groups[neighbor] == groups[current]: # 이웃이 같은 그룹이면 이분 그래프 아님
+            elif groups[neighbor] == groups[current]:
                 return False
-    return True # 검사 통과
+    return True
 
 k = int(input())
 for _ in range(k):
     v, e = map(int, input().split())
     adjList = [[] for _ in range(v + 1)]
-    groups = [0] * (v + 1) # 0: 미방문, 1: 그룹 1, 2: 그룹 2
+    groups = [0] * (v + 1)
 
     for _ in range(e):
         u, w = map(int, input().split())
@@ -356,9 +341,8 @@ for _ in range(k):
         adjList[w].append(u)
 
     is_bipartite = True
-    # 모든 노드에 대해 확인 (연결되지 않은 컴포넌트 고려)
     for i in range(1, v + 1):
-        if groups[i] == 0: # 아직 방문 안 한 노드에서 BFS 시작
+        if groups[i] == 0:
             if not bfs(i, v, adjList, groups):
                 is_bipartite = False
                 break
@@ -367,7 +351,7 @@ for _ in range(k):
                     javascript: `const fs = require('fs');
 const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
 
-let lineIndex = 0; // 입력 줄 추적
+let lineIndex = 0;
 const k = Number(input[lineIndex++]);
 const GROUP_A = 1;
 const GROUP_B = 2;
@@ -384,21 +368,21 @@ function isBipartite(startNode, v, adjList, groups) {
         const nextGroup = (groups[current] === GROUP_A) ? GROUP_B : GROUP_A;
 
         for (const neighbor of adjList[current]) {
-            if (groups[neighbor] === 0) { // 방문 안 함
+            if (groups[neighbor] === 0) {
                 groups[neighbor] = nextGroup;
                 queue.push(neighbor);
-            } else if (groups[neighbor] === groups[current]) { // 같은 그룹이면 실패
+            } else if (groups[neighbor] === groups[current]) {
                 return false;
             }
         }
     }
-    return true; // 통과
+    return true;
 }
 
 for (let t = 0; t < k; t++) {
     const [v, e] = input[lineIndex++].split(' ').map(Number);
     const adjList = Array.from({ length: v + 1 }, () => []);
-    const groups = new Array(v + 1).fill(0); // 0: 미방문
+    const groups = new Array(v + 1).fill(0);
 
     for (let i = 0; i < e; i++) {
         const [u, w] = input[lineIndex++].split(' ').map(Number);
@@ -408,7 +392,7 @@ for (let t = 0; t < k; t++) {
 
     let isBipartiteGraph = true;
     for (let i = 1; i <= v; i++) {
-        if (groups[i] === 0) { // 미방문 노드에서 BFS 시작
+        if (groups[i] === 0) {
             if (!isBipartite(i, v, adjList, groups)) {
                 isBipartiteGraph = false;
                 break;
@@ -421,7 +405,6 @@ for (let t = 0; t < k; t++) {
 console.log(result.trim());`
                 }
             },
-            // --- 문제 3: Union-Find ---
             {
                 type: 'problem_detail',
                 title: '문제 3: 집합의 표현 (BOJ 1717)',
@@ -440,7 +423,7 @@ console.log(result.trim());`
                 example_output_1: `NO
 NO
 YES`,
-                problemId: 'bj1717' // 상세 설명 연결 ID
+                problemId: 'bj1717'
             },
             {
                 type: 'problem',
@@ -452,7 +435,7 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class bj3_1717 {
-    static int[] parent; // 각 원소의 부모(대표)를 저장할 배열
+    static int[] parent;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -461,7 +444,6 @@ public class bj3_1717 {
         int m = Integer.parseInt(st.nextToken());
 
         parent = new int[n + 1];
-        // 초기화: 모든 원소는 자기 자신을 대표로 가짐
         for (int i = 0; i <= n; i++) {
             parent[i] = i;
         }
@@ -473,58 +455,52 @@ public class bj3_1717 {
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
 
-            if (op == 0) { // 합집합 연산
+            if (op == 0) {
                 union(a, b);
-            } else { // 같은 집합인지 확인 연산
+            } else {
                 if (find(a) == find(b)) {
-                    sb.append("YES\n");
+                    sb.append("YES\\n");
                 } else {
-                    sb.append("NO\n");
+                    sb.append("NO\\n");
                 }
             }
         }
         System.out.print(sb);
     }
 
-    // find 연산: 원소 i의 대표(루트)를 찾는 함수 (경로 압축 적용)
     private static int find(int i) {
-        if (parent[i] == i) { // 자기 자신이 대표이면 반환
+        if (parent[i] == i) {
             return i;
         }
-        // 아니라면, 재귀적으로 부모의 대표를 찾아서 나의 대표로 업데이트 (경로 압축)
         return parent[i] = find(parent[i]);
     }
 
-    // union 연산: 두 원소 a, b가 속한 집합을 합치는 함수
     private static void union(int a, int b) {
-        int rootA = find(a); // a의 대표 찾기
-        int rootB = find(b); // b의 대표 찾기
-        if (rootA != rootB) { // 두 대표가 다를 경우에만 합침
-            parent[rootB] = rootA; // b의 대표가 a의 대표를 가리키도록 함 (한쪽으로 합침)
+        int rootA = find(a);
+        int rootB = find(b);
+        if (rootA != rootB) {
+            parent[rootB] = rootA;
         }
     }
 }`,
                     python: `import sys
-# 재귀 깊이 제한 늘리기 필수!
 sys.setrecursionlimit(10**6)
 input = sys.stdin.readline
 
-# find 연산 (경로 압축 포함)
 def find(i):
     if parent[i] == i:
         return i
-    parent[i] = find(parent[i]) # 재귀적으로 찾은 루트로 직접 연결 (경로 압축)
+    parent[i] = find(parent[i])
     return parent[i]
 
-# union 연산
 def union(a, b):
     rootA = find(a)
     rootB = find(b)
     if rootA != rootB:
-        parent[rootB] = rootA # b의 루트가 a의 루트를 가리키게 함
+        parent[rootB] = rootA
 
 n, m = map(int, input().split())
-parent = list(range(n + 1)) # 초기화: 각자 자기 자신을 부모로
+parent = list(range(n + 1))
 
 for _ in range(m):
     op, a, b = map(int, input().split())
@@ -536,33 +512,27 @@ for _ in range(m):
         else:
             print("NO")`,
                     javascript: `const fs = require('fs');
-// 입력 처리 최적화 (Node.js)
 const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
 
 const [n, m] = input[0].split(' ').map(Number);
-// 초기화: 각 인덱스(원소)가 자기 자신을 가리키도록 배열 생성
 const parent = Array.from({ length: n + 1 }, (_, i) => i);
 
-// find 함수 (경로 압축 구현)
 function find(i) {
     if (parent[i] === i) {
         return i;
     }
-    // 재귀 호출로 루트를 찾고, 그 루트를 현재 노드의 부모로 직접 설정
     return parent[i] = find(parent[i]);
 }
 
-// union 함수
 function union(a, b) {
     const rootA = find(a);
     const rootB = find(b);
     if (rootA !== rootB) {
-        // 작은 번호의 루트를 부모로 삼는 등의 최적화도 가능하나, 여기선 단순화
         parent[rootB] = rootA;
     }
 }
 
-let result = ''; // 결과를 모아서 한 번에 출력 (효율성)
+let result = '';
 for (let i = 1; i <= m; i++) {
     const [op, a, b] = input[i].split(' ').map(Number);
     if (op === 0) {
@@ -579,16 +549,13 @@ for (let i = 1; i <= m; i++) {
 console.log(result.trim());`
                 }
             },
-            // 이후 문제들은 index_part2.html 로 이어집니다.
         ];
 
-        // 상세 설명 데이터 (3번 문제 - Union-Find)
-        // --- 상세 설명 데이터 (개선 및 bj1717 추가) ---
         const explanationData = {
             'bj1717': {
                 title: 'BOJ 1717: 집합 표현 - 쉽고 빠른 Union-Find!',
                 steps: [
-                    { // Step 1
+                    {
                         step: 1,
                         icon: '🎯',
                         title: "뭘 하려는 거지? - 문제 상황 쉽게 보기",
@@ -598,11 +565,9 @@ console.log(result.trim());`
                                       <li><strong class='text-red-600'>지시 0 (합치기): "0 a b"</strong> <br>➡️ a가 속한 그룹과 b가 속한 그룹을 <strong class='text-red-600'>하나로 합쳐라!</strong> (이제 한 가족!)</li>
                                       <li><strong class='text-green-600'>지시 1 (확인): "1 a b"</strong> <br>➡️ a랑 b가 <strong class='text-green-600'>같은 그룹인지 확인해봐!</strong> (맞으면 YES, 틀리면 NO)</li>
                                   </ul>
-                                  <p class="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-yellow-800"><strong>핵심 목표:</strong> 이 '합치기'와 '확인하기'를 <strong class='font-bold'>아주 아주 빠르게</strong> 처리하는 방법을 찾는 거예요!</p>
-                                  
-                                  `
+                                  <p class="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-yellow-800"><strong>핵심 목표:</strong> 이 '합치기'와 '확인하기'를 <strong class='font-bold'>아주 아주 빠르게</strong> 처리하는 방법을 찾는 거예요!</p>`
                     },
-                    { // Step 2
+                    {
                         step: 2,
                         icon: '🐢',
                         title: "단순한 생각 (하지만 느려!) - 이름표 붙이기",
@@ -612,17 +577,15 @@ console.log(result.trim());`
                                       <li><strong class='text-red-600'>합치기 (0 a b):</strong> 이게 문제예요! 😱 b 그룹 이름표를 가진 <strong class='text-red-600'>모든 사람을 찾아서</strong> a 그룹 이름표로 바꿔줘야 해요. 그룹이 크면 너무 오래 걸리겠죠? (시간 초과 확정!)</li>
                                   </ul>`
                     },
-                    { // Step 3
+                    {
                         step: 3,
                         icon: '💡',
                         title: "똑똑한 생각! - 각 그룹에 '대장'을 정하자!",
                         content: `<p>매번 이름표를 바꾸는 대신, 각 그룹(무리)마다 딱 한 명의 <strong class='text-purple-600'>'대장(대표, 루트)'</strong>을 정하는 거예요.</p>
                                   <p>내가 어느 그룹인지 알려면? <strong class='font-bold'>우리 그룹 대장이 누군지만 알면 돼요!</strong></p>
-                                  <p class="mt-2 p-3 bg-gray-100 rounded-md"><strong>초기 상태:</strong> 처음엔 모두 혼자니까, <strong class='text-purple-600'>각자 자기 자신이 대장</strong>이에요.</p>
-                                  
-                                  `
+                                  <p class="mt-2 p-3 bg-gray-100 rounded-md"><strong>초기 상태:</strong> 처음엔 모두 혼자니까, <strong class='text-purple-600'>각자 자기 자신이 대장</strong>이에요.</p>`
                     },
-                    { // Step 4
+                    {
                         step: 4,
                         icon: '❓',
                         title: "내 대장은 누구? - `find` 연산 (대장 찾기)",
@@ -632,50 +595,42 @@ console.log(result.trim());`
                                       <li>그 상사가 자기 자신을 가리키면(자기가 대장이면), 그 사람이 <strong class='text-purple-600'>최종 대장(루트)!</strong> 찾았다! 🎉</li>
                                       <li>아니라면, 그 상사에게 다시 1번부터 물어보라고 시켜요. (재귀 호출)</li>
                                   </ol>
-                                  <p class="mt-3">마치 회사 조직도에서 맨 위 사장님을 찾아 올라가는 것과 같아요.</p>
-                                  
-                                  `,
+                                  <p class="mt-3">마치 회사 조직도에서 맨 위 사장님을 찾아 올라가는 것과 같아요.</p>`,
                         code_title: "기본적인 `find` 코드 (최적화 전)",
-                        code: `// parent[i]는 i의 바로 위 상사를 저장한다고 생각!
-int find_simple(int i) {
-    if (parent[i] == i) { // 내가 대장(내 상사가 나 자신)인가?
-        return i;         // 맞으면 내가 최종 대장!
+                        code: `int find_simple(int i) {
+    if (parent[i] == i) {
+        return i;
     }
-    // 아니면? 내 상사에게 다시 물어봐서 최종 대장을 찾아와!
     return find_simple(parent[i]);
 }`,
                         code_explanation: `<p><code>parent</code> 배열을 따라 계속 올라가서, 자기 자신을 가리키는 노드(루트)를 찾을 때까지 재귀적으로 호출하는 방식이에요.</p>`
                     },
-                    { // Step 5
+                    {
                         step: 5,
                         icon: '🤝',
                         title: "두 무리 합체! - `union` 연산 (무리 합치기)",
                         content: `<p>a 그룹과 b 그룹을 합치는 건 더 쉬워요!</p>
                                   <ol class='list-decimal list-inside ml-4 mt-2 space-y-1'>
-                                      <li>a의 최종 대장 (<code>rootA</code>)을 찾아요. (`find(a)`)</li>
-                                      <li>b의 최종 대장 (<code>rootB</code>)을 찾아요. (`find(b)`)</li>
+                                      <li>a의 최종 대장 (<code>rootA</code>)을 찾아요. (<code>find(a)</code>)</li>
+                                      <li>b의 최종 대장 (<code>rootB</code>)을 찾아요. (<code>find(b)</code>)</li>
                                       <li>만약 두 대장이 <strong class='text-red-600'>다르다면</strong> (같은 그룹이 아니라면), 한쪽 대장의 '바로 위 상사'를 다른 쪽 대장으로 <strong class='text-blue-600'>바꿔버려요!</strong> (예: <code>parent[rootB] = rootA</code>)</li>
                                   </ol>
-                                  <p class="mt-3">이제 b 그룹 사람들도 대장을 찾아 올라가다 보면 결국 a 그룹 대장까지 가게 되니, 두 그룹이 하나로 합쳐진 거죠!</p>
-                                  
-                                  `,
-                    code_title: "`union` 코드",
-                    code: `void union(int a, int b) {
-    int rootA = find(a); // a 대장 찾기
-    int rootB = find(b); // b 대장 찾기
+                                  <p class="mt-3">이제 b 그룹 사람들도 대장을 찾아 올라가다 보면 결국 a 그룹 대장까지 가게 되니, 두 그룹이 하나로 합쳐진 거죠!</p>`,
+                        code_title: "`union` 코드",
+                        code: `void union(int a, int b) {
+    int rootA = find(a);
+    int rootB = find(b);
 
-    if (rootA != rootB) { // 두 그룹의 대장이 다를 때만!
-        // b 그룹 대장의 상사를 a 그룹 대장으로 변경!
+    if (rootA != rootB) {
         parent[rootB] = rootA;
     }
-    // 이미 같은 대장(같은 그룹)이면 아무것도 안 함
 }`,
-                    code_explanation: `<p>각각의 대장을 찾고, 다를 경우 한쪽 대장의 <code>parent</code> 값을 다른 쪽 대장 번호로 업데이트하여 연결해요.</p>`
+                        code_explanation: `<p>각각의 대장을 찾고, 다를 경우 한쪽 대장의 <code>parent</code> 값을 다른 쪽 대장 번호로 업데이트하여 연결해요.</p>`
                     },
-                    { // Step 6
-            step: 6,
-                icon: '✅',
-                    title: "같은 무리인지 확인?",
+                    {
+                        step: 6,
+                        icon: '✅',
+                        title: "같은 무리인지 확인?",
                         content: `<p>'1 a b' 지시가 오면 어떻게 할까요?</p>
                                   <p class='text-center text-2xl font-bold my-4 p-4 bg-green-100 border border-green-300 rounded-lg text-green-800'>
                                       a의 대장 (<code>find(a)</code>)과 <br>
@@ -683,68 +638,58 @@ int find_simple(int i) {
                                       <strong class='text-red-600'>같은 사람인지 비교</strong>하면 끝!
                                   </p>
                                   <p>같으면 "YES", 다르면 "NO" 예요.</p>`
-        },
-        { // Step 7
-            step: 7,
-                icon: '🚀',
-                    title: "더 빠르게! - '경로 압축' 최적화",
+                    },
+                    {
+                        step: 7,
+                        icon: '🚀',
+                        title: "더 빠르게! - '경로 압축' 최적화",
                         content: `<p><code>find</code> 연산으로 대장을 찾아 올라가는 길이 너무 길면(트리가 세로로 길면) 시간이 걸릴 수 있어요. 이걸 더 빠르게 하는 마법이 <strong class='text-orange-600'>'경로 압축(Path Compression)'</strong>이에요!</p>
                                   <p>대장을 찾는 과정에서 만났던 <strong class='font-bold'>모든 중간 간부들</strong>에게, 최종 대장을 <strong class='text-red-600'>직속 상사</strong>로 바로 연결해주는 거예요!</p>
                                   <p class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">"사장님 찾았니? 그럼 이제부터 너도 사장님 직속이야!" 하고 알려주는 거죠.</p>
-                                  <p class="mt-2">이렇게 하면 다음번에 대장을 찾을 때는 중간 과정을 다 건너뛰고 <strong class='font-bold'>한 번에</strong> 최종 대장을 찾을 수 있어요.</p>
-                                  
-                                  `,
-                            code_title: "`find` 코드 (경로 압축 적용!)",
-                                code: `int find(int i) {
-    if (parent[i] == i) { // 내가 최종 대장이면 나를 반환
+                                  <p class="mt-2">이렇게 하면 다음번에 대장을 찾을 때는 중간 과정을 다 건너뛰고 <strong class='font-bold'>한 번에</strong> 최종 대장을 찾을 수 있어요.</p>`,
+                        code_title: "`find` 코드 (경로 압축 적용!)",
+                        code: `int find(int i) {
+    if (parent[i] == i) {
         return i;
     }
-    // 최종 대장을 찾아서(find(parent[i])), 그 결과를
-    // 나의 바로 위 상사로 업데이트(parent[i] = ...) 하고 반환!
     return parent[i] = find(parent[i]);
 }`,
-                                    code_explanation: `<p>재귀 호출에서 반환된 최종 대장(루트) 값을 현재 노드 <code>i</code>의 <code>parent</code> 값으로 <strong class='text-red-600'>직접 업데이트</strong>하는 부분이 경로 압축의 핵심이에요!</p>`
-        },
-        { // Step 8
-            step: 8,
-                icon: '🎉',
-                    title: "결론: 그래서 왜 이게 좋은데?",
+                        code_explanation: `<p>재귀 호출에서 반환된 최종 대장(루트) 값을 현재 노드 <code>i</code>의 <code>parent</code> 값으로 <strong class='text-red-600'>직접 업데이트</strong>하는 부분이 경로 압축의 핵심이에요!</p>`
+                    },
+                    {
+                        step: 8,
+                        icon: '🎉',
+                        title: "결론: 그래서 왜 이게 좋은데?",
                         content: `<p>이 '대장 시스템(Union-Find)'에 '경로 압축' 기술까지 사용하면, '합치기(<code>union</code>)'와 '대장 찾기/확인(<code>find</code>)' 연산 모두 <strong class='text-green-700 font-bold'>정~~~말 빨라져요!</strong></p>
                                   <p>거의 <strong class='text-green-700'>O(1)</strong>, 즉 상수 시간에 가깝게 동작해서, 수백만 번의 연산도 눈 깜짝할 사이에 처리할 수 있게 되는 거죠.</p>
                                   <p class="mt-4 p-4 bg-purple-100 border border-purple-300 rounded-lg text-purple-800">그래서 '집합을 합치고 확인하는' 종류의 문제에서는 <strong class='font-bold'>Union-Find가 최고의 선택</strong>이랍니다!</p>`
-        }
+                    }
                 ]
             }
-            // 다른 문제 설명 데이터가 있다면 여기에 추가...
         };
 
-        // --- 모달 및 페이지 이동 관련 전역 변수 ---
         let currentExplanationStep = 0;
         let totalExplanationSteps = 0;
         let currentExplanationData = null;
 
-        // --- 모달 열기 함수 (페이지 이동 기능 추가) ---
         const modalBackdrop = document.getElementById('modal-backdrop');
         const modalContent = document.getElementById('modal-content');
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const explanationContainer = document.getElementById('explanation-container');
 
         function openModal(problemId) {
-            currentExplanationData = explanationData[problemId]; // 현재 문제 데이터 저장
+            currentExplanationData = explanationData[problemId];
             if (currentExplanationData && currentExplanationData.steps) {
                 totalExplanationSteps = currentExplanationData.steps.length;
-                currentExplanationStep = 0; // 항상 첫 번째 스텝부터 시작
-
-                renderModalStep(); // 첫 번째 스텝 렌더링
-
+                currentExplanationStep = 0;
+                renderModalStep();
                 modalBackdrop.style.display = 'block';
                 modalContent.style.display = 'block';
-                modalContent.scrollTop = 0; // 모달 열 때 스크롤 맨 위로
-                document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+                modalContent.scrollTop = 0;
+                document.body.style.overflow = 'hidden';
             }
         }
 
-        // --- 모달 스텝 렌더링 함수 ---
         function renderModalStep() {
             if (!currentExplanationData || currentExplanationStep >= totalExplanationSteps || currentExplanationStep < 0) return;
 
@@ -763,7 +708,6 @@ int find_simple(int i) {
                         </div>
                 `;
 
-            // 코드 및 설명 렌더링
             if (stepData.code || stepData.code_explanation) {
                 contentHtml += `<div class="mt-8 grid grid-cols-1 ${stepData.code && stepData.code_explanation ? 'lg:grid-cols-2' : ''} gap-6 items-start">`;
                 if (stepData.code) {
@@ -779,12 +723,11 @@ int find_simple(int i) {
                              ${stepData.code_explanation}
                         </div>`;
                 }
-                contentHtml += `</div>`; // grid 닫기
+                contentHtml += `</div>`;
             }
 
-            contentHtml += `</div></div>`; // step-content 및 explanation-step 닫기
+            contentHtml += `</div></div>`;
 
-            // 페이지 이동 버튼 추가
             contentHtml += `
                 <div id="modal-pagination">
                     <button id="modal-prev-btn" class="modal-nav-btn" ${currentExplanationStep === 0 ? 'disabled' : ''}>◀ 이전</button>
@@ -793,94 +736,17 @@ int find_simple(int i) {
                 </div>
             `;
 
-            explanationContainer.innerHTML = contentHtml; // 내용 업데이트
+            explanationContainer.innerHTML = contentHtml;
 
-            // 코드 하이라이팅 적용
             explanationContainer.querySelectorAll('pre code').forEach(block => {
                 hljs.highlightElement(block);
             });
 
-            // 페이지 이동 버튼 이벤트 리스너 연결
             document.getElementById('modal-prev-btn').addEventListener('click', prevModalStep);
             document.getElementById('modal-next-btn').addEventListener('click', nextModalStep);
         }
 
-        // --- 모달 페이지 이동 함수 ---
-        function prevModalStep() {
-            if (currentExplanationStep > 0) {
-                currentExplanationStep--;
-                renderModalStep();
-                modalContent.scrollTop = 0; // 스텝 이동 시 스크롤 맨 위로
-            }
-        }
-
-        function nextModalStep() {
-            if (currentExplanationStep < totalExplanationSteps - 1) {
-                currentExplanationStep++;
-                renderModalStep();
-                modalContent.scrollTop = 0; // 스텝 이동 시 스크롤 맨 위로
-            }
-        }
-
-
-        // --- 모달 닫기 함수 ---
-        function closeModal() {
-            modalBackdrop.style.display = 'none';
-            modalContent.style.display = 'none';
-            explanationContainer.innerHTML = ''; // 내용 비우기
-            document.body.style.overflow = ''; // 배경 스크롤 복구
-            // 전역 변수 초기화
-            currentExplanationData = null;
-            currentExplanationStep = 0;
-            totalExplanationSteps = 0;
-        }
-
-        // --- 모달 닫기 이벤트 리스너 (기존 코드 유지) ---
-        modalCloseBtn.addEventListener('click', closeModal);
-        modalBackdrop.addEventListener('click', closeModal);
-
-        // --- 나머지 스크립트 (renderSlides, updateSlideState, goNext, goPrev, 초기화 로직 등)는 여기에 이어서 작성 ---
-        // (이전 제공 코드 참조)
-
-        // --- 초기화 로직 ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // renderSlides(); // 슬라이드 렌더링 - 이 부분은 index_part1/part2 합쳐진 곳에서 호출
-            // updateSlideState(); // 초기 상태 설정 - 이 부분은 index_part1/part2 합쳐진 곳에서 호출
-
-            // 키보드 이벤트 리스너
-            document.addEventListener('keydown', e => {
-                // 모달이 열려 있을 때
-                if (modalBackdrop.style.display === 'block') {
-                    if (e.key === 'ArrowLeft') prevModalStep();
-                    if (e.key === 'ArrowRight') nextModalStep();
-                    if (e.key === 'Escape') closeModal();
-                }
-                // 모달이 닫혀 있을 때 (기존 슬라이드 이동 로직)
-                // else {
-                //     if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') goNext();
-                //     if (e.key === 'ArrowLeft' || e.key === 'PageUp') goPrev();
-                // }
-            });
-        });
-
-        // --- 메인 스크립트 로직 (1부: 데이터 로딩 및 초기 렌더링 준비) ---
-        // presentationData_part2는 index_part2.html 파일에서 로드됩니다.
-        let presentationData = presentationData_part1; // 일단 1부 데이터로 시작
-
-        const presentationContainer = document.getElementById('presentation-container');
-        let currentSlide = 0;
-        let currentLang = 0; // 0: Java, 1: Python, 2: JS
-
-        // --- 이후 로직(renderSlides, updateSlideState, goNext, goPrev, 모달 함수 등)은
-        // --- index_part2.html 파일에 포함됩니다. ---
-
-        // 여기에 추가 코드가 들어갑니다 (index_part2.html에서 계속)
-        // ...
-    </script>
-    <script>
-        // --- 데이터 시작 (2부: 문제 4 ~ 문제 7) ---
         const presentationData_part2 = [
-            // --- 문제 4: 위상 정렬 ---
             {
                 type: 'problem_detail',
                 title: '문제 4: 줄 세우기 (BOJ 2252)',
@@ -911,23 +777,21 @@ public class bj4_2252 {
         int n = Integer.parseInt(st.nextToken());
         int m = Integer.parseInt(st.nextToken());
 
-        ArrayList<Integer>[] adjList = new ArrayList[n + 1]; // 인접 리스트
-        int[] inDegree = new int[n + 1]; // 각 노드의 진입 차수
+        ArrayList<Integer>[] adjList = new ArrayList[n + 1];
+        int[] inDegree = new int[n + 1];
         for (int i = 1; i <= n; i++) {
             adjList[i] = new ArrayList<>();
         }
 
-        // 그래프 정보 입력 및 진입 차수 계산
         for (int i = 0; i < m; i++) {
             st = new StringTokenizer(br.readLine());
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
-            adjList[a].add(b); // a -> b 간선 추가
-            inDegree[b]++; // b의 진입 차수 증가
+            adjList[a].add(b);
+            inDegree[b]++;
         }
 
         Queue<Integer> queue = new LinkedList<>();
-        // 진입 차수가 0인 노드를 큐에 추가 (시작점)
         for (int i = 1; i <= n; i++) {
             if (inDegree[i] == 0) {
                 queue.add(i);
@@ -935,15 +799,13 @@ public class bj4_2252 {
         }
 
         StringBuilder sb = new StringBuilder();
-        // 위상 정렬 실행
         while (!queue.isEmpty()) {
             int current = queue.poll();
-            sb.append(current).append(" "); // 결과에 추가
+            sb.append(current).append(" ");
 
-            // 현재 노드에서 나가는 간선 제거 (개념적으로)
             for (int neighbor : adjList[current]) {
-                inDegree[neighbor]--; // 연결된 노드의 진입 차수 감소
-                if (inDegree[neighbor] == 0) { // 진입 차수가 0이 되면 큐에 추가
+                inDegree[neighbor]--;
+                if (inDegree[neighbor] == 0) {
                     queue.add(neighbor);
                 }
             }
@@ -957,34 +819,30 @@ from collections import deque
 input = sys.stdin.readline
 n, m = map(int, input().split())
 
-adjList = [[] for _ in range(n + 1)] # 인접 리스트
-inDegree = [0] * (n + 1) # 진입 차수
+adjList = [[] for _ in range(n + 1)]
+inDegree = [0] * (n + 1)
 
-# 그래프 정보 입력 및 진입 차수 계산
 for _ in range(m):
     a, b = map(int, input().split())
-    adjList[a].append(b) # a -> b
+    adjList[a].append(b)
     inDegree[b] += 1
 
 queue = deque()
-# 진입 차수 0인 노드 큐에 삽입
 for i in range(1, n + 1):
     if inDegree[i] == 0:
         queue.append(i)
 
 result = []
-# 위상 정렬 실행
 while queue:
     current = queue.popleft()
     result.append(current)
 
-    # 현재 노드에서 나가는 간선 제거 효과
     for neighbor in adjList[current]:
         inDegree[neighbor] -= 1
-        if inDegree[neighbor] == 0: # 진입 차수가 0이 되면 큐에 삽입
+        if inDegree[neighbor] == 0:
             queue.append(neighbor)
 
-print(*result) # 리스트 언패킹하여 출력`,
+print(*result)`,
                     javascript: `const fs = require('fs');
 const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
 
@@ -992,16 +850,14 @@ const [n, m] = input[0].split(' ').map(Number);
 const adjList = Array.from({ length: n + 1 }, () => []);
 const inDegree = new Array(n + 1).fill(0);
 
-// 그래프 구성 및 진입 차수 계산
 for (let i = 1; i <= m; i++) {
     const [a, b] = input[i].split(' ').map(Number);
-    adjList[a].push(b); // a에서 b로 가는 간선
-    inDegree[b]++;      // b의 진입 차수 증가
+    adjList[a].push(b);
+    inDegree[b]++;
 }
 
 const queue = [];
-let head = 0; // 큐 포인터
-// 진입 차수가 0인 노드 큐에 추가
+let head = 0;
 for (let i = 1; i <= n; i++) {
     if (inDegree[i] === 0) {
         queue.push(i);
@@ -1009,15 +865,12 @@ for (let i = 1; i <= n; i++) {
 }
 
 const result = [];
-// 위상 정렬 수행
 while (head < queue.length) {
     const current = queue[head++];
     result.push(current);
 
-    // 현재 노드와 연결된 노드들의 진입 차수 감소
     for (const neighbor of adjList[current]) {
         inDegree[neighbor]--;
-        // 진입 차수가 0이 된 노드를 큐에 추가
         if (inDegree[neighbor] === 0) {
             queue.push(neighbor);
         }
@@ -1027,7 +880,6 @@ while (head < queue.length) {
 console.log(result.join(' '));`
                 }
             },
-            // --- 문제 5: 위상 정렬 응용 ---
             {
                 type: 'problem_detail',
                 title: '문제 5: 게임 개발 (BOJ 1516)',
@@ -1063,49 +915,43 @@ public class bj5_1516 {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(br.readLine());
 
-        ArrayList<Integer>[] adjList = new ArrayList[n + 1]; // 인접 리스트 (나를 필요로 하는 건물)
-        int[] inDegree = new int[n + 1];       // 진입 차수 (내가 필요로 하는 건물 수)
-        int[] buildTime = new int[n + 1];    // 각 건물 건설 시간
-        int[] resultTime = new int[n + 1];   // 각 건물 완성 최소 시간 (DP 테이블 역할)
+        ArrayList<Integer>[] adjList = new ArrayList[n + 1];
+        int[] inDegree = new int[n + 1];
+        int[] buildTime = new int[n + 1];
+        int[] resultTime = new int[n + 1];
 
         for (int i = 1; i <= n; i++) {
             adjList[i] = new ArrayList<>();
         }
 
-        // 입력 처리 및 그래프 구성
         for (int i = 1; i <= n; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
             buildTime[i] = Integer.parseInt(st.nextToken());
-            resultTime[i] = buildTime[i]; // 초기 최소 시간은 자기 건설 시간
+            resultTime[i] = buildTime[i];
 
             while (true) {
                 int pre = Integer.parseInt(st.nextToken());
                 if (pre == -1) break;
-                // pre 건물이 i 건물의 선행 조건임
-                adjList[pre].add(i); // pre -> i 간선 추가 (pre 다음에 i 지을 수 있음)
-                inDegree[i]++;     // i의 진입 차수 증가
+                adjList[pre].add(i);
+                inDegree[i]++;
             }
         }
 
         Queue<Integer> queue = new LinkedList<>();
-        // 진입 차수 0인 건물(선행 조건 없는 건물) 큐에 추가
         for (int i = 1; i <= n; i++) {
             if (inDegree[i] == 0) {
                 queue.add(i);
             }
         }
 
-        // 위상 정렬 + 시간 계산
         while (!queue.isEmpty()) {
             int current = queue.poll();
 
             for (int next : adjList[current]) {
-                // next 건물의 최소 완성 시간 갱신
-                // 기존 계산된 시간 vs (현재 건물 완성 시간 + next 건물 건설 시간) 중 더 큰 값
                 resultTime[next] = Math.max(resultTime[next], resultTime[current] + buildTime[next]);
-                inDegree[next]--; // 선행 조건 하나 완료
+                inDegree[next]--;
 
-                if (inDegree[next] == 0) { // 모든 선행 조건 완료 시 큐에 추가
+                if (inDegree[next] == 0) {
                     queue.add(next);
                 }
             }
@@ -1113,7 +959,7 @@ public class bj5_1516 {
 
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i <= n; i++) {
-            sb.append(resultTime[i]).append("\n");
+            sb.append(resultTime[i]).append("\\n");
         }
         System.out.print(sb);
     }
@@ -1124,38 +970,33 @@ from collections import deque
 input = sys.stdin.readline
 n = int(input())
 
-adjList = [[] for _ in range(n + 1)] # 나를 필요로 하는 건물들
-inDegree = [0] * (n + 1)       # 내가 필요로 하는 건물 수
-buildTime = [0] * (n + 1)    # 각 건물 건설 시간
-resultTime = [0] * (n + 1)   # 각 건물 완성 최소 시간 (DP)
+adjList = [[] for _ in range(n + 1)]
+inDegree = [0] * (n + 1)
+buildTime = [0] * (n + 1)
+resultTime = [0] * (n + 1)
 
-# 입력 처리 및 그래프 구성
 for i in range(1, n + 1):
     line = list(map(int, input().split()))
     buildTime[i] = line[0]
-    resultTime[i] = line[0] # 초기값은 자기 건설 시간
-    # 선행 건물 정보 처리
+    resultTime[i] = line[0]
     for j in range(1, len(line) - 1):
         pre = line[j]
-        adjList[pre].append(i) # pre -> i 간선
-        inDegree[i] += 1     # i의 진입 차수 증가
+        adjList[pre].append(i)
+        inDegree[i] += 1
 
 queue = deque()
-# 진입 차수 0인 건물 큐에 삽입
 for i in range(1, n + 1):
     if inDegree[i] == 0:
         queue.append(i)
 
-# 위상 정렬 및 시간 계산
 while queue:
     current = queue.popleft()
     for next_node in adjList[current]:
-        # 최소 시간 갱신: max(현재까지 계산된 시간, 선행건물 완료 시간 + 자기 건설 시간)
         resultTime[next_node] = max(
             resultTime[next_node], resultTime[current] + buildTime[next_node]
         )
-        inDegree[next_node] -= 1 # 선행 조건 완료
-        if inDegree[next_node] == 0: # 모든 선행 조건 완료
+        inDegree[next_node] -= 1
+        if inDegree[next_node] == 0:
             queue.append(next_node)
 
 for i in range(1, n + 1):
@@ -1164,43 +1005,39 @@ for i in range(1, n + 1):
 const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
 
 const n = Number(input[0]);
-const adjList = Array.from({ length: n + 1 }, () => []); // 나를 필요로 하는 건물
-const inDegree = new Array(n + 1).fill(0);       // 내가 필요로 하는 건물 수
-const buildTime = new Array(n + 1).fill(0);    // 건물 건설 시간
-const resultTime = new Array(n + 1).fill(0);   // 최종 완성 시간 (DP)
+const adjList = Array.from({ length: n + 1 }, () => []);
+const inDegree = new Array(n + 1).fill(0);
+const buildTime = new Array(n + 1).fill(0);
+const resultTime = new Array(n + 1).fill(0);
 
-// 입력 파싱 및 그래프 구성
 for (let i = 1; i <= n; i++) {
     const line = input[i].split(' ').map(Number);
     buildTime[i] = line[0];
-    resultTime[i] = line[0]; // 초기 시간은 자기 건설 시간
+    resultTime[i] = line[0];
 
     for (let j = 1; j < line.length - 1; j++) {
-        const pre = line[j]; // 선행 건물
-        adjList[pre].push(i); // pre -> i
+        const pre = line[j];
+        adjList[pre].push(i);
         inDegree[i]++;
     }
 }
 
 const queue = [];
-let head = 0; // 큐 포인터
-// 진입 차수 0인 건물 큐에 추가
+let head = 0;
 for (let i = 1; i <= n; i++) {
     if (inDegree[i] === 0) {
         queue.push(i);
     }
 }
 
-// 위상 정렬 + 시간 계산
 while (head < queue.length) {
     const current = queue[head++];
 
     for (const next of adjList[current]) {
-        // next 건물의 최소 완료 시간 갱신
         resultTime[next] = Math.max(resultTime[next], resultTime[current] + buildTime[next]);
-        inDegree[next]--; // 선행 조건 하나 해결
+        inDegree[next]--;
 
-        if (inDegree[next] === 0) { // 모든 선행 조건 해결 시 큐에 추가
+        if (inDegree[next] === 0) {
             queue.push(next);
         }
     }
@@ -1213,7 +1050,6 @@ for (let i = 1; i <= n; i++) {
 console.log(resultOutput.trim());`
                 }
             },
-            // --- 문제 6: 다익스트라 ---
             {
                 type: 'problem_detail',
                 title: '문제 6: 최단경로 (BOJ 1753)',
@@ -1247,10 +1083,9 @@ import java.util.StringTokenizer;
 
 public class bj6_1753 {
 
-    // 노드 정보를 담는 클래스, 우선순위 큐에서 가중치 기준으로 정렬하기 위해 Comparable 구현
     static class Node implements Comparable<Node> {
-        int node;   // 도착 노드 번호
-        int weight; // 가중치
+        int node;
+        int weight;
 
         Node(int node, int weight) {
             this.node = node;
@@ -1259,117 +1094,101 @@ public class bj6_1753 {
 
         @Override
         public int compareTo(Node o) {
-            // 가중치가 낮은 순서대로 정렬 (오름차순)
             return this.weight - o.weight;
         }
     }
 
-    static final int INF = Integer.MAX_VALUE; // 무한대 값 설정
+    static final int INF = Integer.MAX_VALUE;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int v = Integer.parseInt(st.nextToken()); // 정점 개수
-        int e = Integer.parseInt(st.nextToken()); // 간선 개수
-        int k = Integer.parseInt(br.readLine());  // 시작 정점
+        int v = Integer.parseInt(st.nextToken());
+        int e = Integer.parseInt(st.nextToken());
+        int k = Integer.parseInt(br.readLine());
 
-        ArrayList<Node>[] adjList = new ArrayList[v + 1]; // 인접 리스트
-        int[] dist = new int[v + 1];                  // 최단 거리 저장 배열
+        ArrayList<Node>[] adjList = new ArrayList[v + 1];
+        int[] dist = new int[v + 1];
 
-        // 인접 리스트 및 거리 배열 초기화
         for (int i = 1; i <= v; i++) {
             adjList[i] = new ArrayList<>();
-            dist[i] = INF; // 모든 거리를 무한대로 초기화
+            dist[i] = INF;
         }
 
-        // 간선 정보 입력
         for (int i = 0; i < e; i++) {
             st = new StringTokenizer(br.readLine());
-            int u = Integer.parseInt(st.nextToken()); // 출발 노드
-            int w = Integer.parseInt(st.nextToken()); // 도착 노드
-            int weight = Integer.parseInt(st.nextToken()); // 가중치
-            adjList[u].add(new Node(w, weight)); // 인접 리스트에 추가
+            int u = Integer.parseInt(st.nextToken());
+            int w = Integer.parseInt(st.nextToken());
+            int weight = Integer.parseInt(st.nextToken());
+            adjList[u].add(new Node(w, weight));
         }
 
-        // 다익스트라 알고리즘 시작
         PriorityQueue<Node> pq = new PriorityQueue<>();
-        dist[k] = 0; // 시작 노드의 거리는 0
-        pq.add(new Node(k, 0)); // 우선순위 큐에 시작 노드 추가
+        dist[k] = 0;
+        pq.add(new Node(k, 0));
 
         while (!pq.isEmpty()) {
-            Node current = pq.poll(); // 현재 가장 거리가 짧은 노드 꺼내기
+            Node current = pq.poll();
 
-            // 이미 처리된 노드(더 짧은 경로가 발견된 경우) 스킵
             if (current.weight > dist[current.node]) {
                 continue;
             }
 
-            // 현재 노드와 연결된 다른 노드들 확인
             for (Node next : adjList[current.node]) {
-                // 현재 노드를 거쳐가는 것이 더 짧은 경우 거리 갱신
                 if (dist[next.node] > dist[current.node] + next.weight) {
                     dist[next.node] = dist[current.node] + next.weight;
-                    pq.add(new Node(next.node, dist[next.node])); // 갱신된 노드 정보 큐에 추가
+                    pq.add(new Node(next.node, dist[next.node]));
                 }
             }
         }
 
-        // 결과 출력
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i <= v; i++) {
             if (dist[i] == INF) {
-                sb.append("INF\n");
+                sb.append("INF\\n");
             } else {
-                sb.append(dist[i]).append("\n");
+                sb.append(dist[i]).append("\\n");
             }
         }
         System.out.print(sb);
     }
 }`,
                     python: `import sys
-import heapq # 우선순위 큐 사용
+import heapq
 
 input = sys.stdin.readline
-v, e = map(int, input().split()) # 정점, 간선 개수
-k = int(input()) # 시작 정점
+v, e = map(int, input().split())
+k = int(input())
 
-adjList = [[] for _ in range(v + 1)] # 인접 리스트
-dist = [float("inf")] * (v + 1)     # 최단 거리 배열 (무한대로 초기화)
+adjList = [[] for _ in range(v + 1)]
+dist = [float("inf")] * (v + 1)
 
-# 간선 정보 입력
 for _ in range(e):
     u, w, weight = map(int, input().split())
-    adjList[u].append((w, weight)) # (도착 노드, 가중치) 형태로 저장
+    adjList[u].append((w, weight))
 
-pq = [] # 우선순위 큐 (힙)
-dist[k] = 0 # 시작 노드 거리 0
-heapq.heappush(pq, (0, k)) # (거리, 노드 번호) 형태로 힙에 추가
+pq = []
+dist[k] = 0
+heapq.heappush(pq, (0, k))
 
-# 다익스트라 알고리즘
 while pq:
-    # 현재 가장 거리가 짧은 노드 정보 꺼내기
     current_weight, current_node = heapq.heappop(pq)
 
-    # 이미 더 짧은 경로가 발견된 노드면 무시
     if current_weight > dist[current_node]:
         continue
 
-    # 현재 노드와 연결된 노드들 확인
     for next_node, weight in adjList[current_node]:
-        new_dist = dist[current_node] + weight # 현재 노드를 거쳐갈 때의 거리
-        # 거쳐가는 것이 더 짧으면 거리 갱신 및 힙에 추가
+        new_dist = dist[current_node] + weight
         if new_dist < dist[next_node]:
             dist[next_node] = new_dist
             heapq.heappush(pq, (new_dist, next_node))
 
-# 결과 출력
 for i in range(1, v + 1):
     if dist[i] == float("inf"):
         print("INF")
     else:
         print(dist[i])`,
-                    javascript: `// 우선순위 큐 클래스 구현 (Min Heap 기반)
-class PriorityQueue {
+                    javascript: `class PriorityQueue {
     constructor(comparator = (a, b) => a - b) {
         this.heap = [];
         this.comparator = comparator;
@@ -1422,44 +1241,37 @@ const fs = require('fs');
 const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
 let lineIndex = 0;
 
-const [v, e] = input[lineIndex++].split(' ').map(Number); // 정점, 간선 수
-const k = Number(input[lineIndex++]); // 시작 정점
+const [v, e] = input[lineIndex++].split(' ').map(Number);
+const k = Number(input[lineIndex++]);
 
-const adjList = Array.from({ length: v + 1 }, () => []); // 인접 리스트
-const dist = new Array(v + 1).fill(Infinity);          // 최단 거리 배열 (무한대로 초기화)
+const adjList = Array.from({ length: v + 1 }, () => []);
+const dist = new Array(v + 1).fill(Infinity);
 
-// 간선 정보 입력
 for (let i = 0; i < e; i++) {
     const [u, w, weight] = input[lineIndex++].split(' ').map(Number);
-    adjList[u].push({ node: w, weight: weight }); // {도착 노드, 가중치} 객체 저장
+    adjList[u].push({ node: w, weight: weight });
 }
 
-// 다익스트라 알고리즘
-// 우선순위 큐 생성 (가중치 기준 오름차순)
 const pq = new PriorityQueue((a, b) => a.weight - b.weight);
-dist[k] = 0; // 시작점 거리 0
-pq.push({ node: k, weight: 0 }); // {노드, 거리} 형태로 큐에 삽입
+dist[k] = 0;
+pq.push({ node: k, weight: 0 });
 
 while (!pq.isEmpty()) {
-    const current = pq.pop(); // 가장 거리가 짧은 노드 정보 꺼내기
+    const current = pq.pop();
 
-    // 이미 처리된(더 짧은 경로 발견된) 노드면 스킵
     if (current.weight > dist[current.node]) {
         continue;
     }
 
-    // 현재 노드에서 갈 수 있는 다른 노드들 확인
     for (const next of adjList[current.node]) {
-        const newDist = dist[current.node] + next.weight; // 현재 노드를 거쳐갈 때 거리
-        // 기존 거리보다 거쳐가는 것이 더 짧으면 갱신
+        const newDist = dist[current.node] + next.weight;
         if (newDist < dist[next.node]) {
             dist[next.node] = newDist;
-            pq.push({ node: next.node, weight: newDist }); // 갱신된 정보 큐에 삽입
+            pq.push({ node: next.node, weight: newDist });
         }
     }
 }
 
-// 결과 출력
 let result = '';
 for (let i = 1; i <= v; i++) {
     if (dist[i] === Infinity) {
@@ -1471,7 +1283,6 @@ for (let i = 1; i <= v; i++) {
 console.log(result.trim());`
                 }
             },
-            // --- 문제 7: 다익스트라 응용 ---
             {
                 type: 'problem_detail',
                 title: '문제 7: K번째 최단 경로 (BOJ 1854)',
@@ -1511,7 +1322,7 @@ public class bj7_1854 {
 
     static class Node implements Comparable<Node> {
         int node;
-        int weight; // 1번 노드부터 현재 노드까지의 총 거리
+        int weight;
 
         Node(int node, int weight) {
             this.node = node;
@@ -1520,122 +1331,103 @@ public class bj7_1854 {
 
         @Override
         public int compareTo(Node o) {
-            return this.weight - o.weight; // 거리 오름차순
+            return this.weight - o.weight;
         }
     }
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int n = Integer.parseInt(st.nextToken()); // 도시 수
-        int m = Integer.parseInt(st.nextToken()); // 도로 수
-        int k = Integer.parseInt(st.nextToken()); // k번째 최단 경로
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        int k = Integer.parseInt(st.nextToken());
 
-        ArrayList<Node>[] adjList = new ArrayList[n + 1]; // 인접 리스트
-        // 각 노드별 최단 경로 K개를 저장할 우선순위 큐 (내림차순 정렬)
+        ArrayList<Node>[] adjList = new ArrayList[n + 1];
         PriorityQueue<Integer>[] distPQs = new PriorityQueue[n + 1];
 
         for (int i = 1; i <= n; i++) {
             adjList[i] = new ArrayList<>();
-            // K개의 거리를 저장, 가장 큰 값이 먼저 나오도록 내림차순 설정
             distPQs[i] = new PriorityQueue<>(Collections.reverseOrder());
         }
 
-        // 도로 정보 입력
         for (int i = 0; i < m; i++) {
             st = new StringTokenizer(br.readLine());
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
             int c = Integer.parseInt(st.nextToken());
-            adjList[a].add(new Node(b, c)); // a -> b, 가중치 c
+            adjList[a].add(new Node(b, c));
         }
 
-        // 다익스트라 시작 (1번 노드에서 출발)
-        PriorityQueue<Node> pq = new PriorityQueue<>(); // 전체 탐색용 우선순위 큐 (오름차순)
-        pq.add(new Node(1, 0)); // 시작 노드 추가
-        distPQs[1].add(0);      // 시작 노드의 첫 번째 최단 경로는 0
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        pq.add(new Node(1, 0));
+        distPQs[1].add(0);
 
         while (!pq.isEmpty()) {
-            Node current = pq.poll(); // 현재까지 경로 중 가장 짧은 노드 선택
+            Node current = pq.poll();
 
-            // 현재 노드와 연결된 다음 노드들 탐색
             for (Node next : adjList[current.node]) {
-                int newDist = current.weight + next.weight; // 1번부터 next 노드까지의 새로운 경로 길이
+                int newDist = current.weight + next.weight;
 
-                // next 노드의 최단 경로 큐가 K개 미만이면 무조건 추가
                 if (distPQs[next.node].size() < k) {
                     distPQs[next.node].add(newDist);
-                    pq.add(new Node(next.node, newDist)); // 탐색 큐에도 추가
+                    pq.add(new Node(next.node, newDist));
                 }
-                // next 노드의 최단 경로 큐가 K개이고,
-                // 새 경로가 큐에서 가장 큰 값(k번째 최단 경로)보다 작으면
                 else if (newDist < distPQs[next.node].peek()) {
-                    distPQs[next.node].poll(); // 가장 큰 값(기존 k번째) 제거
-                    distPQs[next.node].add(newDist); // 새 경로 추가
-                    pq.add(new Node(next.node, newDist)); // 탐색 큐에도 추가
+                    distPQs[next.node].poll();
+                    distPQs[next.node].add(newDist);
+                    pq.add(new Node(next.node, newDist));
                 }
             }
         }
 
-        // 결과 출력
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i <= n; i++) {
-            if (distPQs[i].size() < k) { // k번째 최단 경로가 없으면 -1
-                sb.append("-1\n");
-            } else { // 있으면 가장 큰 값(내림차순 큐의 peek) 출력
-                sb.append(distPQs[i].peek()).append("\n");
+            if (distPQs[i].size() < k) {
+                sb.append("-1\\n");
+            } else {
+                sb.append(distPQs[i].peek()).append("\\n");
             }
         }
         System.out.print(sb);
     }
 }`,
                     python: `import sys
-import heapq # 우선순위 큐 사용
+import heapq
 
 input = sys.stdin.readline
-n, m, k = map(int, input().split()) # 도시, 도로, k번째
+n, m, k = map(int, input().split())
 
-adjList = [[] for _ in range(n + 1)] # 인접 리스트
-# 각 노드별 최단 경로 K개를 저장할 리스트 (힙으로 사용될 것)
-# 최대 힙(내림차순)으로 구현하기 위해 음수로 저장
+adjList = [[] for _ in range(n + 1)]
 distPQs = [[] for _ in range(n + 1)]
 
-# 도로 정보 입력
 for _ in range(m):
     a, b, c = map(int, input().split())
-    adjList[a].append((b, c)) # (도착 노드, 가중치)
+    adjList[a].append((b, c))
 
-# 다익스트라 시작 (1번 노드에서)
-pq = [] # 탐색용 우선순위 큐 (최소 힙, 오름차순)
-heapq.heappush(pq, (0, 1)) # (거리, 노드 번호)
-heapq.heappush(distPQs[1], 0) # 1번 노드의 첫 번째 최단 경로는 0 (음수로 저장)
+pq = []
+heapq.heappush(pq, (0, 1))
+heapq.heappush(distPQs[1], 0)
 
 while pq:
-    current_weight, current_node = heapq.heappop(pq) # 가장 거리가 짧은 노드
+    current_weight, current_node = heapq.heappop(pq)
 
-    # 현재 노드에서 갈 수 있는 다음 노드 탐색
     for next_node, weight in adjList[current_node]:
-        new_dist = current_weight + weight # 1번부터 next_node까지의 새 경로 길이
+        new_dist = current_weight + weight
 
-        # next_node의 경로 저장 힙이 k개 미만이면 무조건 추가
         if len(distPQs[next_node]) < k:
-            heapq.heappush(distPQs[next_node], -new_dist) # 최대 힙 위해 음수로 저장
-            heapq.heappush(pq, (new_dist, next_node))   # 탐색 큐에는 양수로 저장
-        # 힙이 k개이고, 새 경로가 힙의 최솟값(-k번째 최단경로)보다 작으면 갱신
-        elif new_dist < -distPQs[next_node][0]: # distPQs[next_node][0]은 음수 중 가장 작은 값 (-k번째 최단경로)
-            heapq.heappop(distPQs[next_node]) # 가장 작은 음수 (가장 긴 경로) 제거
-            heapq.heappush(distPQs[next_node], -new_dist) # 새 경로(음수) 추가
-            heapq.heappush(pq, (new_dist, next_node))   # 탐색 큐에는 양수로 추가
+            heapq.heappush(distPQs[next_node], -new_dist)
+            heapq.heappush(pq, (new_dist, next_node))
+        elif new_dist < -distPQs[next_node][0]:
+            heapq.heappop(distPQs[next_node])
+            heapq.heappush(distPQs[next_node], -new_dist)
+            heapq.heappush(pq, (new_dist, next_node))
 
-# 결과 출력
 for i in range(1, n + 1):
     if len(distPQs[i]) < k:
         print("-1")
     else:
-        # distPQs[i][0]은 음수 중 가장 작은 값 (-k번째 최단경로)
-        print(-distPQs[i][0]) # 양수로 변환하여 k번째 최단 경로 출력`,
-                    javascript: `// 우선순위 큐 클래스 (Min Heap)
-class PriorityQueue {
+        print(-distPQs[i][0])`,
+                    javascript: `class PriorityQueue {
     constructor(comparator = (a, b) => a - b) {
         this.heap = []; this.comparator = comparator;
     }
@@ -1670,50 +1462,42 @@ const fs = require('fs');
 const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
 let lineIndex = 0;
 
-const [n, m, k] = input[lineIndex++].split(' ').map(Number); // 도시, 도로, K
+const [n, m, k] = input[lineIndex++].split(' ').map(Number);
 
-const adjList = Array.from({ length: n + 1 }, () => []); // 인접 리스트
-// 각 노드별 최단 경로 K개를 저장할 우선순위 큐 (Max Heap - 가장 큰 값이 먼저 나옴)
+const adjList = Array.from({ length: n + 1 }, () => []);
 const distPQs = Array.from({ length: n + 1 }, () => new PriorityQueue((a, b) => b - a));
 
-// 도로 정보 입력
 for (let i = 0; i < m; i++) {
     const [a, b, c] = input[lineIndex++].split(' ').map(Number);
-    adjList[a].push({ node: b, weight: c }); // {도착노드, 가중치}
+    adjList[a].push({ node: b, weight: c });
 }
 
-// 다익스트라 시작 (1번 노드)
-const pq = new PriorityQueue((a, b) => a.weight - b.weight); // 탐색용 큐 (Min Heap)
-pq.push({ node: 1, weight: 0 }); // 시작점 {노드, 거리}
-distPQs[1].push(0); // 1번 노드의 첫 번째 최단 거리는 0
+const pq = new PriorityQueue((a, b) => a.weight - b.weight);
+pq.push({ node: 1, weight: 0 });
+distPQs[1].push(0);
 
 while (!pq.isEmpty()) {
-    const current = pq.pop(); // 가장 거리가 짧은 {노드, 거리}
+    const current = pq.pop();
 
-    // 현재 노드에서 갈 수 있는 다음 노드들 확인
     for (const next of adjList[current.node]) {
-        const newDist = current.weight + next.weight; // 1번부터 next까지의 새로운 경로 거리
+        const newDist = current.weight + next.weight;
 
-        // next 노드의 경로 저장 큐가 K개 미만이면 무조건 추가
         if (distPQs[next.node].size() < k) {
             distPQs[next.node].push(newDist);
             pq.push({ node: next.node, weight: newDist });
-        }
-        // K개이고, 새 경로가 큐의 최댓값(k번째 최단 경로)보다 작으면 갱신
-        else if (newDist < distPQs[next.node].peek()) {
-            distPQs[next.node].pop(); // 가장 큰 값(기존 k번째 경로) 제거
-            distPQs[next.node].push(newDist); // 새 경로 추가
+        } else if (newDist < distPQs[next.node].peek()) {
+            distPQs[next.node].pop();
+            distPQs[next.node].push(newDist);
             pq.push({ node: next.node, weight: newDist });
         }
     }
 }
 
-// 결과 출력
 let resultOutput = '';
 for (let i = 1; i <= n; i++) {
-    if (distPQs[i].size() < k) { // k개가 안되면 -1
+    if (distPQs[i].size() < k) {
         resultOutput += "-1\\n";
-    } else { // k개면 Max Heap의 peek() 값이 k번째 최단 경로
+    } else {
         resultOutput += distPQs[i].peek() + "\\n";
     }
 }
@@ -1722,15 +1506,46 @@ console.log(resultOutput.trim());`
             }
         ];
 
-        // --- 메인 스크립트 로직 (2부: 데이터 결합 및 전체 로직 실행) ---
-        presentationData = presentationData_part1.concat(presentationData_part2); // 1부와 2부 데이터 합치기
+        let presentationData = presentationData_part1.concat(presentationData_part2);
+
+        const presentationContainer = document.getElementById('presentation-container');
+        let currentSlide = 0;
+        let currentLang = 0;
+
+        function prevModalStep() {
+            if (currentExplanationStep > 0) {
+                currentExplanationStep--;
+                renderModalStep();
+                modalContent.scrollTop = 0;
+            }
+        }
+
+        function nextModalStep() {
+            if (currentExplanationStep < totalExplanationSteps - 1) {
+                currentExplanationStep++;
+                renderModalStep();
+                modalContent.scrollTop = 0;
+            }
+        }
+
+        function closeModal() {
+            modalBackdrop.style.display = 'none';
+            modalContent.style.display = 'none';
+            explanationContainer.innerHTML = '';
+            document.body.style.overflow = '';
+            currentExplanationData = null;
+            currentExplanationStep = 0;
+            totalExplanationSteps = 0;
+        }
+
+        modalCloseBtn.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', closeModal);
 
         function renderSlides() {
-            presentationContainer.innerHTML = ''; // 컨테이너 비우기
+            presentationContainer.innerHTML = '';
             presentationData.forEach((data, index) => {
                 let slideHtml = '';
 
-                // --- 슬라이드 타입별 HTML 생성 로직 (index_part1.html과 동일) ---
                 if (data.type === 'title') {
                     slideHtml = `<div class="slide flex-col items-center justify-center p-8 text-center" data-slide-index="${index}">
                         <h1 class="text-8xl md:text-9xl font-bold text-gray-800 mb-16">${data.title}</h1>
@@ -1740,14 +1555,12 @@ console.log(resultOutput.trim());`
                         </div>
                     </div>`;
                 } else if (data.type === 'toc') {
-                    // 목차 항목 클릭 시 해당 슬라이드로 이동하도록 data-goto-slide 설정
                     slideHtml = `<div class="slide flex-col items-center justify-center p-8" data-slide-index="${index}">
                         <h2 class="text-7xl md:text-8xl font-bold mb-16 text-gray-800">${data.title}</h2>
                         <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-10 text-4xl md:text-5xl text-gray-700">
                             ${data.items.map((item, i) => `<li class="toc-item flex items-center" data-goto-slide="${(i * 2) + 2}"><span class="text-gray-500 font-bold mr-6">${i + 1}.</span>${item}</li>`).join('')}
                         </ul></div>`;
                 } else if (data.type === 'problem_detail') {
-                    // 상세 설명 버튼 추가 (problemId가 있을 경우)
                     const detailButtonHtml = data.problemId ? `
                         <div class="absolute top-8 right-12 z-10">
                             <button onclick="openModal('${data.problemId}')" class="bg-sky-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-sky-700 transition-colors shadow-md text-2xl">
@@ -1760,14 +1573,12 @@ console.log(resultOutput.trim());`
                              ${detailButtonHtml}
                             <h2 class="text-5xl md:text-6xl font-bold mb-8 text-gray-800 self-start">${data.title}</h2>
                             <div class="w-full flex-1 grid grid-cols-1 lg:grid-cols-5 gap-6 overflow-hidden">
-                                <!-- 문제 설명 영역 -->
                                 <div class="lg:col-span-3 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
                                     <h3 class="text-3xl font-semibold text-sky-700 mb-4 flex-shrink-0">문제 설명</h3>
                                     <div class="overflow-auto problem-detail-box flex-1">
                                       <p class="text-2xl text-gray-700 leading-relaxed whitespace-pre-line">${data.problem}</p>
                                     </div>
                                 </div>
-                                <!-- 입출력 및 예제 영역 -->
                                 <div class="lg:col-span-2 flex flex-col gap-6">
                                     <div class="flex-1 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
                                         <h3 class="text-3xl font-semibold text-sky-700 mb-4 flex-shrink-0">입출력 형식</h3>
@@ -1801,16 +1612,13 @@ console.log(resultOutput.trim());`
                         </div>`;
 
                 } else if (data.type === 'problem') {
-                    // [요청사항 반영] Split 기능 제거된 코드 렌더링
                     const languages = ['java', 'python', 'javascript'];
                     let codeBlocksHtml = '';
 
                     languages.forEach(lang => {
                         const codeString = data.codes[lang] || '';
-                        // '\n' 이스케이프 처리된 것을 실제 줄바꿈으로 변경
                         const langSpecificCode = codeString.replace(/\\n/g, '\n');
 
-                        // 단일 코드 블록으로 렌더링
                         const innerHtml = `
                             <div class="code-block dark-scrollbar bg-[#282c34] rounded-xl shadow-lg p-4 text-2xl h-full overflow-auto">
                                 <pre><code class="language-${lang}">${langSpecificCode.trim()}</code></pre>
@@ -1834,31 +1642,26 @@ console.log(resultOutput.trim());`
                             </div>
                         </div>`;
                 }
-                // 생성된 HTML을 컨테이너에 추가
                 presentationContainer.insertAdjacentHTML('beforeend', slideHtml);
             });
 
-            // 코드 하이라이팅 적용
             document.querySelectorAll('pre code').forEach(block => {
-                // HTML 태그가 코드로 인식되지 않도록 이스케이프
                 block.innerHTML = block.innerHTML.replace(/</g, "&lt;").replace(/>/g, "&gt;");
                 hljs.highlightElement(block);
             });
 
-            // 목차 아이템 클릭 이벤트 리스너 추가
             document.querySelectorAll('.toc-item').forEach(item => {
                 item.addEventListener('click', (e) => {
                     const slideIndex = parseInt(e.currentTarget.dataset.gotoSlide, 10);
                     if (!isNaN(slideIndex)) {
                         currentSlide = slideIndex;
-                        currentLang = 0; // 다른 슬라이드로 이동 시 항상 Java부터 시작
+                        currentLang = 0;
                         updateSlideState();
                     }
                 });
             });
         }
 
-        // 현재 슬라이드 및 언어 상태 업데이트 함수
         function updateSlideState() {
             const slides = document.querySelectorAll('.slide');
             slides.forEach((slide, index) => slide.classList.toggle('active', index === currentSlide));
@@ -1868,19 +1671,17 @@ console.log(resultOutput.trim());`
                 const languages = ['java', 'python', 'javascript'];
                 const currentLangName = languages[currentLang];
 
-                // 언어 표시기 스타일 업데이트 및 클릭 이벤트 설정
                 activeSlide.querySelectorAll('.lang-indicator').forEach((indicator, index) => {
                     const isActive = index === currentLang;
-                    indicator.classList.toggle('text-sky-600', isActive); // 활성 언어 색상
-                    indicator.classList.toggle('text-gray-300', !isActive); // 비활성 언어 색상
-                    indicator.style.transform = isActive ? 'scale(1.15)' : 'scale(1.0)'; // 활성 언어 강조
-                    indicator.onclick = () => { // 클릭 시 언어 변경
+                    indicator.classList.toggle('text-sky-600', isActive);
+                    indicator.classList.toggle('text-gray-300', !isActive);
+                    indicator.style.transform = isActive ? 'scale(1.15)' : 'scale(1.0)';
+                    indicator.onclick = () => {
                         currentLang = index;
                         updateSlideState();
                     };
                 });
 
-                // 현재 선택된 언어의 코드 블록만 보이도록 설정
                 activeSlide.querySelectorAll('.code-container').forEach(container => {
                     const isActive = container.dataset.lang === currentLangName;
                     container.classList.toggle('visible', isActive);
@@ -1888,35 +1689,30 @@ console.log(resultOutput.trim());`
             }
         }
 
-        // 다음 슬라이드/언어로 이동 함수
         const goNext = () => {
             const activeSlide = document.querySelector('.slide.active');
             if (!activeSlide) return;
 
-            // 현재 슬라이드가 문제 슬라이드이고, 마지막 언어가 아니면 언어 변경
             if (activeSlide.dataset.isProblem && currentLang < 2) {
                 currentLang++;
-            } else { // 아니면 다음 슬라이드로 이동하고 언어 초기화
+            } else {
                 if (currentSlide < presentationData.length - 1) {
                     currentSlide++;
-                    currentLang = 0; // 새 슬라이드는 Java부터 시작
+                    currentLang = 0;
                 }
             }
             updateSlideState();
         };
 
-        // 이전 슬라이드/언어로 이동 함수
         const goPrev = () => {
             const activeSlide = document.querySelector('.slide.active');
             if (!activeSlide) return;
 
-            // 현재 슬라이드가 문제 슬라이드이고, 첫 언어가 아니면 언어 변경
             if (activeSlide.dataset.isProblem && currentLang > 0) {
                 currentLang--;
-            } else { // 아니면 이전 슬라이드로 이동
+            } else {
                 if (currentSlide > 0) {
                     currentSlide--;
-                    // 이전 슬라이드가 문제 슬라이드면 마지막 언어부터 시작
                     const prevSlide = document.querySelector(`[data-slide-index="${currentSlide}"]`);
                     currentLang = prevSlide.dataset.isProblem ? 2 : 0;
                 }
@@ -1924,93 +1720,21 @@ console.log(resultOutput.trim());`
             updateSlideState();
         };
 
-        // --- 모달 관련 로직 ---
-        const modalBackdrop = document.getElementById('modal-backdrop');
-        const modalContent = document.getElementById('modal-content');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
-        const explanationContainer = document.getElementById('explanation-container');
-
-        // 모달 열기 함수
-        function openModal(problemId) {
-            const data = explanationData[problemId];
-            if (data) {
-                let contentHtml = `<h1 class="text-5xl font-bold text-gray-800 mb-12">${data.title}</h1>`; // 제목 아래 여백 증가
-                data.steps.forEach(step => {
-                    // 스텝별 컨테이너 스타일링 강화
-                    contentHtml += `
-                        <div class="mb-10 bg-white p-8 rounded-xl shadow-lg border border-gray-200">
-                            <h2 class="text-4xl font-bold mb-6 flex items-center text-gray-700">
-                                <span class="text-5xl mr-5">${step.icon}</span>
-                                <span class="text-gray-400 mr-4">STEP ${step.step}:</span>
-                                ${step.title}
-                            </h2>
-                            <div class="prose max-w-none prose-xl prose-p:my-3 prose-li:my-2">
-                                ${step.content || ''}
-                            </div>
-                    `;
-                    // 코드 및 설명 레이아웃 조정
-                    if (step.code && step.code_explanation) {
-                        contentHtml += `
-                            <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                                <div class="code-block dark-scrollbar bg-[#282c34] rounded-xl shadow-md p-4 text-lg max-h-[60vh] overflow-auto">
-                                    <pre><code class="language-java">${step.code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>
-                                 </div>
-                                <div class="bg-sky-50 p-6 rounded-xl border border-sky-200 text-sky-800 prose prose-xl">
-                                    ${step.code_explanation}
-                                </div>
-                            </div>
-                        `;
-                    } else if (step.code) { // 코드만 있는 경우
-                        contentHtml += `
-                            <div class="mt-8 code-block dark-scrollbar bg-[#282c34] rounded-xl shadow-md p-4 text-lg max-h-[60vh] overflow-auto">
-                                <pre><code class="language-java">${step.code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>
-                             </div>`;
-                    }
-                    contentHtml += `</div>`; // 스텝 컨테이너 닫기
-                });
-
-                explanationContainer.innerHTML = contentHtml;
-                // 모달 내 코드 하이라이팅
-                explanationContainer.querySelectorAll('pre code').forEach(block => {
-                    hljs.highlightElement(block);
-                });
-
-                modalBackdrop.style.display = 'block';
-                modalContent.style.display = 'block';
-                document.body.style.overflow = 'hidden'; // 모달 열렸을 때 배경 스크롤 방지
-            }
-        }
-
-        // 모달 닫기 함수
-        function closeModal() {
-            modalBackdrop.style.display = 'none';
-            modalContent.style.display = 'none';
-            explanationContainer.innerHTML = ''; // 내용 비우기
-            document.body.style.overflow = ''; // 배경 스크롤 복구
-        }
-
-        // 모달 닫기 이벤트 리스너
-        modalCloseBtn.addEventListener('click', closeModal);
-        modalBackdrop.addEventListener('click', closeModal);
-
-
-        // --- 초기화 로직 ---
         document.addEventListener('DOMContentLoaded', () => {
-            renderSlides(); // 슬라이드 렌더링
-            updateSlideState(); // 초기 상태 설정
+            renderSlides();
+            updateSlideState();
 
-            // 키보드 이벤트 리스너
             document.addEventListener('keydown', e => {
-                // 모달이 열려있지 않을 때만 슬라이드 이동
                 if (modalBackdrop.style.display !== 'block') {
                     if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') goNext();
                     if (e.key === 'ArrowLeft' || e.key === 'PageUp') goPrev();
+                } else {
+                    if (e.key === 'ArrowLeft') prevModalStep();
+                    if (e.key === 'ArrowRight') nextModalStep();
+                    if (e.key === 'Escape') closeModal();
                 }
-                // 모달이 열려 있을 때 ESC로 닫기
-                if (e.key === 'Escape') closeModal();
             });
         });
-
     </script>
 </body>
 
