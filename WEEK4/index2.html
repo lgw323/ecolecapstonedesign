@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 프롬프트 활용 발표 (4주차 과제)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+        html,
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .code-container {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            visibility: hidden;
+        }
+
+        .code-container.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lang-indicator {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .code-block::-webkit-scrollbar,
+        .problem-detail-box::-webkit-scrollbar,
+        .answer-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .code-block::-webkit-scrollbar-track,
+        .problem-detail-box::-webkit-scrollbar-track,
+        .answer-content::-webkit-scrollbar-track {
+            background: #f1f5f9;
+
+        }
+
+        .code-block::-webkit-scrollbar-thumb,
+        .problem-detail-box::-webkit-scrollbar-thumb,
+        .answer-content::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+
+            border-radius: 4px;
+        }
+
+        .code-block.dark-scrollbar::-webkit-scrollbar-track {
+            background: #282c34;
+
+        }
+
+        .code-block.dark-scrollbar::-webkit-scrollbar-thumb {
+            background: #5c6370;
+
+        }
+
+        .code-block.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+
+        }
+
+        .toc-item {
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .toc-item:hover {
+            color: #0369a1;
+
+        }
+
+        .example-box pre {
+            white-space: pre-wrap;
+            word-break: break-all;
+            background-color: #f3f4f6;
+
+            padding: 0.75rem;
+
+            border-radius: 0.5rem;
+
+            height: 100%;
+            overflow-y: auto;
+        }
+
+
+
+        .question-slide {
+            background-color: #eff6ff;
+        }
+
+        .answer-slide {
+            background-color: #f0fdf4;
+        }
+
+        .slide-content {
+
+            max-height: calc(100vh - 12rem);
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .slide-content-wrapper {
+            max-height: calc(100vh - 9rem);
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body class="bg-white text-black">
+
+
+    <div id="presentation-root" class="relative w-screen h-screen">
+        <div id="presentation-container" class="w-full h-full bg-white flex flex-col overflow-hidden">
+
+        </div>
+    </div>
+
+    <script>
+
+        const presentationData = [
+
+            {
+                type: 'title',
+                title: 'AI 프롬프트 활용 발표',
+                subtitle: '(4주차 과제)',
+                author: '경성대학교 소프트웨어학과',
+                author_detail: '2021663046 이건우'
+            },
+            {
+                type: 'toc',
+                title: '발표 목차: AI 프롬프트 활용',
+                items: [
+                    '1. 코드 최적화 제안해줘', '2. 3개 언어 비교 분석해줘', '3. 비유로 원리 설명해줘',
+                    '4. 시간 복잡도 자세히 알려줘', '5. 비슷한 문제 추천해줘', '6. 조건 바꾸면 어떻게 풀어?',
+                    '7. 시각화 스크립트 만들어줘', '8. 예상 질문/답변 만들어줘', '9. 까다로운 테스트 케이스 만들어줘',
+                    '10. 다른 풀이법 알려줘'
+                ]
+            },
+
+            {
+                type: 'question',
+                q_num: 1,
+                title: '코드 최적화 제안해줘',
+                content: `내가 만든 Union-Find 자바 코드를 분석해 줄래? 지금 '경로 압축'만 썼는데, 'Union by Rank'나 'Union by Size' 최적화를 써서 코드를 고쳐주고, 성능이 얼마나 좋아지는지도 설명해주면 좋겠어.`
+            },
+            {
+                type: 'answer',
+                q_num: 1,
+                title: 'AI 답변: Union by Rank 최적화 적용',
+                content_text: `제공하신 Java 코드에 <strong>Union by Rank</strong> 최적화를 적용한 리팩토링 결과입니다. 각 집합의 <strong>랭크</strong>(트리의 높이에 대한 추정치)를 기록하는 \`rank\` 배열을 추가했습니다. \`union\` 연산 시, 랭크가 낮은 트리를 랭크가 높은 트리에 붙여 트리의 전체 높이가 불필요하게 증가하는 것을 방지합니다. 이를 통해 <strong>find</strong> 연산의 효율성을 더욱 높일 수 있으며, 경로 압축과 함께 사용될 때 거의 상수 시간에 가까운 성능(O(α(n)))을 보장합니다.`,
+                content_code: {
+                    lang: 'java',
+                    code: `import java.io.*;
+import java.util.*;
+
+public class UnionFindOptimized {
+    static int[] parent;
+    static int[] rank; 
+
+    public static void main(String[] args) throws IOException {
+        
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        parent = new int[n + 1];
+        rank = new int[n + 1]; 
+        for (int i = 0; i <= n; i++) {
+            parent[i] = i;
+            rank[i] = 0; 
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < m; i++) {
+            st = new StringTokenizer(br.readLine());
+            int op = Integer.parseInt(st.nextToken());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+
+            if (op == 0) {
+                union(a, b); 
+            } else {
+                if (find(a) == find(b)) sb.append("YES\\n");
+                else sb.append("NO\\n");
+            }
+        }
+        System.out.print(sb);
+    }
+
+    
+    private static int find(int i) {
+        if (parent[i] == i) return i;
+        return parent[i] = find(parent[i]);
+    }
+
+    
+    private static void union(int a, int b) {
+        int rootA = find(a);
+        int rootB = find(b);
+
+        if (rootA != rootB) {
+            
+            if (rank[rootA] < rank[rootB]) {
+                parent[rootA] = rootB; 
+            } else if (rank[rootA] > rank[rootB]) {
+                parent[rootB] = rootA; 
+            } else {
+                parent[rootB] = rootA; 
+                rank[rootA]++;         
+            }
+        }
+    }
+}`
+                }
+            },
+
+            {
+                type: 'question',
+                q_num: 2,
+                title: '3개 언어 비교 분석해줘',
+                content: `내가 준 Java, Python, JavaScript 코드는 전부 Union-Find 알고리즘 코드인데, 언어별 특징이 코드 스타일에 어떻게 나타나는지 비교 분석해 줄 수 있을까? 특히 재귀 함수 처리나 입출력 방식, 배열 초기화 같은 부분에서 차이점을 중심으로 설명해주면 좋겠어.`
+            },
+            {
+                type: 'answer',
+                q_num: 2,
+                title: 'AI 답변: 언어별 Union-Find 구현 특징 비교',
+                content_text: `Union-Find 알고리즘 구현 시 Java, Python, JavaScript는 다음과 같은 언어적 특징과 스타일 차이를 보입니다.
+
+* <strong>재귀 함수 처리:</strong>
+    * <strong>Java:</strong> 재귀 호출 깊이에 대한 기본 제한이 비교적 넉넉하지만, 매우 큰 입력에서는 \`StackOverflowError\`가 발생할 수 있습니다. 명시적인 타입 선언이 필요합니다.
+    * <strong>Python:</strong> 기본 재귀 깊이 제한이 낮아(\~1000), \`sys.setrecursionlimit()\`으로 제한을 늘려주어야 하는 경우가 많습니다. 동적 타이핑으로 코드가 간결합니다.
+    * <strong>JavaScript (Node.js):</strong> V8 엔진의 콜 스택 크기 제한에 영향을 받습니다. Python과 마찬가지로 매우 깊은 재귀에서는 스택 오버플로우가 발생할 수 있습니다. 함수형 스타일 구현이 자연스럽습니다.
+
+* <strong>입출력 방식:</strong>
+    * <strong>Java:</strong> \`BufferedReader\`와 \`StringTokenizer\` (또는 \`split\`) 조합이 일반적이며, 대량 입력 처리에 효율적입니다. 출력은 \`StringBuilder\`를 사용하여 한번에 처리하는 것이 성능에 유리합니다.
+    * <strong>Python:</strong> \`sys.stdin.readline()\`을 사용하는 것이 \`input()\`보다 빠릅니다. \`map()\`과 리스트 컴프리헨션을 활용한 간결한 입력 처리가 특징입니다.
+    * <strong>JavaScript (Node.js):</strong> \`fs.readFileSync('/dev/stdin')\`으로 입력을 한번에 읽어 처리하는 방식이 일반적입니다. \`split('\\n')\`과 \`split(' ')\`, \`map(Number)\`를 조합하여 사용합니다. 출력은 문자열로 모아서 \`console.log()\`로 한번에 출력하는 것이 효율적입니다.
+
+* <strong>배열 초기화:</strong>
+    * <strong>Java:</strong> \`new int[n + 1]\`과 같이 명시적으로 크기를 지정하고 생성합니다. 초기값 할당을 위해 반복문이 필요합니다 (\`parent[i] = i;\`).
+    * <strong>Python:</strong> \`list(range(n + 1))\` 또는 리스트 컴프리헨션 \`[i for i in range(n + 1)]\`을 사용하여 간결하게 초기화할 수 있습니다.
+    * <strong>JavaScript:</strong> \`Array.from({ length: n + 1 }, (_, i) => i)\` 또는 \`new Array(n + 1).fill(0).map((_, i) => i)\` 와 같은 방법으로 초기화합니다.
+
+전반적으로 Python과 JavaScript가 동적 타이핑과 내장 함수 덕분에 더 간결한 코드를 보여주는 경향이 있으며, Java는 타입 안정성과 명시적인 코드 구조를 가집니다. 성능 측면에서는 컴파일 언어인 Java가 일반적으로 유리할 수 있으나, 알고리즘 문제 해결 환경에서는 Python과 Node.js의 구현 용이성과 빠른 실행 시간도 장점입니다.`
+            },
+
+            {
+                type: 'question',
+                q_num: 3,
+                title: '비유로 원리 설명해줘',
+                content: `Union-Find 알고리즘의 핵심인 'find'랑 'union' 연산, 그리고 '경로 압축' 최적화 과정을 코딩 모르는 사람도 알아듣게 쉬운 비유로 설명해줄 수 있을까? '학급 반장 선거'나 'SNS 친구 맺기' 같은 걸로 말이야.`
+            },
+            {
+                type: 'answer',
+                q_num: 3,
+                title: 'AI 답변: "우리 반 반장 찾기" 비유',
+                content_text: `Union-Find 알고리즘을 <strong>여러 학급에서 최종 대표(반장) 찾기</strong>에 비유해 보겠습니다.<br/><br/>* <strong>초기 상태:</strong> 여러 개의 반(집합)이 있고, 각 반에는 학생들이 있습니다. 처음에는 모든 학생이 자기 자신이 반장 후보(대표)입니다. (\`parent[i] = i\`)<br/><br/>* <strong>\`find\` 연산 (우리 반 반장 찾기):</strong><br/>    * 어떤 학생(원소)에게 <strong>너희 반 최종 반장이 누구니?</strong>라고 묻는 과정입니다.<br/>    * 그 학생은 자기가 직접 아는 바로 윗사람(부모)에게 물어봅니다. (\`parent[i]\`)<br/>    * 그 윗사람도 자기 윗사람에게 계속 물어봅니다.<br/>    * 이 과정을 반복해서, 더 이상 물어볼 윗사람이 없는 최고 어른, 즉 최종 반장(루트, 대표)을 찾아냅니다. (자기 자신이 부모인 노드)<br/><br/>* <strong>\`union\` 연산 (두 반 합치기):</strong><br/>    * 두 학생 a와 b가 속한 반을 하나로 합치는 과정입니다. (예: 1반과 2반 합병)<br/>    * 먼저 각 학생의 최종 반장(\`find(a)\`, \`find(b)\`)을 찾습니다.<br/>    * 두 반장이 다르다면, 한쪽 반장(예: 2반 반장)에게 <strong>이제부터 너의 윗사람은 1반 반장이야</strong>라고 알려줍니다. (\`parent[rootB] = rootA\`)<br/>    * 이제 2반 학생들에게 반장을 물어보면 결국 1반 반장을 찾아가게 되므로, 두 반은 하나의 그룹이 됩니다.<br/><br/>* <strong>경로 압축 (Path Compression - 반장 직통 라인 만들기):</strong><br/>    * \`find\` 연산으로 반장을 찾는 과정에서 만났던 모든 학생들에게 <strong>너희 반 최종 반장은 OOO야</strong>라고 <strong>직접</strong> 알려주는 것입니다. (\`parent[i] = find(parent[i])\` 부분)<br/>    * 다음에 이 학생들에게 반장을 물어보면, 중간 과정을 거치지 않고 바로 최종 반장에게 연결되므로 훨씬 빠르게 찾을 수 있습니다. 마치 반장과 직통 전화번호를 갖게 되는 것과 같습니다.<br/><br/>이처럼 Union-Find는 그룹을 관리하고, 어떤 두 요소가 같은 그룹에 속하는지 빠르게 확인하는 데 매우 효율적인 방법입니다.`
+            },
+
+            {
+                type: 'question',
+                q_num: 4,
+                title: '시간 복잡도 자세히 알려줘',
+                content: `Union-Find 알고리즘 시간 복잡도가 거의 상수 시간인 O(α(n))이라던데, 여기서 아커만 역함수(α(n))가 뭔지 설명 좀 해주고, 왜 보통 쓰는 O(1)이나 O(log n) 같은 게 아니라 이런 특이한 시간 복잡도가 나오는지 이유도 알려줘.`
+            },
+            {
+                type: 'answer',
+                q_num: 4,
+                title: 'AI 답변: O(α(n)) 시간 복잡도 설명',
+                content_text: `Union-Find 알고리즘이 경로 압축과 Union by Rank/Size 최적화를 모두 적용했을 때, M개의 연산에 대한 총 시간 복잡도는 O(Mα(N))이며, 따라서 개별 연산의 평균(Amortized) 시간 복잡도는 O(α(N))이 됩니다.
+
+* <strong>아커만 함수 (Ackermann Function) 와 그 역함수 (α(N)):</strong>
+    * 아커만 함수는 매우 빠르게 증가하는 함수로 유명합니다. 예를 들어, A(4, 2)는 2의 65536 제곱보다 훨씬 큰 수입니다.
+    * <strong>아커만 역함수 α(N)</strong>은 이 아커만 함수의 증가율이 얼마나 빠른지를 역으로 보여주는 함수입니다. 즉, N이 아무리 커져도 α(N)의 값은 극도로 느리게 증가합니다.
+    * 현실적으로 컴퓨터 과학에서 다루는 모든 N값(우주의 원자 수보다 훨씬 큰 N 포함)에 대해 <strong>α(N)은 5 미만의 매우 작은 값</strong>을 가집니다. 그래서 O(α(N))은 거의 O(1), 즉 상수 시간에 가깝다고 간주됩니다.
+
+* <strong>왜 O(α(N)) 인가?</strong>
+    * 경로 압축과 Union by Rank/Size 최적화를 함께 사용하면, 트리의 높이가 극도로 낮게 유지됩니다.
+    * 정확한 수학적 증명은 복잡하지만, 핵심 아이디어는 \`find\` 연산이 수행될 때마다 경로상의 노드들이 루트에 더 가깝게 연결되면서(경로 압축), 이후의 \`find\` 연산 비용이 크게 줄어든다는 것입니다.
+    * 이 상각 분석(Amortized Analysis)을 통해, 개별 연산의 평균 비용이 α(N)에 비례함을 보일 수 있습니다. 특정 연산은 O(log N) 또는 그 이상이 걸릴 수도 있지만, M번의 연산 전체를 놓고 보면 평균적으로는 거의 상수 시간에 가깝게 동작한다는 의미입니다.
+    * 만약 최적화 기법 중 하나라도 빠지면(예: 경로 압축만 사용), 시간 복잡도는 O(log N) 또는 O(N)으로 증가할 수 있습니다.`
+            },
+
+            {
+                type: 'question',
+                q_num: 5,
+                title: '비슷한 문제 추천해줘',
+                content: `Union-Find 알고리즘 써서 풀 만한 다른 백준이나 리트코드 문제 5개 정도 추천해줄래? 각 문제가 왜 Union-Find 쓰기 좋은지랑 간단한 풀이 전략도 같이 알려주면 좋겠어. (사이클 판별이나 네트워크 연결 같은 거 있잖아)`
+            },
+            {
+                type: 'answer',
+                q_num: 5,
+                title: 'AI 답변: Union-Find 활용 문제 추천',
+                content_text: `Union-Find 알고리즘은 '서로소 집합(Disjoint Set)'을 효율적으로 관리하는 데 사용되며, 다음과 같은 유형의 문제들에 효과적으로 적용될 수 있습니다.
+
+1.  <strong>백준 1976 - 여행 가자:</strong>
+    * <strong>유형:</strong> 연결 요소(Connected Component) 확인
+    * <strong>적합 이유:</strong> 여러 도시들이 주어지고, 두 도시 간의 연결 정보가 주어집니다. 특정 도시들이 모두 연결되어 하나의 여행 계획으로 가능한지 확인해야 합니다.
+    * <strong>풀이 전략:</strong> 연결된 도시들을 \`union\` 연산으로 같은 집합으로 묶습니다. 여행 계획에 포함된 모든 도시들이 최종적으로 같은 집합(\`find\` 결과가 동일)에 속하는지 확인합니다.
+
+2.  <strong>백준 4195 - 친구 네트워크:</strong>
+    * <strong>유형:</strong> 집합의 크기 계산
+    * <strong>적합 이유:</strong> 친구 관계가 형성될 때마다 두 사람이 속한 친구 네트워크(집합)를 합치고, 합쳐진 네트워크의 총 인원수를 출력해야 합니다.
+    * <strong>풀이 전략:</strong> 각 집합의 크기를 저장하는 배열을 추가로 관리합니다. \`union\` 연산 시, 합쳐지는 두 집합의 크기를 더하여 새로운 루트 노드에 크기 정보를 업데이트합니다. 문자열로 주어진 친구 이름은 해시맵 등을 이용해 정수 인덱스로 변환하여 처리합니다.
+
+3.  <strong>백준 1043 - 거짓말:</strong>
+    * <strong>유형:</strong> 정보 전파 및 그룹 분리
+    * <strong>적합 이유:</strong> 진실을 아는 사람들과 같은 파티에 참석한 사람들은 모두 진실을 알게 됩니다. 진실을 모르는 사람들만 있는 파티의 수를 세어야 합니다.
+    * <strong>풀이 전략:</strong> 각 파티에 참석한 사람들을 \`union\` 연산으로 하나의 집합으로 묶습니다. 진실을 아는 초기 멤버들이 속한 집합을 파악하고, 각 파티를 순회하며 해당 파티의 멤버 중 진실을 아는 집합에 속한 사람이 한 명이라도 있는지 \`find\` 연산으로 확인합니다. 한 명도 없다면 해당 파티는 과장된 이야기를 할 수 있는 파티입니다.
+
+4.  <strong>백준 16562 - 친구비:</strong>
+    * <strong>유형:</strong> 최소 비용으로 연결 요소 만들기 (MST 변형)
+    * <strong>적합 이유:</strong> 모든 학생과 친구가 되기 위해 필요한 최소 비용을 구해야 합니다. 친구 관계는 전이적이며, 각 학생마다 친구가 되는 데 필요한 비용이 다릅니다.
+    * <strong>풀이 전략:</strong> 친구 관계를 \`union\` 연산으로 묶어 친구 그룹(연결 요소)을 형성합니다. 각 그룹(집합) 내에서 가장 친구비가 적은 학생을 대표로 삼거나, 각 그룹별 최소 친구비를 기록합니다. 모든 그룹의 최소 친구비 합을 계산합니다.
+
+5.  <strong>LeetCode 547 - Number of Provinces (백준 11724 - 연결 요소의 개수와 유사):</strong>
+    * <strong>유형:</strong> 연결 요소 개수 세기
+    * <strong>적합 이유:</strong> 도시들이 서로 연결되어 있는 정보가 주어질 때, 총 몇 개의 독립적인 연결 그룹(Province)이 있는지 계산해야 합니다.
+    * <strong>풀이 전략:</strong> 인접 행렬이나 간선 리스트를 통해 연결된 도시들을 \`union\` 연산으로 합칩니다. 최종적으로 \`parent[i] == i\`인 루트 노드의 개수를 세면 그것이 연결 요소의 개수가 됩니다.`
+            },
+
+            {
+                type: 'question',
+                q_num: 6,
+                title: '조건 바꾸면 어떻게 풀어?',
+                content: `만약에 '집합의 표현' 문제에서 '두 집합 합치는 union 연산을 취소하는 기능'이 생긴다면, 지금 쓰는 Union-Find 자료구조를 어떻게 바꿔야 할까? 가능한 방법이랑 시간 복잡도는 어떻게 변하는지도 설명해줘.`
+            },
+            {
+                type: 'answer',
+                q_num: 6,
+                title: 'AI 답변: Union 연산 취소 기능 추가 방안',
+                content_text: `기본적인 경로 압축 최적화를 사용하는 Union-Find 자료구조는 \`union\` 연산을 취소하기 어렵습니다. 경로 압축 과정에서 부모 포인터 정보가 영구적으로 변경되기 때문입니다. \`union\` 연산 취소(undo) 기능을 구현하기 위한 일반적인 접근 방식은 다음과 같습니다.
+
+1.  <strong>경로 압축 없이 Union by Rank/Size 만 사용 + 변경 로그 저장:</strong>
+    * <strong>수정 방안:</strong> \`find\` 연산 시 경로 압축을 사용하지 않습니다. \`union\` 연산은 Union by Rank 또는 Size를 사용합니다. \`union\` 연산을 수행할 때마다 어떤 노드의 부모가 누구로 변경되었는지, 그리고 랭크(또는 크기)가 어떻게 변경되었는지 '변경 로그' 스택에 저장합니다.
+    * <strong>취소 방안:</strong> 마지막 \`union\` 연산을 취소하려면, 변경 로그 스택에서 마지막 변경 사항을 꺼내어(pop) 원래 상태로 복원합니다. (예: 변경되었던 노드의 부모 포인터와 랭크 값을 이전 상태로 되돌림)
+    * <strong>시간 복잡도:</strong> 경로 압축이 없으므로 \`find\` 연산은 트리의 높이에 비례하여 O(log N)이 됩니다. \`union\` 연산도 O(log N)이며, 취소 연산은 O(1)입니다. 전체적으로 시간 복잡도가 증가합니다.
+
+2.  <strong>Persistent Union-Find (영구적 자료구조 활용):</strong>
+    * <strong>수정 방안:</strong> 각 \`union\` 연산이 수행될 때마다 변경되는 노드 정보만 새로 생성하고, 이전 버전의 정보는 그대로 유지하는 '영구적(Persistent)' 자료구조 기법을 사용합니다. 각 버전(연산 시점)의 루트 포인터만 저장하면 됩니다.
+    * <strong>취소 방안:</strong> 특정 시점의 연산을 취소하는 대신, 이전 버전의 자료구조 상태에 접근하여 작업을 수행합니다. 즉, '취소'는 이전 상태로 '돌아가는' 개념이 됩니다.
+    * <strong>시간 복잡도:</strong> 각 \`union\` 연산마다 새로운 노드를 생성하므로 공간 복잡도가 증가합니다(대략 O(M log N)). 시간 복잡도는 경로 압축을 사용하지 않는 경우 O(log N)이며, 경로 압축과 유사한 기법을 영구적 구조에 적용하면 평균 O(log N) 또는 O(log\* N)에 가깝게 만들 수 있지만 구현이 매우 복잡해집니다.
+
+<strong>결론:</strong>
+Union 연산 취소 기능은 일반적인 Union-Find 구조에 간단히 추가하기 어렵습니다. 변경 로그를 저장하는 방식이 비교적 구현이 간단하지만 시간 복잡도가 O(log N)으로 증가하며, 영구적 자료구조는 시간 복잡도를 어느 정도 유지할 수 있지만 구현이 복잡하고 공간 복잡도가 커지는 단점이 있습니다.`
+            },
+
+            {
+                type: 'question',
+                q_num: 7,
+                title: '시각화 스크립트 만들어줘',
+                content: `BOJ 1717 문제 예제 입력 있잖아, 그걸로 내 Union-Find 코드 돌리면 \`parent\` 배열이 각 연산마다 어떻게 바뀌는지 단계별로 텍스트 설명을 만들어줘. 발표 자료에 시각적인 애니메이션 넣을 때 쓰려고 해.`
+            },
+            {
+                type: 'answer',
+                q_num: 7,
+                title: 'AI 답변: 예제 입력 연산별 `parent` 배열 변화 추적',
+                content_text: `BOJ 1717 예제 입력 (n=7, m=8)에 대한 Union-Find 연산(경로 압축 적용) 시 \`parent\` 배열 변화 과정입니다.
+
+* <strong>초기 상태:</strong>
+    * \`parent = [0, 1, 2, 3, 4, 5, 6, 7]\` (각 원소가 자신을 가리킴)
+
+* <strong>1. 연산 \`0 1 3\` (union(1, 3)):</strong>
+    * \`find(1)\` -> 1 반환
+    * \`find(3)\` -> 3 반환
+    * \`rootA = 1\`, \`rootB = 3\`. 다르므로 합침. \`parent[3] = 1\`.
+    * <strong>결과:</strong> \`parent = [0, 1, 2, <strong>1</strong>, 4, 5, 6, 7]\`
+
+* <strong>2. 연산 \`1 1 7\` (find(1) == find(7)?):</strong>
+    * \`find(1)\` -> 1 반환
+    * \`find(7)\` -> 7 반환
+    * \`1 != 7\` 이므로 <strong>NO</strong> 출력.
+    * <strong>결과:</strong> \`parent = [0, 1, 2, 1, 4, 5, 6, 7]\` (변화 없음)
+
+* <strong>3. 연산 \`0 7 6\` (union(7, 6)):</strong>
+    * \`find(7)\` -> 7 반환
+    * \`find(6)\` -> 6 반환
+    * \`rootA = 7\`, \`rootB = 6\`. 다르므로 합침. \`parent[6] = 7\`.
+    * <strong>결과:</strong> \`parent = [0, 1, 2, 1, 4, 5, <strong>7</strong>, 7]\`
+
+* <strong>4. 연산 \`1 7 1\` (find(7) == find(1)?):</strong>
+    * \`find(7)\` -> 7 반환
+    * \`find(1)\` -> 1 반환
+    * \`7 != 1\` 이므로 <strong>NO</strong> 출력.
+    * <strong>결과:</strong> \`parent = [0, 1, 2, 1, 4, 5, 7, 7]\` (변화 없음)
+
+* <strong>5. 연산 \`0 3 7\` (union(3, 7)):</strong>
+    * \`find(3)\` 실행: \`parent[3]\`는 1 -> \`find(1)\` 호출 -> 1 반환. <strong>경로 압축: \`parent[3]\`은 이미 1이므로 변화 없음.</strong> \`rootA = 1\`.
+    * \`find(7)\` -> 7 반환. \`rootB = 7\`.
+    * \`rootA != rootB\`. 다르므로 합침. \`parent[7] = 1\`.
+    * <strong>결과:</strong> \`parent = [0, 1, 2, 1, 4, 5, 7, <strong>1</strong>]\`
+
+* <strong>6. 연산 \`0 4 2\` (union(4, 2)):</strong>
+    * \`find(4)\` -> 4 반환
+    * \`find(2)\` -> 2 반환
+    * \`rootA = 4\`, \`rootB = 2\`. 다르므로 합침. \`parent[2] = 4\`.
+    * <strong>결과:</strong> \`parent = [0, 1, <strong>4</strong>, 1, 4, 5, 7, 1]\`
+
+* <strong>7. 연산 \`0 5 4\` (union(5, 4)):</strong>
+    * \`find(5)\` -> 5 반환
+    * \`find(4)\` -> 4 반환
+    * \`rootA = 5\`, \`rootB = 4\`. 다르므로 합침. \`parent[4] = 5\`.
+    * <strong>결과:</strong> \`parent = [0, 1, 4, 1, <strong>5</strong>, 5, 7, 1]\`
+
+* <strong>8. 연산 \`1 1 7\` (find(1) == find(7)?):</strong>
+    * \`find(1)\` -> 1 반환
+    * \`find(7)\` 실행: \`parent[7]\`는 1 -> \`find(1)\` 호출 -> 1 반환. <strong>경로 압축: \`parent[7]\`은 이미 1이므로 변화 없음.</strong> \`rootB = 1\`.
+    * \`1 == 1\` 이므로 <strong>YES</strong> 출력.
+    * <strong>결과:</strong> \`parent = [0, 1, 4, 1, 5, 5, 7, 1]\` (변화 없음)`
+            },
+
+            {
+                type: 'question',
+                q_num: 8,
+                title: '예상 질문/답변 만들어줘',
+                content: `내가 Union-Find 알고리즘 발표할 때, 사람들이 할 만한 질문 5개랑 그럴듯한 답변 좀 만들어 줄래? 알고리즘 원리나 장단점, 실제 어디 쓰이는지 같은 거 물어볼 수 있잖아.`
+            },
+            {
+                type: 'answer',
+                q_num: 8,
+                title: 'AI 답변: Union-Find 발표 예상 질문 및 답변',
+                content_text: `Union-Find 알고리즘 발표 시 나올 수 있는 예상 질문과 답변입니다.
+
+<strong>Q1. Union-Find 알고리즘은 어떤 문제를 해결하는 데 주로 사용되나요? 실제 적용 사례가 있다면 알려주세요.</strong>
+
+> <strong>A1.</strong> Union-Find는 주로 <strong>동적인 연결 관계</strong>를 다루는 문제에 사용됩니다. 대표적으로 그래프에서 <strong>두 노드가 연결되어 있는지(같은 연결 요소에 속하는지)</strong> 빠르게 판별하거나, <strong>사이클(Cycle)이 발생하는지</strong> 확인할 때 유용합니다. 실제 적용 사례로는 최소 신장 트리(MST)를 구하는 <strong>크루스칼(Kruskal) 알고리즘</strong>에서 간선을 추가할 때 사이클 생성 여부를 확인하는 데 사용되며, 네트워크 연결 상태 확인, 이미지 처리에서의 객체 레이블링 등 다양한 분야에서 활용됩니다.
+
+<strong>Q2. 경로 압축(Path Compression)과 Union by Rank/Size 최적화는 왜 중요한가요? 둘 다 적용해야 하나요?</strong>
+
+> <strong>A2.</strong> 이 두 최적화 기법은 Union-Find 알고리즘의 <strong>시간 복잡도를 획기적으로 개선</strong>하기 때문에 매우 중요합니다. 최적화 없이는 트리가 한쪽으로 길게 치우쳐져 \`find\` 연산이 O(N)까지 느려질 수 있습니다. <strong>경로 압축</strong>은 \`find\` 연산 시 거쳐가는 노드들을 루트에 직접 연결하여 다음번 검색 속도를 높이고, <strong>Union by Rank/Size</strong>는 \`union\` 연산 시 트리의 높이(또는 크기)를 고려하여 더 균형 잡힌 트리를 유지하도록 돕습니다. 이론적으로 최상의 성능(거의 상수 시간, O(α(N)))을 위해서는 <strong>두 최적화를 함께 적용</strong>하는 것이 권장됩니다.
+
+<strong>Q3. Union-Find 알고리즘의 단점이나 한계점은 무엇인가요?</strong>
+
+> <strong>A3.</strong> 기본적인 Union-Find 구조의 주요 한계점은 <strong>한번 합쳐진 집합을 다시 분리하는 연산(split 또는 undo)을 효율적으로 지원하지 못한다</strong>는 것입니다. 경로 압축 과정에서 이전의 부모-자식 관계 정보가 손실되기 때문입니다. 이를 해결하려면 변경 로그를 추적하거나 영구적(Persistent) 자료구조를 사용하는 등 추가적인 구현이 필요하며, 이는 시간 또는 공간 복잡도를 증가시킬 수 있습니다.
+
+<strong>Q4. \`find\` 연산 시 재귀 대신 반복문으로도 구현할 수 있나요? 성능 차이가 있을까요?</strong>
+
+> <strong>A4.</strong> 네, \`find\` 연산은 <strong>반복문으로도 구현 가능</strong>합니다. 루트를 찾아 올라가는 과정과 경로 압축을 반복문을 이용해 구현할 수 있습니다. 성능 면에서는, 재귀 호출은 함수 호출 오버헤드가 발생할 수 있고 매우 깊은 트리에서는 스택 오버플로우 위험이 있습니다. 반면 반복문 구현은 이러한 오버헤드가 없고 스택 오버플로우 위험도 적지만, 코드가 조금 더 복잡해질 수 있습니다. 대부분의 경우 성능 차이는 미미하지만, 극한의 성능 최적화가 필요하거나 재귀 깊이 제한이 문제가 되는 환경에서는 반복문 구현이 선호될 수 있습니다.
+
+<strong>Q5. BOJ 1717 문제에서 N과 M의 범위가 매우 큰데, Union-Find가 어떻게 효율적으로 동작할 수 있나요?</strong>
+
+> <strong>A5.</strong> 문제에서 N(원소 개수)이 최대 100만, M(연산 개수)이 최대 10만입니다. 만약 각 연산이 O(N)이나 O(log N)의 시간이 걸린다면 시간 초과가 발생할 것입니다. 하지만 Union-Find는 경로 압축과 Union by Rank/Size 최적화를 통해 각 연산의 <strong>평균 시간 복잡도가 거의 상수 시간(O(α(N)))</strong>에 가깝습니다. α(N)은 N이 매우 커져도 5 미만의 작은 값을 가지므로, M개의 연산을 수행하는 총 시간 복잡도는 거의 O(M)에 가깝게 됩니다. 따라서 10만 번의 연산도 매우 빠르게 처리할 수 있어 효율적으로 동작합니다.`
+            },
+
+            {
+                type: 'question',
+                q_num: 9,
+                title: '까다로운 테스트 케이스 만들어줘',
+                content: `내가 만든 Union-Find 코드가 경로 압축 같은 최적화를 제대로 하는지 확인하고 싶어. 재귀가 엄청 깊어지거나 트리가 한쪽으로만 길어지는 그런 까다로운 테스트 케이스 5개 정도 만들어 줄 수 있을까?`
+            },
+            {
+                type: 'answer',
+                q_num: 9,
+                title: 'AI 답변: Union-Find 엣지 케이스 테스트 데이터',
+                content_text: `Union-Find 구현의 정확성과 최적화 효과를 검증하기 위한 까다로운 테스트 케이스 5가지입니다. (N=10 가정)
+
+<strong>테스트 케이스 1: 순차적 연결 (선형 트리 유도)</strong>
+* <strong>목표:</strong> 경로 압축이 없다면 \`find\` 연산이 O(N)이 되는 상황 유도.
+* <strong>연산:</strong>
+    \`\`\`
+    0 0 1
+    0 1 2
+    0 2 3
+    0 3 4
+    0 4 5
+    0 5 6
+    0 6 7
+    0 7 8
+    0 8 9
+    1 0 9 
+    \`\`\`
+* <strong>예상:</strong> 경로 압축이 잘 동작한다면 마지막 \`find(0)\` 호출 후 \`parent[0]\`~\`parent[8]\` 이 모두 루트(0 또는 9, 구현따라 다름)를 가리켜야 함.
+
+<strong>테스트 케이스 2: 한 노드에 모두 연결</strong>
+* <strong>목표:</strong> Union by Rank/Size 없이 구현 시, 한쪽으로 치우친 별 모양 트리 유도.
+* <strong>연산:</strong>
+    \`\`\`
+    0 0 1
+    0 0 2
+    0 0 3
+    0 0 4
+    0 0 5
+    1 1 5 
+    1 0 5 
+    \`\`\`
+* <strong>예상:</strong> Union by Rank/Size가 없다면 0이 루트가 되고 나머지가 모두 직접 자식이 될 수 있음. 경로 압축 효과는 크지 않음.
+
+<strong>테스트 케이스 3: 중간 노드를 통한 연결 및 경로 압축 확인</strong>
+* <strong>목표:</strong> 경로 압축 시 중간 노드들의 부모가 루트로 직접 변경되는지 확인.
+* <strong>연산:</strong>
+    \`\`\`
+    0 0 1
+    0 1 2
+    0 2 3
+    1 0 3 
+    0 4 5
+    0 5 6
+    0 6 7
+    0 3 7 
+    1 2 5 
+    \`\`\`
+* <strong>예상:</strong> \`find(3)\` 호출 후 \`parent[1]\`, \`parent[2]\`가 루트(0)를 가리켜야 함. \`find(2)\` 호출 시 \`parent[2]\`가 이미 루트여야 하고, \`find(5)\` 호출 후 \`parent[4]\`, \`parent[5]\`, \`parent[6]\`이 최종 루트를 가리켜야 함.
+
+<strong>테스트 케이스 4: 이미 합쳐진 집합에 대한 반복적인 Union 연산</strong>
+* <strong>목표:</strong> 이미 같은 집합인 원소들에 대해 \`union\` 연산을 반복 수행해도 구조나 결과가 변하지 않는지 확인.
+* <strong>연산:</strong>
+    \`\`\`
+    0 1 2
+    0 3 4
+    0 1 3 
+    0 2 4 
+    0 3 1 
+    1 1 4 
+    \`\`\`
+* <strong>예상:</strong> 불필요한 \`union\` 연산이 부작용을 일으키지 않아야 하며, \`find\` 결과는 동일해야 함.
+
+<strong>테스트 케이스 5: 크기가 큰 경우 (N=1,000,000, M=100,000) - 성능 테스트</strong>
+* <strong>목표:</strong> 대규모 입력에서 시간 초과 또는 스택 오버플로우(재귀 구현 시) 발생 여부 확인.
+* <strong>연산:</strong> (Python 코드로 생성 예시)
+    \`\`\`python
+    N, M = 1000000, 100000
+    print(f"{N} {M}")
+    for i in range(M // 2): 
+        print(f"0 {i} {(i + N // 2) % N}")
+    for i in range(M // 2): 
+        print(f"1 {i} {(i + M // 4) % N}")
+    \`\`\`
+* <strong>예상:</strong> 최적화가 잘 된 Union-Find 구현이라면 시간 제한 내에 통과해야 함. Python의 경우 \`sys.setrecursionlimit\` 조정 필요할 수 있음.
+`
+            },
+
+            {
+                type: 'question',
+                q_num: 10,
+                title: '다른 풀이법 알려줘',
+                content: `'집합의 표현' 문제를 Union-Find 말고 다른 방법으로도 풀 수 있을까? 예를 들면 인접 리스트랑 DFS/BFS 같은 걸로 말이야. 가능하다면 파이썬 코드로 예시 좀 보여주고, Union-Find 방식이랑 비교했을 때 장단점도 분석해줘.`
+            },
+            {
+                type: 'answer',
+                q_num: 10,
+                title: 'AI 답변: DFS/BFS를 이용한 풀이 및 비교',
+                content_text: `네, '집합의 표현' 문제는 인접 리스트와 그래프 탐색(DFS 또는 BFS)을 이용해서도 해결할 수 있습니다. 하지만 연산 방식이 달라지며, Union-Find에 비해 <strong>일반적으로 비효율적</strong>입니다.
+
+<strong>DFS/BFS를 이용한 접근 방식:</strong>
+
+1.  <strong>자료구조:</strong> 각 원소가 속한 집합 번호를 저장하는 배열(\`group_id\`)과 그래프를 표현할 인접 리스트(\`adjList\`)를 사용합니다. 초기에는 각 원소가 별도의 그룹 ID를 가집니다.
+2.  <strong>\`union(a, b)\` 연산:</strong>
+    * a와 b가 이미 같은 그룹 ID를 가지고 있다면 아무것도 하지 않습니다.
+    * 다른 그룹이라면, a가 속한 그룹의 모든 노드를 DFS 또는 BFS로 탐색하여 b의 그룹 ID로 변경합니다. (또는 그 반대)
+3.  <strong>\`find(a, b)\` (같은 집합 확인) 연산:</strong>
+    * a와 b의 그룹 ID(\`group_id[a]\`, \`group_id[b]\`)가 같은지 비교하여 반환합니다.
+
+<strong>Python 예시 코드 (DFS 사용):</strong>`,
+                content_code: {
+                    lang: 'python',
+                    code: `import sys
+sys.setrecursionlimit(10**6) 
+input = sys.stdin.readline
+
+def dfs_change_group(u, target_group_id, current_group_id, visited):
+    
+    visited[u] = True
+    group_id[u] = target_group_id
+    for v in adjList[u]:
+        if not visited[v] and group_id[v] == current_group_id:
+            dfs_change_group(v, target_group_id, current_group_id, visited)
+
+n, m = map(int, input().split())
+group_id = list(range(n + 1)) 
+adjList = [[] for _ in range(n + 1)] 
+edges = [] 
+
+for _ in range(m):
+    op, a, b = map(int, input().split())
+    if op == 0: 
+        
+        
+        if group_id[a] != group_id[b]:
+            
+            adjList[a].append(b)
+            adjList[b].append(a)
+            edges.append((a,b)) 
+
+            
+            group_to_change = max(group_id[a], group_id[b])
+            target_group = min(group_id[a], group_id[b])
+            visited = [False] * (n + 1)
+            
+            if group_id[a] == group_to_change:
+                 dfs_change_group(a, target_group, group_to_change, visited)
+            else:
+                 dfs_change_group(b, target_group, group_to_change, visited)
+
+    else: 
+        if group_id[a] == group_id[b]:
+            print("YES")
+        else:
+            
+            
+            print("NO")
+
+
+`
+                },
+                content_text_after_code: `<strong>Union-Find 방식과의 비교:</strong>
+
+* <strong>Union-Find:</strong>
+    * <strong>장점:</strong> \`union\`과 \`find\` 연산 모두 평균적으로 거의 상수 시간(O(α(N)))으로 매우 빠릅니다. 구현이 비교적 간단합니다.
+    * <strong>단점:</strong> 집합을 분리하는 연산이 어렵습니다.
+
+* <strong>DFS/BFS 방식:</strong>
+    * <strong>장점:</strong> 그래프 구조를 직접 관리하므로, 특정 그룹의 멤버를 모두 찾거나 그룹 관련 추가 정보를 관리하기 용이할 수 있습니다.
+    * <strong>단점:</strong>
+        * <strong>\`union\` 연산:</strong> 한 그룹의 모든 노드를 탐색하여 그룹 ID를 변경해야 하므로, 최악의 경우 O(N + E) (N: 정점 수, E: 간선 수)의 시간이 걸려 매우 비효율적입니다. (위 코드 기준)
+        * <strong>\`find\` (같은 집합 확인) 연산:</strong> 그룹 ID 배열만 사용하면 O(1)이지만, \`union\` 연산의 지연 반영 등을 고려하면 복잡해지고 O(1)을 보장하기 어려울 수 있습니다.
+        * <strong>구현 복잡도:</strong> \`union\` 시 그룹 ID를 효율적으로 변경하는 로직이 복잡합니다.
+
+<strong>결론:</strong>
+'집합의 표현' 문제와 같이 단순히 두 원소가 같은 집합에 속하는지만 빠르게 확인하고 집합을 합치는 연산이 주가 되는 경우에는 <strong>Union-Find 알고리즘이 압도적으로 효율적</strong>입니다. DFS/BFS 방식은 \`union\` 연산 비용이 너무 커서 시간 초과가 발생할 가능성이 높습니다.`
+            }
+        ];
+
+
+        const presentationContainer = document.getElementById('presentation-container');
+        let currentSlide = 0;
+
+        function renderSlides() {
+            presentationContainer.innerHTML = '';
+            presentationData.forEach((data, index) => {
+                let slideHtml = '';
+
+                const slideBaseClass = "slide flex-col p-6 md:p-10 absolute inset-0 items-center";
+
+                if (data.type === 'title') {
+
+                    slideHtml = `<div class="${slideBaseClass} justify-center text-center" data-slide-index="${index}">
+                        <h1 class="text-7xl md:text-8xl font-bold text-gray-800 mb-6">${data.title}</h1>
+                        <p class="text-4xl md:text-5xl text-gray-600 mb-16">${data.subtitle || ''}</p>
+                        <div class="mt-8 text-3xl md:text-4xl text-gray-600">
+                           <p>${data.author}</p>
+                           <p class="mt-2 font-semibold text-gray-700">${data.author_detail}</p>
+                        </div>
+                    </div>`;
+                } else if (data.type === 'toc') {
+
+                    slideHtml = `<div class="${slideBaseClass} justify-center" data-slide-index="${index}">
+                        <h2 class="text-5xl md:text-6xl font-bold mb-12 text-gray-800">${data.title}</h2>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6 text-2xl md:text-3xl text-gray-700 w-full max-w-6xl lg:max-w-7xl"> 
+                            ${data.items.map((item, i) => `<li class="toc-item flex items-start" data-goto-slide="${(i * 2) + 2}"><span class="text-gray-500 font-bold mr-3 w-8">${i + 1}.</span><span>${item}</span></li>`).join('')}
+                        </ul></div>`;
+                } else if (data.type === 'question') {
+
+                    slideHtml = `<div class="${slideBaseClass} question-slide justify-start" data-slide-index="${index}">
+                        <div class="w-full max-w-6xl lg:max-w-7xl mt-8 md:mt-12"> 
+                           <h2 class="text-4xl md:text-5xl font-bold mb-6 text-blue-800"><span class="bg-blue-200 text-blue-800 rounded-full px-4 py-1 mr-4">Q${data.q_num}</span>${data.title}</h2>
+                           <div class="slide-content-wrapper"> 
+                               <div class="slide-content answer-content bg-white p-6 rounded-lg border border-blue-200 shadow text-xl md:text-2xl leading-relaxed text-gray-800"> 
+                                   <p>${data.content.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')}</p>
+                               </div>
+                           </div>
+                        </div>
+                    </div>`;
+                } else if (data.type === 'answer') {
+                    let codeBlockHtml = '';
+                    if (data.content_code) {
+                        codeBlockHtml = `
+                         <div class="mt-6">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-600">코드 예시 (${data.content_code.lang}):</h3> 
+                            <div class="code-block dark-scrollbar bg-[#282c34] rounded-lg shadow-md p-4 text-base max-h-[45vh] overflow-auto"> 
+                               <pre><code class="language-${data.content_code.lang}">${data.content_code.code.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>
+                            </div>
+                         </div>`;
+                    }
+                    let afterCodeTextHtml = '';
+                    if (data.content_text_after_code) {
+                        afterCodeTextHtml = `<div class="mt-4 text-lg md:text-xl leading-relaxed text-gray-800">${data.content_text_after_code.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>').replace(/`([^`]+)`/g, '<code class="bg-gray-200 px-1 rounded text-sm">$1</code>').replace(/\n/g, '<br/>')}</div>`
+                    }
+
+                    slideHtml = `<div class="${slideBaseClass} answer-slide justify-start" data-slide-index="${index}">
+                        <div class="w-full max-w-6xl lg:max-w-7xl mt-8 md:mt-12"> 
+                            <h2 class="text-4xl md:text-5xl font-bold mb-6 text-green-800"><span class="bg-green-200 text-green-800 rounded-full px-4 py-1 mr-4">A${data.q_num}</span>${data.title}</h2>
+                            <div class="slide-content-wrapper"> 
+                                <div class="slide-content answer-content bg-white p-6 rounded-lg border border-green-200 shadow ">
+                                   <div class="text-lg md:text-xl leading-relaxed text-gray-800">${data.content_text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>').replace(/`([^`]+)`/g, '<code class="bg-gray-200 px-1 rounded text-sm">$1</code>').replace(/\n/g, '<br/>')}</div> 
+                                   ${codeBlockHtml}
+                                   ${afterCodeTextHtml}
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+
+                presentationContainer.insertAdjacentHTML('beforeend', slideHtml);
+            });
+
+
+            document.querySelectorAll('pre code').forEach(block => {
+                hljs.highlightElement(block);
+            });
+
+
+            document.querySelectorAll('.toc-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const slideIndex = parseInt(e.currentTarget.dataset.gotoSlide, 10);
+                    if (!isNaN(slideIndex)) {
+                        currentSlide = slideIndex;
+                        updateSlideState();
+                    }
+                });
+            });
+        }
+
+
+        function updateSlideState() {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, index) => slide.classList.toggle('active', index === currentSlide));
+        }
+
+
+        const goNext = () => {
+            if (currentSlide < presentationData.length - 1) {
+                currentSlide++;
+                updateSlideState();
+            }
+        };
+
+
+        const goPrev = () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlideState();
+            }
+        };
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSlides();
+            updateSlideState();
+
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') goNext();
+                if (e.key === 'ArrowLeft' || e.key === 'PageUp') goPrev();
+                if (e.key === 'Home') { currentSlide = 0; updateSlideState(); }
+                if (e.key === 'End') { currentSlide = presentationData.length - 1; updateSlideState(); }
+            });
+        });
+
+    </script>
+</body>
+
+</html>
