@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class bj6_11724 {
+public class bj7_11724 {
 
     static ArrayList<Integer>[] adjList;
     static boolean[] visited;
