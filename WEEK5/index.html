@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알고리즘 7문제: Java, Python, JS 풀이 분석 (WEEK5)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- 4주차 style.css 대신 5주차용 style.css를 링크합니다. -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-white text-black">
+
+    <div id="presentation-root" class="relative w-screen h-screen">
+        <div id="presentation-container" class="w-full h-full bg-white flex flex-col overflow-hidden">
+        </div>
+    </div>
+
+    <!-- 모달 HTML 구조 제거 -->
+
+    <script>
+        const presentationData = [
+            {
+                type: 'title',
+                title: '알고리즘 7문제 (5주차)',
+                author: '경성대학교 소프트웨어학과',
+                author_detail: '2021663046 이건우'
+            },
+            {
+                type: 'toc',
+                title: '발표 순서 (5주차)',
+                items: [
+                    '타임머신 (BOJ 11657)',
+                    '플로이드 (BOJ 11404)',
+                    '최소 스패닝 트리 (BOJ 1197)',
+                    '트리의 부모 찾기 (BOJ 11725)',
+                    '트리 (BOJ 1068)',
+                    '문자열 집합 (BOJ 14425)',
+                    '트리 순회 (BOJ 1991)'
+                ]
+            },
+            // --- 문제 1: 벨만-포드 ---
+            {
+                type: 'problem_detail',
+                title: '문제 1: 타임머신 (BOJ 11657)',
+                problem: 'N개의 도시와 M개의 버스 노선이 있다. 버스는 A에서 B로 가는 시간 C가 주어지는데, C는 양수, 0, 또는 **음수**일 수 있다. 1번 도시에서 나머지 모든 도시로 가는 **가장 빠른 시간**을 구하시오.',
+                input: 'N, M. 이후 M개의 줄에 A(시작), B(도착), C(시간)가 주어진다. C가 0이거나 음수일 수 있다. 1번 도시에서 출발한다.',
+                output: '1번 도시에서 2번..N번 도시로 가는 가장 빠른 시간을 순서대로 출력한다. 만약 시간이 무한히 오래 전으로 되돌아갈 수 있다면(음수 사이클) -1을 출력하고, 경로가 없다면 -1을 출력한다.',
+                example_input_1: `3 4
+1 2 4
+1 3 3
+2 3 -1
+3 1 -2`,
+                example_output_1: `-1`
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 벨만-포드 (Bellman-Ford)',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class bj1_11657 {
+    static class Edge {
+        int start, end, time;
+        public Edge(int start, int end, int time) {
+            this.start = start; this.end = end; this.time = time;
+        }
+    }
+    static final long INF = Long.MAX_VALUE;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+        ArrayList<Edge> edges = new ArrayList<>();
+        long[] dist = new long[N + 1];
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            edges.add(new Edge(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+        }
+        Arrays.fill(dist, INF);
+        dist[1] = 0;
+
+        // N-1번 모든 간선 확인
+        for (int i = 1; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                Edge edge = edges.get(j);
+                if (dist[edge.start] != INF && dist[edge.end] > dist[edge.start] + edge.time) {
+                    dist[edge.end] = dist[edge.start] + edge.time;
+                }
+            }
+        }
+        // N번째 확인 (음수 사이클 검사)
+        boolean hasNegativeCycle = false;
+        for (int j = 0; j < M; j++) {
+            Edge edge = edges.get(j);
+            if (dist[edge.start] != INF && dist[edge.end] > dist[edge.start] + edge.time) {
+                hasNegativeCycle = true;
+                break;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        if (hasNegativeCycle) {
+            sb.append("-1\\n");
+        } else {
+            for (int i = 2; i <= N; i++) {
+                sb.append(dist[i] == INF ? "-1" : dist[i]).append("\\n");
+            }
+        }
+        System.out.print(sb);
+    }
+}`,
+                    python: `import sys
+input = sys.stdin.readline
+INF = float('inf')
+
+class Edge:
+    def __init__(self, start, end, time):
+        self.start = start
+        self.end = end
+        self.time = time
+
+N, M = map(int, input().split())
+edges = []
+dist = [INF] * (N + 1)
+for _ in range(M):
+    A, B, C = map(int, input().split())
+    edges.append(Edge(A, B, C))
+dist[1] = 0
+
+for i in range(1, N):
+    for j in range(M):
+        edge = edges[j]
+        if dist[edge.start] != INF and dist[edge.end] > dist[edge.start] + edge.time:
+            dist[edge.end] = dist[edge.start] + edge.time
+
+hasNegativeCycle = False
+for j in range(M):
+    edge = edges[j]
+    if dist[edge.start] != INF and dist[edge.end] > dist[edge.start] + edge.time:
+        hasNegativeCycle = True
+        break
+
+if hasNegativeCycle:
+    print("-1")
+else:
+    for i in range(2, N + 1):
+        print(dist[i] if dist[i] != INF else "-1")`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+let lineIndex = 0;
+
+const [N, M] = input[lineIndex++].split(' ').map(Number);
+const edges = [];
+const dist = new Array(N + 1).fill(Infinity);
+
+for (let i = 0; i < M; i++) {
+    const [A, B, C] = input[lineIndex++].split(' ').map(Number);
+    edges.push({ start: A, end: B, time: C });
+}
+dist[1] = 0;
+
+for (let i = 1; i < N; i++) {
+    for (let j = 0; j < M; j++) {
+        const edge = edges[j];
+        if (dist[edge.start] !== Infinity && dist[edge.end] > dist[edge.start] + edge.time) {
+            dist[edge.end] = dist[edge.start] + edge.time;
+        }
+    }
+}
+
+let hasNegativeCycle = false;
+for (let j = 0; j < M; j++) {
+    const edge = edges[j];
+    if (dist[edge.start] !== Infinity && dist[edge.end] > dist[edge.start] + edge.time) {
+        hasNegativeCycle = true;
+        break;
+    }
+}
+
+const sb = [];
+if (hasNegativeCycle) {
+    sb.push("-1");
+} else {
+    for (let i = 2; i <= N; i++) {
+        sb.push(dist[i] === Infinity ? "-1" : dist[i]);
+    }
+}
+console.log(sb.join('\\n'));`
+                }
+            },
+            // --- 문제 2: 플로이드-워셜 ---
+            {
+                type: 'problem_detail',
+                title: '문제 2: 플로이드 (BOJ 11404)',
+                problem: 'N(100 이하)개의 도시가 있고, M개의 버스 노선이 있다. 모든 도시 쌍 (i, j)에 대해서 도시 i에서 j로 가는데 드는 **최소 비용**을 구하시오.',
+                input: 'N(도시 개수), M(버스 개수). 이후 M개의 줄에 A(시작), B(도착), C(비용)가 주어진다. 시작과 도착이 같은 경우는 없다.',
+                output: 'N개의 줄에 걸쳐, i번 줄에 i번 도시에서 1..N번 도시로 가는 최소 비용을 출력한다. 경로가 없으면 0을 출력한다.',
+                example_input_1: `5
+14
+1 2 2
+1 3 3
+1 4 1
+1 5 10
+2 4 2
+3 4 1
+3 5 1
+4 5 3
+3 5 10
+...`,
+                example_output_1: `0 2 3 1 4 
+12 0 15 2 5 
+11 13 0 1 2 
+10 12 13 0 3 
+INF INF INF INF 0 
+...`
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 플로이드-워셜 (Floyd-Warshall)',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class bj2_11404 {
+    static final int INF = 100_000_001; // (최대 비용 100,000 * N 100) 보다 큰 값
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        int m = Integer.parseInt(br.readLine());
+        int[][] dist = new int[n + 1][n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            Arrays.fill(dist[i], INF);
+            dist[i][i] = 0;
+        }
+        for (int i = 0; i < m; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+            dist[a][b] = Math.min(dist[a][b], c);
+        }
+
+        // 플로이드-워셜: k = 거쳐가는 노드
+        for (int k = 1; k <= n; k++) {
+            for (int i = 1; i <= n; i++) { // i = 출발
+                for (int j = 1; j <= n; j++) { // j = 도착
+                    dist[i][j] = Math.min(dist[i][j], dist[i][k] + dist[k][j]);
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                sb.append(dist[i][j] == INF ? "0 " : dist[i][j] + " ");
+            }
+            sb.append("\\n");
+        }
+        System.out.print(sb);
+    }
+}`,
+                    python: `import sys
+input = sys.stdin.readline
+INF = float("inf")
+
+n = int(input())
+m = int(input())
+dist = [[INF] * (n + 1) for _ in range(n + 1)]
+
+for i in range(1, n + 1):
+    dist[i][i] = 0
+for _ in range(m):
+    a, b, c = map(int, input().split())
+    dist[a][b] = min(dist[a][b], c)
+
+for k in range(1, n + 1):
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+
+for i in range(1, n + 1):
+    for j in range(1, n + 1):
+        print(dist[i][j] if dist[i][j] != INF else 0, end=" ")
+    print()`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+let lineIndex = 0;
+const n = parseInt(input[lineIndex++]);
+const m = parseInt(input[lineIndex++]);
+
+const INF = Infinity;
+const dist = Array.from({ length: n + 1 }, () => new Array(n + 1).fill(INF));
+for (let i = 1; i <= n; i++) dist[i][i] = 0;
+
+for (let i = 0; i < m; i++) {
+    const [a, b, c] = input[lineIndex++].split(' ').map(Number);
+    dist[a][b] = Math.min(dist[a][b], c);
+}
+
+for (let k = 1; k <= n; k++) {
+    for (let i = 1; i <= n; i++) {
+        for (let j = 1; j <= n; j++) {
+            dist[i][j] = Math.min(dist[i][j], dist[i][k] + dist[k][j]);
+        }
+    }
+}
+
+const sb = [];
+for (let i = 1; i <= n; i++) {
+    const row = [];
+    for (let j = 1; j <= n; j++) {
+        row.push(dist[i][j] === INF ? "0" : dist[i][j]);
+    }
+    sb.push(row.join(' '));
+}
+console.log(sb.join('\\n'));`
+                }
+            },
+            // --- 문제 3: 최소 스패닝 트리 ---
+            {
+                type: 'problem_detail',
+                title: '문제 3: 최소 스패닝 트리 (BOJ 1197)',
+                problem: '그래프가 주어졌을 때, 그 그래프의 **최소 스패닝 트리**를 구하는 프로그램을 작성하시오. MST는 주어진 그래프의 모든 정점을 연결하는 부분 그래프 중에서 그 가중치의 합이 최소인 트리를 말한다.',
+                input: 'V(정점 개수), E(간선 개수). 이후 E개의 줄에 A, B, C(가중치)가 주어진다. (1 ≤ V ≤ 10,000, 1 ≤ E ≤ 100,000)',
+                output: '첫째 줄에 최소 스패닝 트리의 가중치를 출력한다.',
+                example_input_1: `3 3
+1 2 1
+2 3 2
+1 3 3`,
+                example_output_1: `3`
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 크루스칼 (Kruskal) + Union-Find',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
+
+public class bj3_1197 {
+    static class Edge implements Comparable<Edge> {
+        int start, end, weight;
+        public Edge(int start, int end, int weight) {
+            this.start = start; this.end = end; this.weight = weight;
+        }
+        @Override
+        public int compareTo(Edge o) {
+            return this.weight - o.weight; // 가중치 오름차순
+        }
+    }
+    static int[] parent;
+    static int find(int x) {
+        if (parent[x] == x) return x;
+        return parent[x] = find(parent[x]);
+    }
+    static void union(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+        if (rootX != rootY) parent[rootY] = rootX;
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int V = Integer.parseInt(st.nextToken());
+        int E = Integer.parseInt(st.nextToken());
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
+        for (int i = 0; i < E; i++) {
+            st = new StringTokenizer(br.readLine());
+            pq.add(new Edge(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+        }
+        parent = new int[V + 1];
+        for (int i = 1; i <= V; i++) parent[i] = i;
+
+        long totalWeight = 0;
+        int edgeCount = 0;
+        while (!pq.isEmpty()) {
+            Edge edge = pq.poll();
+            if (find(edge.start) != find(edge.end)) { // 사이클이 생기지 않으면
+                union(edge.start, edge.end);
+                totalWeight += edge.weight;
+                edgeCount++;
+            }
+            if (edgeCount == V - 1) break;
+        }
+        System.out.println(totalWeight);
+    }
+}`,
+                    python: `import sys
+import heapq
+input = sys.stdin.readline
+sys.setrecursionlimit(10**6)
+
+def find(x):
+    if parent[x] == x:
+        return x
+    parent[x] = find(parent[x])
+    return parent[x]
+
+def union(x, y):
+    rootX = find(x)
+    rootY = find(y)
+    if rootX != rootY:
+        parent[rootY] = rootX
+
+V, E = map(int, input().split())
+pq = []
+for _ in range(E):
+    A, B, C = map(int, input().split())
+    heapq.heappush(pq, (C, A, B))
+
+parent = [i for i in range(V + 1)]
+totalWeight = 0
+edgeCount = 0
+
+while pq:
+    weight, start, end = heapq.heappop(pq)
+    if find(start) != find(end):
+        union(start, end)
+        totalWeight += weight
+        edgeCount += 1
+    if edgeCount == V - 1:
+        break
+print(totalWeight)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+let lineIndex = 0;
+// JS는 우선순위 큐가 내장되어 있지 않아, sort로 대체합니다.
+const [V, E] = input[lineIndex++].split(' ').map(Number);
+const edges = [];
+for (let i = 0; i < E; i++) {
+    const [A, B, C] = input[lineIndex++].split(' ').map(Number);
+    edges.push({ start: A, end: B, weight: C });
+}
+edges.sort((a, b) => a.weight - b.weight);
+
+const parent = Array.from({ length: V + 1 }, (_, i) => i);
+function find(x) {
+    if (parent[x] === x) return x;
+    return parent[x] = find(parent[x]);
+}
+function union(x, y) {
+    const rootX = find(x);
+    const rootY = find(y);
+    if (rootX !== rootY) parent[rootY] = rootX;
+}
+
+let totalWeight = 0;
+let edgeCount = 0;
+for (const edge of edges) {
+    if (find(edge.start) !== find(edge.end)) {
+        union(edge.start, edge.end);
+        totalWeight += edge.weight;
+        edgeCount++;
+    }
+    if (edgeCount === V - 1) break;
+}
+console.log(totalWeight);`
+                }
+            },
+            // --- 문제 4: 트리 (DFS) ---
+            {
+                type: 'problem_detail',
+                title: '문제 4: 트리의 부모 찾기 (BOJ 11725)',
+                problem: '루트가 1인 트리가 주어진다. 이때, 각 노드의 **부모를 구하는** 프로그램을 작성하시오.',
+                input: 'N(노드 개수). 이후 N-1개의 줄에 트리 상에서 연결된 두 정점이 주어진다. (2 ≤ N ≤ 100,000)',
+                output: '2번 노드부터 N번 노드까지, 각 노드의 부모 노드 번호를 순서대로 출력한다.',
+                example_input_1: `7
+1 6
+6 3
+3 5
+4 1
+2 4
+4 7`,
+                example_output_1: `4
+6
+1
+3
+1
+4`
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: DFS 또는 BFS',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+public class bj4_11725 {
+    static int N;
+    static boolean[] visited;
+    static int[] answer;
+    static ArrayList<Integer>[] tree;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        visited = new boolean[N + 1];
+        tree = new ArrayList[N + 1];
+        answer = new int[N + 1];
+        for (int i = 1; i <= N; i++) {
+            tree[i] = new ArrayList<>();
+        }
+        for (int i = 1; i < N; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int n1 = Integer.parseInt(st.nextToken());
+            int n2 = Integer.parseInt(st.nextToken());
+            tree[n1].add(n2);
+            tree[n2].add(n1);
+        }
+        DFS(1); // 루트(1)부터 탐색 시작
+        for (int i = 2; i <= N; i++) {
+            System.out.println(answer[i]);
+        }
+    }
+    
+    static void DFS(int number) {
+        visited[number] = true;
+        for (int child : tree[number]) {
+            if (!visited[child]) {
+                answer[child] = number; // child의 부모는 number
+                DFS(child);
+            }
+        }
+    }
+}`,
+                    python: `import sys
+sys.setrecursionlimit(10**6 + 1)
+input = sys.stdin.readline
+
+N = int(input())
+visited = [False] * (N + 1)
+answer = [0] * (N + 1)
+tree = [[] for _ in range(N + 1)]
+
+for _ in range(N - 1):
+    n1, n2 = map(int, input().split())
+    tree[n1].append(n2)
+    tree[n2].append(n1)
+
+def DFS(number):
+    visited[number] = True
+    for child in tree[number]:
+        if not visited[child]:
+            answer[child] = number
+            DFS(child)
+DFS(1)
+for i in range(2, N + 1):
+    print(answer[i])`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+let lineIndex = 0;
+
+const N = parseInt(input[lineIndex++]);
+
+const visited = new Array(N + 1).fill(false);
+const answer = new Array(N + 1).fill(0);
+const tree = Array.from({ length: N + 1 }, () => []);
+
+for (let i = 1; i < N; i++) {
+    const [n1, n2] = input[lineIndex++].split(' ').map(Number);
+    tree[n1].push(n2);
+    tree[n2].push(n1);
+}
+
+function DFS(number) {
+    visited[number] = true;
+    for (const child of tree[number]) {
+        if (!visited[child]) {
+            answer[child] = number;
+            DFS(child);
+        }
+    }
+}
+
+DFS(1);
+
+const sb = [];
+for (let i = 2; i <= N; i++) {
+    sb.push(answer[i]);
+}
+console.log(sb.join('\\n'));`
+                }
+            },
+            // --- 문제 5: 트리 (DFS) ---
+            {
+                type: 'problem_detail',
+                title: '문제 5: 트리 (BOJ 1068)',
+                problem: '트리에서 특정 노드를 지웠을 때, 남은 트리에서 **리프 노드의 개수**를 구하는 프로그램을 작성하시오. 노드를 지우면 그 노드의 모든 자식 노드와 그 자손 노드도 함께 지워진다.',
+                input: 'N(노드 개수). 다음 줄에 0..N-1번 노드의 부모가 주어진다. 부모가 없으면(루트) -1이 주어진다. 다음 줄에 지울 노드의 번호가 주어진다.',
+                output: '남은 트리에서의 리프 노드의 개수를 출력한다.',
+                example_input_1: `5
+-1 0 0 1 1
+2`,
+                example_output_1: `2`
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: DFS',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+public class bj5_1068 {
+    static ArrayList<Integer> arr[];
+    static int N;
+    static int root;
+    static int deleted;
+    static int leafcount;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        arr = new ArrayList[N];
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        deleted = Integer.parseInt(br.readLine());
+        for (int i = 0; i < arr.length; i++) arr[i] = new ArrayList<>();
+        
+        for (int now = 0; now < N; now++) {
+            int parent = Integer.parseInt(st.nextToken());
+            if (parent == -1) root = now;
+            else arr[parent].add(now);
+        }
+        
+        if (deleted == root) {
+            System.out.println(0);
+        } else {
+            DFS(root);
+            System.out.println(leafcount);
+        }
+    }
+
+    static void DFS(int number) {
+        boolean isLeaf = true;
+        for (int child : arr[number]) {
+            if (child == deleted) continue; // 삭제된 노드는 탐색 안함
+            isLeaf = false;
+            DFS(child);
+        }
+        if (isLeaf) {
+            leafcount++;
+        }
+    }
+}`,
+                    python: `import sys
+sys.setrecursionlimit(10**6)
+input = sys.stdin.readline
+
+N = int(input())
+parent_info = list(map(int, input().split()))
+deleted = int(input())
+arr = [[] for _ in range(N)]
+root = -1
+leafcount = 0
+
+for now in range(N):
+    parent = parent_info[now]
+    if parent == -1:
+        root = now
+    else:
+        arr[parent].append(now)
+
+def DFS(number):
+    global leafcount
+    isLeaf = True
+    for child in arr[number]:
+        if child == deleted:
+            continue
+        isLeaf = False
+        DFS(child)
+    if isLeaf:
+        leafcount += 1
+
+if deleted == root:
+    print(0)
+else:
+    DFS(root)
+    print(leafcount)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+let lineIndex = 0;
+
+const N = parseInt(input[lineIndex++]);
+const parentInfo = input[lineIndex++].split(' ').map(Number);
+const deleted = parseInt(input[lineIndex++]);
+
+const arr = Array.from({ length: N }, () => []);
+let root = -1;
+let leafcount = 0;
+
+for (let now = 0; now < N; now++) {
+    const parent = parentInfo[now];
+    if (parent === -1) root = now;
+    else arr[parent].push(now);
+}
+
+function DFS(number) {
+    let isLeaf = true;
+    for (const child of arr[number]) {
+        if (child === deleted) continue;
+        isLeaf = false;
+        DFS(child);
+    }
+    if (isLeaf) {
+        leafcount++;
+    }
+}
+
+if (deleted === root) {
+    console.log(0);
+} else {
+    // 루트가 존재하지 않는 경우(빈 트리) 방지
+    if (root !== -1) {
+        DFS(root);
+    }
+    console.log(leafcount);
+}`
+                }
+            },
+            // --- bj5_1068 자세히 보기 슬라이드 (신규) ---
+            {
+                type: 'explanation_slide',
+                title: 'BOJ 1068: 트리 - 자세히 보기',
+                content: `
+                    <h2>문제 이해: 리프 노드 찾기</h2>
+                    <p>이 문제는 '트리'라는 자료구조에서 특정 노드를 '제거'했을 때, 최종적으로 남는 '리프 노드'가 몇 개인지 묻는 문제입니다.</p>
+                    <ul>
+                        <li><strong>트리:</strong> 부모-자식 관계를 가진 계층형 자료구조입니다. (예: 회사 조직도)</li>
+                        <li><strong>리프 노드:</strong> 자식이 하나도 없는 노드, 즉 '말단' 노드를 의미합니다.</li>
+                        <li><strong>노드 제거:</strong> 어떤 노드를 제거하면, 그 노드뿐만 아니라 그 노드에 매달린 모든 자손(자식, 손자, ...)이 함께 사라집니다.</li>
+                    </ul>
+
+                    <h2>핵심 전략: DFS (깊이 우선 탐색)</h2>
+                    <p>트리의 모든 노드를 빠짐없이 방문하여 리프 노드인지 확인하는 가장 좋은 방법은 <strong>DFS(깊이 우선 탐색)</strong>입니다.</p>
+                    <ol>
+                        <li><strong>1. 트리 만들기:</strong> <code>-1 0 0 1 1</code>과 같은 부모 배열을 <strong>인접 리스트</strong>(<code>ArrayList&lt;Integer&gt; arr[]</code>)로 변환합니다. <code>arr[부모]</code>에 <code>자식</code>을 <code>add</code>합니다.</li>
+                        <li><strong>2. 루트 찾기:</strong> 부모가 <code>-1</code>인 노드가 트리의 시작점(루트)입니다.</li>
+                        <li><strong>3. 탐색 시작:</strong> 루트 노드부터 DFS를 시작합니다. (단, <strong>지울 노드가 루트라면 트리가 통째로 사라지므로 0을 출력</strong>하고 종료합니다.)</li>
+                    </ol>
+
+                    <h2>DFS 함수 상세 로직 (<code>DFS(int number)</code>)</h2>
+                    <p>현재 <code>number</code> 노드를 방문했을 때의 동작입니다.</p>
+<pre><code class="language-java">static void DFS(int number) {
+    boolean isLeaf = true; // (1) 일단 '리프 노드'라고 가정
+    
+    // (2) 현재 노드의 모든 자식들을 확인
+    for (int child : arr[number]) {
+        
+        // (3) [핵심] 만약 자식이 '지워진 노드'라면?
+        if (child == deleted) {
+            continue; // 이 자식은 없는 셈 치고 다음 자식으로 넘어감
+        }
+        
+        // (4) '지워지지 않은' 자식이 한 명이라도 있으면
+        isLeaf = false; // 'isLeaf' 가정을 취소 (나는 리프가 아님)
+        DFS(child);     // 그 자식 노드로 탐색을 이어감
+    }
+    
+    // (5) 모든 자식 확인 후, isLeaf가 여전히 true라면?
+    if (isLeaf) {
+        leafcount++; // (결론) 이 노드는 진짜 리프 노드임!
+    }
+}</code></pre>
+                    <ul>
+                        <li>이 로직의 핵심은 <code>isLeaf</code>라는 <strong>플래그 변수</strong>입니다.</li>
+                        <li>탐색을 시작할 때 '일단 리프라고 가정'하고, '지워지지 않은' 자식이 단 하나라도 발견되면 가정을 '취소'합니다.</li>
+                        <li>탐색을 모두 마쳤는데도 가정이 '유지'되었다면, 그 노드는 자식이 아예 없거나, 있던 자식이 지워진 노드뿐인 '진짜 리프 노드'임을 의미합니다.</li>
+                    </ul>
+                `
+            },
+            // --- 문제 6: 해시 ---
+            {
+                type: 'problem_detail',
+                title: '문제 6: 문자열 집합 (BOJ 14425)',
+                problem: '총 N개의 문자열로 이루어진 집합 S가 주어진다. M개의 문자열이 주어지는데, 이 문자열 중에서 **집합 S에 포함되어 있는 것**이 총 몇 개인지 구하시오.',
+                input: 'N, M. 이후 N개의 줄에 집합 S의 문자열, M개의 줄에 검사할 문자열이 주어진다. (1 ≤ N, M ≤ 10,000)',
+                output: 'M개의 문자열 중 S에 포함된 문자열의 개수를 출력한다.',
+                example_input_1: `5 11
+baekjoononlinejudge
+startlink
+codeplus
+sundaycoding
+codingsh
+baekjoon
+codeplus
+codeminus
+startlink
+...`,
+                example_output_1: `4`
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 해시 집합 (HashSet)',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.StringTokenizer;
+
+public class bj6_14425 {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+
+        // 1. 집합 S를 HashSet에 저장 (O(N * L))
+        HashSet<String> setS = new HashSet<>();
+        for (int i = 0; i < N; i++) {
+            setS.add(br.readLine());
+        }
+
+        int count = 0;
+        // 2. M개의 문자열을 contains로 검사 (O(M * L))
+        for (int i = 0; i < M; i++) {
+            if (setS.contains(br.readLine())) {
+                count++;
+            }
+        }
+        System.out.println(count);
+    }
+}`,
+                    python: `import sys
+input = sys.stdin.readline
+N, M = map(int, input().split())
+
+setS = set()
+for _ in range(N):
+    setS.add(input().strip())
+
+count = 0
+for _ in range(M):
+    if input().strip() in setS:
+        count += 1
+
+print(count)`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+let lineIndex = 0;
+
+const [N, M] = input[lineIndex++].split(' ').map(Number);
+
+const setS = new Set();
+for (let i = 0; i < N; i++) {
+    setS.add(input[lineIndex++]);
+}
+
+let count = 0;
+for (let i = 0; i < M; i++) {
+    if (setS.has(input[lineIndex++])) {
+        count++;
+    }
+}
+console.log(count);`
+                }
+            },
+            // --- 문제 7: 트리 순회 ---
+            {
+                type: 'problem_detail',
+                title: '문제 7: 트리 순회 (BOJ 1991)',
+                problem: '이진 트리를 입력받아 **전위 순회(preorder), 중위 순회(inorder), 후위 순회(postorder)**한 결과를 출력하는 프로그램을 작성하시오.',
+                input: 'N(노드 개수). N개의 줄에 각 노드와 그의 왼쪽 자식, 오른쪽 자식이 주어진다. (A~Z, 자식 없으면 .)',
+                output: '첫째 줄에 전위 순회, 둘째 줄에 중위 순회, 셋째 줄에 후위 순회 결과를 출력한다.',
+                example_input_1: `7
+A B C
+B D .
+C E F
+E . .
+F . G
+D . .
+G . .`,
+                example_output_1: `ABDCEFG
+DBAECFG
+DBEGFCA`
+            },
+            {
+                type: 'problem',
+                title: '알고리즘: 트리 순회 (재귀)',
+                codes: {
+                    java: `import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class bj7_1991 {
+    static class Node { char left, right; public Node(char left, char right) { this.left = left; this.right = right; } }
+    static Node[] tree;
+    static StringBuilder sb = new StringBuilder();
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(br.readLine());
+        tree = new Node[N]; // 0='A', 1='B', ...
+        for (int i = 0; i < N; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            char p = st.nextToken().charAt(0);
+            char l = st.nextToken().charAt(0);
+            char r = st.nextToken().charAt(0);
+            tree[p - 'A'] = new Node(l, r);
+        }
+        preorder('A'); sb.append("\\n");
+        inorder('A'); sb.append("\\n");
+        postorder('A'); sb.append("\\n");
+        System.out.println(sb);
+    }
+    // 전위: 루트 -> 좌 -> 우
+    public static void preorder(char c) {
+        if (c == '.') return; int i = c - 'A';
+        sb.append(c); preorder(tree[i].left); preorder(tree[i].right);
+    }
+    // 중위: 좌 -> 루트 -> 우
+    public static void inorder(char c) {
+        if (c == '.') return; int i = c - 'A';
+        inorder(tree[i].left); sb.append(c); inorder(tree[i].right);
+    }
+    // 후위: 좌 -> 우 -> 루트
+    public static void postorder(char c) {
+        if (c == '.') return; int i = c - 'A';
+        postorder(tree[i].left); postorder(tree[i].right); sb.append(c);
+    }
+}`,
+                    python: `import sys
+input = sys.stdin.readline
+N = int(input())
+tree = {}
+for _ in range(N):
+    parent, left, right = input().strip().split()
+    tree[parent] = (left, right)
+
+def preorder(current):
+    if current == ".": return
+    print(current, end="")
+    preorder(tree[current][0])
+    preorder(tree[current][1])
+
+def inorder(current):
+    if current == ".": return
+    inorder(tree[current][0])
+    print(current, end="")
+    inorder(tree[current][1])
+
+def postorder(current):
+    if current == ".": return
+    postorder(tree[current][0])
+    postorder(tree[current][1])
+    print(current, end="")
+
+preorder("A"); print()
+inorder("A"); print()
+postorder("A"); print()`,
+                    javascript: `const fs = require('fs');
+const input = fs.readFileSync('/dev/stdin').toString().trim().split('\\n');
+let lineIndex = 0;
+const N = parseInt(input[lineIndex++]);
+const tree = {};
+for (let i = 0; i < N; i++) {
+    const [parent, left, right] = input[lineIndex++].split(' ');
+    tree[parent] = { left, right };
+}
+
+let resultPre = "", resultIn = "", resultPost = "";
+
+function preorder(current) {
+    if (current === '.') return;
+    resultPre += current; preorder(tree[current].left); preorder(tree[current].right);
+}
+function inorder(current) {
+    if (current === '.') return;
+    inorder(tree[current].left); resultIn += current; inorder(tree[current].right);
+}
+function postorder(current) {
+    if (current === '.') return;
+    postorder(tree[current].left); postorder(tree[current].right); resultPost += current;
+}
+
+preorder('A'); inorder('A'); postorder('A');
+console.log(resultPre);
+console.log(resultIn);
+console.log(resultPost);`
+                }
+            }
+        ]; // presentationData 배열 끝
+
+        const presentationContainer = document.getElementById('presentation-container');
+        let currentSlide = 0;
+        let currentLang = 0;
+
+        function renderSlides() {
+            presentationContainer.innerHTML = '';
+            presentationData.forEach((data, index) => {
+                let slideHtml = '';
+
+                if (data.type === 'title') {
+                    slideHtml = `<div class="slide flex-col items-center justify-center p-8 text-center" data-slide-index="${index}">
+                        <h1 class="text-8xl md:text-9xl font-bold text-gray-800 mb-16">${data.title}</h1>
+                        <div class="mt-8 text-4xl md:text-5xl text-gray-600">
+                           <p>${data.author}</p>
+                           <p class="mt-2 font-semibold text-gray-700">${data.author_detail}</p>
+                        </div>
+                    </div>`;
+                } else if (data.type === 'toc') {
+                    slideHtml = `<div class="slide flex-col items-center justify-center p-8" data-slide-index="${index}">
+                        <h2 class="text-7xl md:text-8xl font-bold mb-16 text-gray-800">${data.title}</h2>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-10 text-4xl md:text-5xl text-gray-700">
+                            ${data.items.map((item, i) => `<li class="toc-item flex items-center" data-goto-slide="${(i * 2) + 2}"><span class="text-gray-500 font-bold mr-6">${i + 1}.</span>${item}</li>`).join('')}
+                        </ul></div>`;
+                } else if (data.type === 'problem_detail') {
+                    // 5주차: '자세히 보기' 버튼 제거
+                    slideHtml = `
+                        <div class="slide flex-col p-8 md:p-12 bg-gray-50 relative" data-slide-index="${index}">
+                            <h2 class="text-5xl md:text-6xl font-bold mb-8 text-gray-800 self-start">${data.title}</h2>
+                            <div class="w-full flex-1 grid grid-cols-1 lg:grid-cols-5 gap-6 overflow-hidden">
+                                <div class="lg:col-span-3 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                                    <h3 class="text-3xl font-semibold text-sky-700 mb-4 flex-shrink-0">문제 설명</h3>
+                                    <div class="overflow-auto problem-detail-box flex-1">
+                                      <p class="text-2xl text-gray-700 leading-relaxed whitespace-pre-line">${data.problem}</p>
+                                    </div>
+                                </div>
+                                <div class="lg:col-span-2 flex flex-col gap-6">
+                                    <div class="flex-1 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                                        <h3 class="text-3xl font-semibold text-sky-700 mb-4 flex-shrink-0">입출력 형식</h3>
+                                        <div class="grid grid-cols-1 gap-4 overflow-auto problem-detail-box flex-1">
+                                            <div>
+                                                <h4 class="text-2xl font-semibold text-gray-600 mb-2">입력</h4>
+                                                <p class="text-xl text-gray-600 leading-relaxed whitespace-pre-line">${data.input}</p>
+                                            </div>
+                                            <hr class="my-2 border-gray-200">
+                                            <div>
+                                                <h4 class="text-2xl font-semibold text-gray-600 mb-2">출력</h4>
+                                                <p class="text-xl text-gray-600 leading-relaxed whitespace-pre-line">${data.output}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                                        <h3 class="text-3xl font-semibold text-sky-700 mb-4 flex-shrink-0">예제</h3>
+                                        <div class="grid grid-cols-2 gap-4 flex-1 overflow-hidden">
+                                            <div class="example-box">
+                                                <h4 class="text-2xl font-semibold text-gray-600 mb-2">입력</h4>
+                                                <pre class="text-xl">${data.example_input_1 || ''}</pre>
+                                            </div>
+                                            <div class="example-box">
+                                                <h4 class="text-2xl font-semibold text-gray-600 mb-2">출력</h4>
+                                                <pre class="text-xl">${data.example_output_1 || ''}</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+
+                } else if (data.type === 'problem') {
+                    const languages = ['java', 'python', 'javascript'];
+                    let codeBlocksHtml = '';
+
+                    languages.forEach(lang => {
+                        const codeString = data.codes[lang] || '';
+                        const langSpecificCode = codeString.replace(/\\n/g, '\n');
+
+                        const innerHtml = `
+                            <div class="code-block dark-scrollbar bg-[#282c34] rounded-xl shadow-lg p-4 text-2xl h-full overflow-auto">
+                                <pre><code class="language-${lang}">${langSpecificCode.trim()}</code></pre>
+                            </div>`;
+
+                        codeBlocksHtml += `<div class="code-container h-full" data-lang="${lang}">${innerHtml}</div>`;
+                    });
+
+                    slideHtml = `
+                        <div class="slide flex-col p-8 md:p-12" data-slide-index="${index}" data-is-problem="true">
+                            <div class="flex-shrink-0">
+                                <h2 class="text-6xl md:text-7xl font-bold mb-4 text-gray-800">${data.title}</h2>
+                            </div>
+                            <div class="flex-1 mt-4 flex flex-col min-h-0">
+                                <div class="flex items-center justify-center space-x-6 mb-4">
+                                    <span class="lang-indicator java text-4xl font-bold p-2 cursor-pointer">Java</span>
+                                    <span class="lang-indicator python text-4xl font-bold p-2 cursor-pointer">Python</span>
+                                    <span class="lang-indicator javascript text-4xl font-bold p-2 cursor-pointer">JavaScript</span>
+                                </div>
+                                <div class="flex-1 relative min-h-0">${codeBlocksHtml}</div>
+                            </div>
+                        </div>`;
+                } else if (data.type === 'explanation_slide') {
+                    // (신규) 자세히 보기 슬라이드 렌더링
+                    slideHtml = `
+                        <div class="slide flex-col p-8 md:p-12 bg-sky-50" data-slide-index="${index}">
+                            <div class="flex-shrink-0 w-full max-w-7xl mx-auto">
+                                <h2 class="text-6xl md:text-7xl font-bold mb-8 text-sky-800">${data.title}</h2>
+                            </div>
+                            <div class="flex-1 min-h-0 w-full">
+                                <div class="explanation-slide-content">
+                                    ${data.content}
+                                </div>
+                            </div>
+                        </div>`;
+                }
+                presentationContainer.insertAdjacentHTML('beforeend', slideHtml);
+            });
+
+            document.querySelectorAll('pre code').forEach(block => {
+                block.innerHTML = block.innerHTML.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                hljs.highlightElement(block);
+            });
+
+            document.querySelectorAll('.toc-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const slideIndex = parseInt(e.currentTarget.dataset.gotoSlide, 10);
+                    if (!isNaN(slideIndex)) {
+                        currentSlide = slideIndex;
+                        currentLang = 0;
+                        updateSlideState();
+                    }
+                });
+            });
+        }
+
+        function updateSlideState() {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, index) => slide.classList.toggle('active', index === currentSlide));
+
+            const activeSlide = slides[currentSlide];
+            if (activeSlide && activeSlide.dataset.isProblem) {
+                const languages = ['java', 'python', 'javascript'];
+                const currentLangName = languages[currentLang];
+
+                activeSlide.querySelectorAll('.lang-indicator').forEach((indicator, index) => {
+                    const isActive = index === currentLang;
+                    indicator.classList.toggle('text-sky-600', isActive);
+                    indicator.classList.toggle('text-gray-300', !isActive);
+                    indicator.style.transform = isActive ? 'scale(1.15)' : 'scale(1.0)';
+                    indicator.onclick = () => {
+                        currentLang = index;
+                        updateSlideState();
+                    };
+                });
+
+                activeSlide.querySelectorAll('.code-container').forEach(container => {
+                    const isActive = container.dataset.lang === currentLangName;
+                    container.classList.toggle('visible', isActive);
+                });
+            }
+        }
+
+        const goNext = () => {
+            const activeSlide = document.querySelector('.slide.active');
+            if (!activeSlide) return;
+
+            if (activeSlide.dataset.isProblem && currentLang < 2) {
+                currentLang++;
+            } else {
+                if (currentSlide < presentationData.length - 1) {
+                    currentSlide++;
+                    currentLang = 0;
+                }
+            }
+            updateSlideState();
+        };
+
+        const goPrev = () => {
+            const activeSlide = document.querySelector('.slide.active');
+            if (!activeSlide) return;
+
+            if (activeSlide.dataset.isProblem && currentLang > 0) {
+                currentLang--;
+            } else {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    const prevSlide = document.querySelector(`[data-slide-index="${currentSlide}"]`);
+                    currentLang = prevSlide.dataset.isProblem ? 2 : 0;
+                }
+            }
+            updateSlideState();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSlides();
+            updateSlideState();
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') goNext();
+                if (e.key === 'ArrowLeft' || e.key === 'PageUp') goPrev();
+            });
+        });
+    </script>
+</body>
+
+</html>
