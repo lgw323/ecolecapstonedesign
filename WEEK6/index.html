@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알고리즘 8문제 (6주차) - BOJ Style</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Github Style Highlight (Light Theme) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-white overflow-hidden">
+
+    <div id="presentation-root" class="relative w-screen h-screen">
+        <!-- 슬라이드 컨테이너 -->
+        <div id="presentation-container" class="w-full h-full flex flex-col">
+            <!-- JS 주입 -->
+        </div>
+    </div>
+
+    <script src="data_part1.js"></script>
+    <script src="data_part2.js"></script>
+
+    <script>
+        const presentationData = [...presentationData_part1, ...presentationData_part2];
+        const presentationContainer = document.getElementById('presentation-container');
+
+        let currentSlide = 0;
+        let currentLang = 0; // 0: Java, 1: Python, 2: JS
+
+        function renderSlides() {
+            presentationContainer.innerHTML = '';
+            presentationData.forEach((data, index) => {
+                let slideHtml = '';
+
+                // 1. 표지
+                if (data.type === 'title') {
+                    slideHtml = `
+                    <div class="slide flex-col items-center justify-center p-12 text-center" data-slide-index="${index}">
+                        <div class="border-4 border-[#0076C0] rounded-3xl p-20 bg-white shadow-xl">
+                            <img src="https://d2gd6pc034wcta.cloudfront.net/images/logo@2x.png" alt="BOJ Logo" class="h-24 mx-auto mb-12">
+                            <h1 class="text-title mb-16 text-7xl">${data.title}</h1>
+                            <div class="mt-10">
+                               <p class="text-subtitle mb-4 text-gray-500">${data.author}</p>
+                               <p class="text-5xl font-bold text-[#0076C0]">${data.author_detail}</p>
+                            </div>
+                        </div>
+                    </div>`;
+
+                    // 2. 목차
+                } else if (data.type === 'toc') {
+                    slideHtml = `
+                    <div class="slide flex-col items-center justify-center p-16" data-slide-index="${index}">
+                        <h2 class="text-title mb-20 border-b-8 border-[#0076C0] pb-6 px-12">목 차</h2>
+                        <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-40 gap-y-12 w-full max-w-8xl">
+                            ${data.items.map((item, i) => `
+                                <li class="toc-item flex items-center" data-goto-slide="${getProblemSlideIndex(i)}">
+                                    <span class="text-[#0076C0] mr-8 w-20 text-right font-extrabold">${i + 1}.</span>
+                                    <span>${item}</span>
+                                </li>`).join('')}
+                        </ul>
+                    </div>`;
+
+                    // 3. 문제 상세 (Vertical Stack Layout)
+                } else if (data.type === 'problem_detail') {
+                    slideHtml = `
+                    <div class="slide flex-col p-12" data-slide-index="${index}">
+                        <h2 class="text-6xl font-extrabold mb-8 text-[#0076C0] border-l-[12px] border-[#0076C0] pl-8 shrink-0">${data.title}</h2>
+                        
+                        <div class="flex-1 flex flex-col gap-10 min-h-0">
+                            <!-- 상단: 설명 (40%) -->
+                            <div class="flex gap-12 h-[40%]">
+                                <div class="boj-card flex-[3] flex flex-col overflow-hidden border-2 border-gray-300">
+                                    <h3 class="section-title">📝 문제</h3>
+                                    <div class="overflow-auto pr-4">
+                                        <p class="content-text mt-2">${data.problem}</p>
+                                    </div>
+                                </div>
+                                <div class="boj-card flex-[2] flex flex-col overflow-hidden border-2 border-gray-300 bg-gray-50">
+                                    <h3 class="section-title">📥 조건</h3>
+                                    <div class="overflow-auto pr-4">
+                                        <p class="content-text mt-2 text-gray-700">${data.input}</p>
+                                        <p class="content-text mt-4 text-gray-700 border-t-2 border-gray-300 pt-4">${data.output}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 하단: 예제 (60% - 핵심) -->
+                            <div class="h-[60%] flex gap-12">
+                                <div class="flex-1 flex flex-col min-h-0">
+                                    <span class="text-3xl font-bold mb-4 text-[#0076C0] pl-2">예제 입력</span>
+                                    <div class="example-container shadow-md">
+                                        <pre>${data.example_input_1 || ''}</pre>
+                                    </div>
+                                </div>
+                                <div class="flex-1 flex flex-col min-h-0">
+                                    <span class="text-3xl font-bold mb-4 text-[#0076C0] pl-2">예제 출력</span>
+                                    <div class="example-container shadow-md">
+                                        <pre>${data.example_output_1 || ''}</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+
+                    // 4. 코드 화면
+                } else if (data.type === 'problem') {
+                    const languages = ['java', 'python', 'javascript'];
+                    let codeBlocksHtml = '';
+
+                    languages.forEach(lang => {
+                        const codeString = data.codes[lang] || '';
+                        const escapedCode = codeString
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/"/g, "&quot;")
+                            .replace(/'/g, "&#039;")
+                            .replace(/\\n/g, '\n');
+
+                        codeBlocksHtml += `
+                            <div class="code-container h-full p-12" data-lang="${lang}">
+                                <div class="w-full h-full overflow-hidden flex flex-col rounded-2xl shadow-2xl border-4 border-[#0076C0]">
+                                    <pre class="code-block"><code class="language-${lang} h-full">${escapedCode.trim()}</code></pre>
+                                </div>
+                            </div>`;
+                    });
+
+                    slideHtml = `
+                        <div class="slide flex-col bg-white" data-slide-index="${index}" data-is-problem="true">
+                            <div class="flex justify-between items-center px-12 pt-12 pb-4 shrink-0 border-b-4 border-gray-200">
+                                <h2 class="text-6xl font-bold text-[#333]">${data.title}</h2>
+                                <div class="flex space-x-12">
+                                    <span class="lang-indicator java">Java</span>
+                                    <span class="lang-indicator python">Python</span>
+                                    <span class="lang-indicator javascript">Node.js</span>
+                                </div>
+                            </div>
+                            <div class="flex-1 relative w-full min-h-0 bg-[#F8F9FA]">
+                                ${codeBlocksHtml}
+                            </div>
+                        </div>`;
+
+                    // 5. 심화 설명
+                } else if (data.type === 'explanation_slide') {
+                    slideHtml = `
+                        <div class="slide flex-col p-12" data-slide-index="${index}">
+                            <h2 class="text-6xl font-bold mb-12 text-[#0076C0] border-b-8 border-[#0076C0] pb-6 w-full">${data.title}</h2>
+                            <div class="flex-1 boj-card overflow-hidden shadow-xl border-4 border-gray-300">
+                                <div class="explanation-slide-content h-full overflow-auto p-8">
+                                    ${data.content}
+                                </div>
+                            </div>
+                        </div>`;
+                }
+
+                presentationContainer.insertAdjacentHTML('beforeend', slideHtml);
+            });
+
+            document.querySelectorAll('pre code').forEach(block => {
+                hljs.highlightElement(block);
+            });
+
+            document.querySelectorAll('.toc-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const slideIndex = parseInt(e.currentTarget.dataset.gotoSlide, 10);
+                    if (!isNaN(slideIndex)) {
+                        currentSlide = slideIndex;
+                        currentLang = 0;
+                        updateSlideState();
+                    }
+                });
+            });
+        }
+
+        function getProblemSlideIndex(problemIndex) {
+            let count = 0;
+            for (let i = 0; i < presentationData.length; i++) {
+                if (presentationData[i].type === 'problem_detail') {
+                    if (count === problemIndex) return i;
+                    count++;
+                }
+            }
+            return 0;
+        }
+
+        function updateSlideState() {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+
+            const activeSlide = slides[currentSlide];
+            if (activeSlide && activeSlide.dataset.isProblem === 'true') {
+                const languages = ['java', 'python', 'javascript'];
+                const currentLangName = languages[currentLang];
+
+                activeSlide.querySelectorAll('.lang-indicator').forEach((indicator, index) => {
+                    const isActive = index === currentLang;
+                    indicator.classList.toggle('active', isActive);
+                });
+
+                activeSlide.querySelectorAll('.code-container').forEach(container => {
+                    const isActive = container.dataset.lang === currentLangName;
+                    container.classList.toggle('visible', isActive);
+                });
+            }
+        }
+
+        const goNext = () => {
+            const activeSlide = document.querySelector('.slide.active');
+            if (!activeSlide) return;
+
+            if (activeSlide.dataset.isProblem === 'true') {
+                if (currentLang < 2) {
+                    currentLang++;
+                    updateSlideState();
+                    return;
+                }
+                currentLang = 0;
+            }
+
+            if (currentSlide < presentationData.length - 1) {
+                currentSlide++;
+                if (presentationData[currentSlide].type === 'problem') {
+                    currentLang = 0;
+                }
+                updateSlideState();
+            }
+        };
+
+        const goPrev = () => {
+            const activeSlide = document.querySelector('.slide.active');
+            if (!activeSlide) return;
+
+            if (activeSlide.dataset.isProblem === 'true') {
+                if (currentLang > 0) {
+                    currentLang--;
+                    updateSlideState();
+                    return;
+                }
+            }
+
+            if (currentSlide > 0) {
+                currentSlide--;
+                if (presentationData[currentSlide].type === 'problem') {
+                    currentLang = 2;
+                } else {
+                    currentLang = 0;
+                }
+                updateSlideState();
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSlides();
+            updateSlideState();
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+                    e.preventDefault();
+                    goNext();
+                }
+                if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                    e.preventDefault();
+                    goPrev();
+                }
+                if (e.key === 'Home') { currentSlide = 0; currentLang = 0; updateSlideState(); }
+                if (e.key === 'End') {
+                    currentSlide = presentationData.length - 1;
+                    currentLang = 0;
+                    updateSlideState();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
