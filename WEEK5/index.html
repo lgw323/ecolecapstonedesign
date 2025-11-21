@@ -614,6 +614,116 @@ console.log(sb.join('\\n'));`
 2`,
                 example_output_1: `2`
             },
+            // --- bj5_1068 자세히 보기 슬라이드 (신규) ---
+            {
+                type: 'explanation_slide',
+                title: 'BOJ 1068: 트리 - 자세히 보기', // [!] 제목 수정
+
+                // [!] content 속성값 전체를 이 내용으로 교체
+                content: `
+                    <style>
+                        /* 다이어그램 가독성을 위한 스타일 */
+                        .tree-diagram {
+                            font-family: 'D2Coding', 'Consolas', monospace;
+                            font-size: 1.5rem; /* 24px */
+                            line-height: 1.8;
+                            background-color: #f8fafc; /* bg-slate-50 */
+                            padding: 1.5rem;
+                            border-radius: 0.5rem; /* rounded-lg */
+                            border: 1px solid #e2e8f0; /* border-slate-200 */
+                            overflow-x: auto;
+                        }
+                        .tree-diagram .deleted {
+                            color: #ef4444; /* text-red-500 */
+                            text-decoration: line-through;
+                        }
+                        .tree-diagram .target {
+                            color: #ef4444; /* text-red-500 */
+                            font-weight: 600; /* font-semibold */
+                        }
+                        .tree-diagram .leaf {
+                            color: #16a34a; /* text-green-600 */
+                            font-weight: 600;
+                        }
+                    </style>
+
+                    <h2>🎯 문제 비유하기: "회사 조직도와 구조조정"</h2>
+                    <p>이 문제는 '트리'를 '회사 조직도'에 비유하면 아주 쉽게 이해할 수 있습니다.</p>
+                    <ul style="list-style-type: '✔️ '; padding-left: 2rem;">
+                        <li><strong>트리 (Tree)</strong> = 🏢 회사 조직도</li>
+                        <li><strong>루트 (Root, -1)</strong> = 👑 사장님 (CEO)</li>
+                        <li><strong>노드 (Node)</strong> = 👨‍💻 직원</li>
+                        <li><strong>리프 노드 (Leaf)</strong> = 👶 직속 부하가 없는 '막내 사원'</li>
+                        <li><strong>지울 노드 (Deleted)</strong> = ❌ 구조조정(해고) 대상 직원</li>
+                    </ul>
+                    <p style="margin-top: 1rem;"><strong>규칙:</strong> 특정 직원이 해고되면, 그 아래의 모든 부하 직원들(자손)도 <strong>함께 해고</strong>됩니다.<br>
+                       <strong>목표:</strong> 구조조정 후, 회사에 남아있는 <strong>'막내 사원(👶)'이 총 몇 명</strong>인지 세는 것입니다.</p>
+
+                    <h2 style="margin-top: 2.5rem;">🖼️ 예제 시각화: 조직도는 어떻게 변할까?</h2>
+                    <p>예제 입력(<code>N=5</code>, 부모: <code>-1 0 0 1 1</code>, 지울 노드: <code>2</code>)을 조직도로 그려보겠습니다.</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div>
+                            <h3>[BEFORE] 🏢 초기 조직도</h3>
+                            <pre class="tree-diagram">
+👑 0 (사장님)
+   ├── 👨‍💼 1 (팀장)
+   │   ├── 👶 3 (막내)
+   │   └── 👶 4 (막내)
+   └── 👨‍💼 2 (팀장) <span class="target">(❌ 해고 대상)</span></pre>
+                        </div>
+                        <div>
+                            <h3>[AFTER] 💥 구조조정 후</h3>
+                            <pre class="tree-diagram">
+👑 0 (사장님)
+   ├── 👨‍💼 1 (팀장)
+   │   ├── <span class="leaf">👶 3 (남은 막내)</span>
+   │   └── <span class="leaf">👶 4 (남은 막내)</span>
+   └── <span class="deleted">👨‍💼 2 (해고됨)</span></pre>
+                        </div>
+                    </div>
+                    <p style="text-align: center; font-size: 1.5rem; margin-top: 1rem;">
+                        남아있는 '막내 사원'은 3번, 4번 ➡️ <strong>총 2명</strong>입니다.
+                    </p>
+
+                    <h2 style="margin-top: 2.5rem;">🧭 탐색 전략: "사장님의 하향식 순찰 (DFS)"</h2>
+                    <p>남아있는 막내 사원을 찾으려면, '사장님(루트)'부터 모든 직원을 빠짐없이 방문(순찰)해야 합니다.<br>
+                       이때 'DFS(깊이 우선 탐색)' 방식을 사용합니다.</p>
+                    <ul style="list-style-type: '➡️ '; padding-left: 2rem;">
+                        <li><strong>DFS란?</strong> '사장님'이 '1번 팀장'에게 순찰을 지시하면, '1번 팀장'은 보고를 올리기 <strong>전에</strong> 자기 부하인 '3번 사원'을 먼저 순찰시킵니다. 이렇게 한 줄기를 끝까지 파고들었다가(Depth-First) 다시 올라와 다음 줄기로 가는 방식입니다.</li>
+                    </ul>
+                    
+                    <h2 style="margin-top: 2.5rem;">💻 코드와 비유 연결: "진짜 '막내'는 누구?"</h2>
+                    <p>가장 까다로운 부분은, <strong>팀원들이 모두 해고당해서 '본의 아니게' 막내가 된 팀장</strong>도 세어야 한다는 것입니다.<br>
+                       코드는 이 상황을 <code>isLeaf</code>라는 깃발(🚩)로 확인합니다.</p>
+                    <pre><code class="language-java">
+static void DFS(int number) {
+    // (1) "일단 이 직원(number)은 '막내'라고 가정 (깃발 🚩을 든다)"
+    boolean isLeaf = true; 
+    
+    // (2) "그의 직속 부하(child)들을 한 명씩 확인"
+    for (int child : arr[number]) {
+        
+        // (3) "[검문 1] 이 부하가 해고 명단(deleted)에 있나?"
+        if (child == deleted) {
+            continue; // 해고된 직원은 없는 셈 친다. (무시)
+        }
+        
+        // (4) "[검문 2] 오! 해고되지 않은 부하가 한 명이라도 있네!"
+        isLeaf = false; // "그럼 이 직원은 막내가 아니다! (깃발 🏳️을 내린다)"
+        DFS(child);     // "이제 이 부하에게 순찰을 넘긴다."
+    }
+    
+    // (5) "모든 부하를 다 확인했는데도... 깃발이 여전히 들려있나? 🚩"
+    if (isLeaf) {
+        leafcount++; // "그렇다면 이 직원은 '진짜 막내'다! 카운트!"
+    }
+}</code></pre>
+
+                    <h2 style="margin-top: 2.5rem;">⚠️ 최종 함정: "사장님이 해고되면?"</h2>
+                    <p>만약 '사장님(루트)'이 구조조정 대상이라면? 조직도 전체가 사라집니다.<br>
+                       따라서 순찰(DFS)을 시작하기 전에 <code>if (deleted == root)</code>인지 먼저 확인해서, 맞다면 <code>0</code>을 출력하고 즉시 종료해야 합니다.</p>
+                `
+            },
             {
                 type: 'problem',
                 title: '알고리즘: DFS',
@@ -739,57 +849,6 @@ if (deleted === root) {
     console.log(leafcount);
 }`
                 }
-            },
-            // --- bj5_1068 자세히 보기 슬라이드 (신규) ---
-            {
-                type: 'explanation_slide',
-                title: 'BOJ 1068: 트리 - 자세히 보기',
-                content: `
-                    <h2>문제 이해: 리프 노드 찾기</h2>
-                    <p>이 문제는 '트리'라는 자료구조에서 특정 노드를 '제거'했을 때, 최종적으로 남는 '리프 노드'가 몇 개인지 묻는 문제입니다.</p>
-                    <ul>
-                        <li><strong>트리:</strong> 부모-자식 관계를 가진 계층형 자료구조입니다. (예: 회사 조직도)</li>
-                        <li><strong>리프 노드:</strong> 자식이 하나도 없는 노드, 즉 '말단' 노드를 의미합니다.</li>
-                        <li><strong>노드 제거:</strong> 어떤 노드를 제거하면, 그 노드뿐만 아니라 그 노드에 매달린 모든 자손(자식, 손자, ...)이 함께 사라집니다.</li>
-                    </ul>
-
-                    <h2>핵심 전략: DFS (깊이 우선 탐색)</h2>
-                    <p>트리의 모든 노드를 빠짐없이 방문하여 리프 노드인지 확인하는 가장 좋은 방법은 <strong>DFS(깊이 우선 탐색)</strong>입니다.</p>
-                    <ol>
-                        <li><strong>1. 트리 만들기:</strong> <code>-1 0 0 1 1</code>과 같은 부모 배열을 <strong>인접 리스트</strong>(<code>ArrayList&lt;Integer&gt; arr[]</code>)로 변환합니다. <code>arr[부모]</code>에 <code>자식</code>을 <code>add</code>합니다.</li>
-                        <li><strong>2. 루트 찾기:</strong> 부모가 <code>-1</code>인 노드가 트리의 시작점(루트)입니다.</li>
-                        <li><strong>3. 탐색 시작:</strong> 루트 노드부터 DFS를 시작합니다. (단, <strong>지울 노드가 루트라면 트리가 통째로 사라지므로 0을 출력</strong>하고 종료합니다.)</li>
-                    </ol>
-
-                    <h2>DFS 함수 상세 로직 (<code>DFS(int number)</code>)</h2>
-                    <p>현재 <code>number</code> 노드를 방문했을 때의 동작입니다.</p>
-<pre><code class="language-java">static void DFS(int number) {
-    boolean isLeaf = true; // (1) 일단 '리프 노드'라고 가정
-    
-    // (2) 현재 노드의 모든 자식들을 확인
-    for (int child : arr[number]) {
-        
-        // (3) [핵심] 만약 자식이 '지워진 노드'라면?
-        if (child == deleted) {
-            continue; // 이 자식은 없는 셈 치고 다음 자식으로 넘어감
-        }
-        
-        // (4) '지워지지 않은' 자식이 한 명이라도 있으면
-        isLeaf = false; // 'isLeaf' 가정을 취소 (나는 리프가 아님)
-        DFS(child);     // 그 자식 노드로 탐색을 이어감
-    }
-    
-    // (5) 모든 자식 확인 후, isLeaf가 여전히 true라면?
-    if (isLeaf) {
-        leafcount++; // (결론) 이 노드는 진짜 리프 노드임!
-    }
-}</code></pre>
-                    <ul>
-                        <li>이 로직의 핵심은 <code>isLeaf</code>라는 <strong>플래그 변수</strong>입니다.</li>
-                        <li>탐색을 시작할 때 '일단 리프라고 가정'하고, '지워지지 않은' 자식이 단 하나라도 발견되면 가정을 '취소'합니다.</li>
-                        <li>탐색을 모두 마쳤는데도 가정이 '유지'되었다면, 그 노드는 자식이 아예 없거나, 있던 자식이 지워진 노드뿐인 '진짜 리프 노드'임을 의미합니다.</li>
-                    </ul>
-                `
             },
             // --- 문제 6: 해시 ---
             {
@@ -1037,7 +1096,7 @@ console.log(resultPost);`
                                 <div class="lg:col-span-3 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
                                     <h3 class="text-3xl font-semibold text-sky-700 mb-4 flex-shrink-0">문제 설명</h3>
                                     <div class="overflow-auto problem-detail-box flex-1">
-                                      <p class="text-2xl text-gray-700 leading-relaxed whitespace-pre-line">${data.problem}</p>
+                                        <p class="text-2xl text-gray-700 leading-relaxed whitespace-pre-line">${data.problem.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</p>
                                     </div>
                                 </div>
                                 <div class="lg:col-span-2 flex flex-col gap-6">

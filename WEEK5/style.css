@@ -159,11 +159,8 @@ body {
 
 /* --- (신규) 자세히 보기 슬라이드 스타일 --- */
 .explanation-slide-content {
-    max-width: 80rem;
-    /* 최대 너비 */
     width: 100%;
-    margin: 0 auto;
-    height: calc(100% - 12rem);
+    height: calc(100% - 1.5rem);
     /* 제목 제외 높이 */
     overflow-y: auto;
     background-color: #ffffff;
@@ -232,4 +229,28 @@ body {
     color: inherit;
     padding: 0;
     font-size: 1rem;
+}
+
+.lg\:col-span-3 .problem-detail-box p {
+    font-size: 2.25rem !important;
+    /* 36px */
+    line-height: 1.5 !important;
+}
+
+.lg\:col-span-2 .problem-detail-box p {
+    font-size: 1.875rem !important;
+    /* 30px */
+    line-height: 1.5 !important;
+}
+
+.example-box pre {
+    font-size: 1.875rem !important;
+    /* 30px */
+    line-height: 1.5 !important;
+}
+
+.explanation-slide-content pre .hljs-comment {
+    color: #fcd34d;
+    /* text-yellow-300 - 어두운 배경에서 잘 보이도록 주석 색상 밝게 */
+    font-style: italic;
 }
