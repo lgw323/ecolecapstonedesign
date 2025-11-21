@@ -432,111 +432,232 @@ console.log(output.join('\\n'));`
 1`
     },
 
-    // --- [심화 분석] 1. 문제 해부 ---
+    // --- [심화 분석] 1. 용어 정리 (그림) ---
     {
         type: 'explanation_slide',
-        title: '심화 분석 1: 문제 해부',
+        title: '심화 분석 1: 문제 속 용어, 그림으로 이해하기',
         content: `
-            <h3 class="text-4xl font-bold text-[#0076C0] mb-8">📌 문제 상황 정의</h3>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 text-3xl text-gray-800 leading-relaxed">
-                <div class="bg-[#F7F7F9] p-8 rounded-xl border border-gray-300">
-                    <strong class="block mb-4 text-black text-4xl">1. 트리 구조</strong>
-                    <p>N개의 정점이 연결되어 있고, 순환(Cycle)이 없는 구조입니다. <strong>1번이 루트(꼭대기)</strong>입니다.</p>
+            <div class="flex flex-col h-full justify-center">
+                <h3 class="text-4xl font-bold text-gray-800 mb-8">🌲 트리의 가족 관계도</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="bg-gray-900 text-white p-8 rounded-xl font-mono text-3xl leading-relaxed shadow-lg">
+<pre>
+      1 (루트: 왕)
+     / \\
+    2   3
+   / \\
+  4   5
+</pre>
+                    </div>
+                    <div class="space-y-6 text-3xl text-gray-700">
+                        <p><strong class="text-[#0076C0]">정점 (Node):</strong> 번호가 붙은 동그라미 (1~5)</p>
+                        <p><strong class="text-[#0076C0]">부모 (Parent):</strong> 나랑 연결된 <strong>바로 위</strong> 노드<br>(4의 부모는 2)</p>
+                        <p><strong class="text-[#0076C0]">조상 (Ancestor):</strong> 내 머리 위에 있는 <strong>모든</strong> 노드<br>(4의 조상은 2, 1)</p>
+                    </div>
                 </div>
-                <div class="bg-[#F7F7F9] p-8 rounded-xl border border-gray-300">
-                    <strong class="block mb-4 text-black text-4xl">2. 목표 (LCA)</strong>
-                    <p>두 노드 A, B가 주어졌을 때, 위쪽으로 올라가면서 만나는 조상 중 <strong>가장 가까운(깊은)</strong> 녀석을 찾아야 합니다.</p>
-                </div>
-            </div>
-            <div class="mt-12 p-8 bg-white border-l-8 border-red-500 shadow-md">
-                <p class="text-3xl font-bold text-red-600 mb-4">⚠️ 제약 조건의 압박</p>
-                <p class="text-3xl text-gray-800">
-                    정점(N) 10만 개, 질문(M) 10만 번.<br>
-                    단순하게 찾으면 100억 번 연산 ➡️ <strong>시간 초과 확정!</strong>
-                </p>
             </div>
         `
     },
 
-    // --- [심화 분석] 2. 시뮬레이션 (실패) ---
+    // --- [심화 분석] 2. 목표 시뮬레이션 ---
     {
         type: 'explanation_slide',
-        title: '심화 분석 2: 왜 실패하는가?',
+        title: '심화 분석 2: 무엇을 구해야 하는가?',
         content: `
-            <h3 class="text-4xl font-bold text-red-600 mb-8">❌ 기존 방법: 한 칸씩 올라가기</h3>
-            <div class="text-3xl text-gray-800 leading-loose">
-                <p class="mb-8">
-                    가장 단순한 방법은 두 노드의 깊이를 맞추고, <br>
-                    같아질 때까지 <strong>한 칸씩 부모로 이동</strong>하는 것입니다.
-                </p>
-                <div class="bg-gray-100 p-8 rounded-xl border border-gray-300 font-mono">
-                    while (parent[A] != parent[B]) {<br>
-                    &nbsp;&nbsp;A = parent[A]; // 한 칸 위로<br>
-                    &nbsp;&nbsp;B = parent[B]; // 한 칸 위로<br>
-                    }
+            <div class="flex flex-col h-full">
+                <h3 class="text-4xl font-bold text-gray-800 mb-8">🎯 목표: 공통 조상 중 '가장 가까운' 분 찾기</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center h-full">
+                    <div class="bg-gray-100 p-8 rounded-xl border-l-8 border-[#0076C0] text-3xl leading-relaxed">
+                        <p class="mb-6"><strong>질문:</strong> "4번과 5번의 공통 조상은?"</p>
+                        <ul class="list-disc list-inside space-y-4">
+                            <li>4번의 조상: <strong>2</strong>, <strong>1</strong></li>
+                            <li>5번의 조상: <strong>2</strong>, <strong>1</strong></li>
+                            <li>공통 조상: 2, 1</li>
+                        </ul>
+                        <p class="mt-8 text-[#0076C0] font-bold">
+                            가장 가까운(깊은) 정답(LCA): <span class="text-5xl text-red-600 align-middle">2</span>
+                        </p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-xl flex justify-center items-center">
+                        <div class="font-mono text-4xl leading-loose">
+<pre>
+      1
+     / \\
+    <span class="text-red-600 font-bold">2</span>   3
+   <span class="text-blue-500">/</span> <span class="text-blue-500">\\</span>
+  <span class="text-blue-600 font-bold">4</span>   <span class="text-blue-600 font-bold">5</span>
+</pre>
+                        </div>
+                    </div>
                 </div>
-                <p class="mt-8 text-red-600 font-bold">
-                    트리가 일직선이라면? 깊이가 10만이면?<br>
-                    10만(깊이) × 10만(질문) = 100억 번 연산 (100초 소요) 🐢
-                </p>
             </div>
         `
     },
 
-    // --- [심화 분석] 3. 해결책 ---
+    // --- [심화 분석] 3. 난이도 (시간 초과) ---
     {
         type: 'explanation_slide',
-        title: '심화 분석 3: 해결책 (희소 배열)',
+        title: '심화 분석 3: 그냥 찾으면 안 되나요? (시간 초과)',
         content: `
-            <h3 class="text-4xl font-bold text-[#0076C0] mb-8">💡 아이디어: 2의 제곱수로 점프!</h3>
-            <div class="text-3xl text-gray-800 leading-relaxed">
-                <p class="mb-8">
-                    한 칸씩 가지 말고, <strong>축지법(점프)</strong>을 씁니다.<br>
-                    모든 노드에게 미리 <strong>2^k 번째 조상</strong>을 외우게 시킵니다.
-                </p>
-                <ul class="list-disc pl-12 space-y-4 bg-[#F0F8FF] p-8 rounded-xl border border-[#0076C0]">
-                    <li>나의 <strong>1번째</strong> ($2^0$) 조상 (부모)</li>
-                    <li>나의 <strong>2번째</strong> ($2^1$) 조상 (부모의 부모)</li>
-                    <li>나의 <strong>4번째</strong> ($2^2$) 조상</li>
-                    <li>... 나의 <strong>65536번째</strong> ($2^{16}$) 조상</li>
-                </ul>
-                <p class="mt-8">
-                    이렇게 하면 아무리 깊어도 <strong>최대 17번</strong> 점프만으로 도달 가능합니다! 🚀
-                </p>
+            <div class="flex flex-col h-full justify-center">
+                <h3 class="text-4xl font-bold text-red-600 mb-8">🐢 왜 어려운가? (시간 초과 경고)</h3>
+                <div class="bg-red-50 border-4 border-red-200 rounded-2xl p-10 space-y-8">
+                    <div class="flex items-start gap-8">
+                        <div class="text-6xl">😱</div>
+                        <div>
+                            <h4 class="text-4xl font-bold text-gray-800 mb-4">최악의 시나리오: 일직선 트리</h4>
+                            <p class="text-3xl text-gray-700 font-mono bg-white inline-block px-4 py-2 rounded">1 - 2 - 3 - ... - 100,000</p>
+                        </div>
+                    </div>
+                    
+                    <hr class="border-red-200">
+
+                    <div class="space-y-6 text-3xl text-gray-800">
+                        <p><strong>상황:</strong> 지하 10만 층(N)에서 꼭대기 1층까지 걸어서 가야 함.</p>
+                        <p><strong>미션:</strong> 이 짓을 10만 번(M) 반복해야 함.</p>
+                        <p class="bg-white p-6 rounded-xl shadow-inner">
+                            <span class="font-bold text-red-600">100,000 (깊이) × 100,000 (질문) = 100억 번 연산</span><br>
+                            <span class="text-2xl text-gray-500 mt-2">컴퓨터 처리 속도: 1초에 약 1억 번 ➡️ <strong>100초 소요 (시간 초과!)</strong></span>
+                        </p>
+                    </div>
+                </div>
             </div>
         `
     },
 
-    // --- [심화 분석] 4. 과정 및 요약 ---
+    // --- [심화 분석] 4. 해결책 (희소 배열) ---
     {
         type: 'explanation_slide',
-        title: '심화 분석 4: 코드 구현 요약',
+        title: '심화 분석 4: 해결책 - 2의 제곱수로 점프! (희소 배열)',
         content: `
-            <h3 class="text-4xl font-bold text-[#0076C0] mb-8">💻 핵심 로직 요약</h3>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 h-full">
-                <div class="text-3xl text-gray-800 space-y-6">
-                    <div class="p-6 border-l-8 border-green-500 bg-green-50">
-                        <strong>1. 족보 만들기 (전처리)</strong><br>
-                        <span class="text-2xl text-gray-600">"내 8번째 조상은 = 내 4번째 조상의 4번째 조상이다"</span>
+            <div class="flex flex-col h-full justify-center">
+                <h3 class="text-4xl font-bold text-[#0076C0] mb-8">⚡ 해결책: 2의 제곱수로 점프! (희소 배열)</h3>
+                
+                <div class="grid grid-cols-2 gap-12">
+                    <div class="space-y-8">
+                        <div class="bg-blue-50 p-8 rounded-xl border-l-8 border-blue-500">
+                            <h4 class="text-3xl font-bold mb-4">🚀 아이디어: 축지법</h4>
+                            <p class="text-3xl leading-relaxed">
+                                한 칸씩 기어가지 말고,<br>
+                                <strong>2의 k승 칸씩 껑충</strong> 뛰어서 가자!
+                            </p>
+                        </div>
+                        <div class="text-3xl text-gray-700 space-y-4">
+                            <p>✔️ 2^0 = 1번째 조상 (부모)</p>
+                            <p>✔️ 2^1 = 2번째 조상</p>
+                            <p>✔️ 2^2 = 4번째 조상</p>
+                            <p>✔️ 2^16 ≈ 65,536번째 조상</p>
+                        </div>
                     </div>
-                    <div class="p-6 border-l-8 border-blue-500 bg-blue-50">
-                        <strong>2. 깊이 맞추기</strong><br>
-                        <span class="text-2xl text-gray-600">큰 보폭부터 점프하여 두 노드의 높이를 맞춘다.</span>
-                    </div>
-                    <div class="p-6 border-l-8 border-purple-500 bg-purple-50">
-                        <strong>3. 같이 점프하기</strong><br>
-                        <span class="text-2xl text-gray-600">만나기 <strong>직전</strong>까지 같이 점프한 뒤, 한 칸 위가 정답!</span>
+
+                    <div class="bg-gray-800 text-green-400 p-8 rounded-xl font-mono text-2xl flex flex-col justify-center items-center shadow-2xl">
+                        <p class="mb-6 text-white">10만 층을 올라가는 횟수 비교</p>
+                        <div class="w-full space-y-4">
+                            <div class="flex justify-between border-b border-gray-600 pb-2">
+                                <span>기존 방식</span>
+                                <span class="text-red-400">100,000번</span>
+                            </div>
+                            <div class="flex justify-between text-3xl font-bold">
+                                <span>점프 방식</span>
+                                <span class="text-yellow-400">단 17번!</span>
+                            </div>
+                        </div>
+                        <p class="mt-6 text-gray-400 text-xl">(2^17 > 100,000)</p>
                     </div>
                 </div>
-                <div class="bg-[#282c34] p-6 rounded-xl border border-gray-500 overflow-hidden flex flex-col justify-center">
-                    <pre><code class="language-java text-2xl text-white font-mono">
-// 2^k번째 조상 채우기 (점화식)
-for (int k = 1; k <= K_MAX; k++) {
-    for (int n = 1; n <= N; n++) {
-        parent[k][n] = 
-          parent[k-1][ parent[k-1][n] ];
-    }
-}</code></pre>
+            </div>
+        `
+    },
+
+    // --- [심화 분석] 5. 동작 과정 ---
+    {
+        type: 'explanation_slide',
+        title: '심화 분석 5: 알고리즘 동작 과정',
+        content: `
+            <div class="flex flex-col h-full">
+                <h3 class="text-4xl font-bold text-gray-800 mb-8">👣 실전 풀이 과정 (알고리즘 동작)</h3>
+                <div class="grid grid-cols-3 gap-6 h-full text-center">
+                    
+                    <!-- Step 1 -->
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-lg flex flex-col">
+                        <div class="bg-[#0076C0] text-white text-2xl font-bold py-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">1</div>
+                        <h4 class="text-2xl font-bold mb-4">깊이(Depth) 맞추기</h4>
+                        <div class="flex-1 bg-gray-50 rounded-lg p-4 flex items-center justify-center text-6xl">
+                            📏
+                        </div>
+                        <p class="text-xl text-gray-600 mt-4 text-left">
+                            더 깊이 있는 녀석을 끄집어 올려서 <strong>같은 층</strong>에 세웁니다.<br>
+                            (큰 점프부터 시도)
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-lg flex flex-col">
+                        <div class="bg-[#0076C0] text-white text-2xl font-bold py-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">2</div>
+                        <h4 class="text-2xl font-bold mb-4">같이 점프하기</h4>
+                        <div class="flex-1 bg-gray-50 rounded-lg p-4 flex items-center justify-center text-6xl">
+                            🏃💨 🏃💨
+                        </div>
+                        <p class="text-xl text-gray-600 mt-4 text-left">
+                            두 노드가 <strong>다를 때만</strong> 위로 점프합니다.<br>
+                            (만나기 <strong>직전</strong>까지 이동)
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-lg flex flex-col">
+                        <div class="bg-[#0076C0] text-white text-2xl font-bold py-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">3</div>
+                        <h4 class="text-2xl font-bold mb-4">정답 찾기</h4>
+                        <div class="flex-1 bg-gray-50 rounded-lg p-4 flex items-center justify-center text-6xl">
+                            🏁
+                        </div>
+                        <p class="text-xl text-gray-600 mt-4 text-left">
+                            도착한 곳의 <strong>바로 위 부모</strong>가 진짜 공통 조상(LCA)입니다.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        `
+    },
+
+    // --- [심화 분석] 6. 코드 연결 ---
+    {
+        type: 'explanation_slide',
+        title: '심화 분석 6: 코드로 구현하기 (3단계)',
+        content: `
+            <div class="flex flex-col h-full justify-center">
+                <h3 class="text-4xl font-bold text-[#0076C0] mb-8">💻 코드 구현 3단계 (요약)</h3>
+                
+                <div class="space-y-6 text-2xl">
+                    
+                    <div class="flex items-center bg-gray-50 p-6 rounded-xl border-l-8 border-green-500 shadow-sm">
+                        <div class="font-bold w-32 text-green-700">STEP 1</div>
+                        <div class="flex-1">
+                            <strong>DFS 탐색:</strong><br>
+                            누가 몇 층에 사는지, 1번째 부모는 누구인지 조사합니다.
+                            <code class="block mt-2 text-gray-500 text-xl font-mono">depth[node] = d; parent[0][node] = p;</code>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center bg-gray-50 p-6 rounded-xl border-l-8 border-blue-500 shadow-sm">
+                        <div class="font-bold w-32 text-blue-700">STEP 2</div>
+                        <div class="flex-1">
+                            <strong>족보 만들기 (DP):</strong> <span class="text-red-500 text-sm font-bold align-top">★핵심</span><br>
+                            점화식을 이용해 2의 k승번째 조상을 모두 채웁니다.
+                            <code class="block mt-2 text-blue-600 text-xl font-mono bg-blue-100 p-2 rounded">parent[k][n] = parent[k-1][ parent[k-1][n] ];</code>
+                            <span class="text-gray-500 text-lg">(내 8번째 위 = 내 4번째 위의 4번째 위)</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center bg-gray-50 p-6 rounded-xl border-l-8 border-purple-500 shadow-sm">
+                        <div class="font-bold w-32 text-purple-700">STEP 3</div>
+                        <div class="flex-1">
+                            <strong>LCA Query:</strong><br>
+                            입력이 들어오면 <strong>깊이를 맞추고</strong> &rarr; <strong>점프</strong>해서 정답을 출력!
+                        </div>
+                    </div>
+
                 </div>
             </div>
         `
