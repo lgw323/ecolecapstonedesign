@@ -569,92 +569,177 @@ console.log(output.join('\\n'));`
         `
     },
 
-    // --- [심화 분석] 5. 동작 과정 ---
+    // --- [심화 분석 5-1] 1단계: 키 맞추기 ---
     {
         type: 'explanation_slide',
-        title: '심화 분석 5: 알고리즘 동작 과정',
+        title: '심화 분석 5-1: 1단계 - 키 맞추기',
         content: `
-            <div class="flex flex-col h-full">
-                <h3 class="text-4xl font-bold text-gray-800 mb-8">👣 실전 풀이 과정 (알고리즘 동작)</h3>
-                <div class="grid grid-cols-3 gap-6 h-full text-center">
-                    
-                    <!-- Step 1 -->
-                    <div class="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-lg flex flex-col">
-                        <div class="bg-[#0076C0] text-white text-2xl font-bold py-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">1</div>
-                        <h4 class="text-2xl font-bold mb-4">깊이(Depth) 맞추기</h4>
-                        <div class="flex-1 bg-gray-50 rounded-lg p-4 flex items-center justify-center text-6xl">
-                            📏
+            <div class="flex flex-col h-full justify-center">
+                <h3 class="text-5xl font-bold text-gray-800 mb-16 leading-tight">📏 "일단 같은 층에 서야<br>말이 통한다"</h3>
+                
+                <div class="grid grid-cols-2 gap-20 items-center">
+                    <!-- 상황 설명 -->
+                    <div class="space-y-10">
+                        <div class="bg-blue-50 p-10 rounded-3xl border-l-[12px] border-[#0076C0]">
+                            <h4 class="text-4xl font-bold mb-6 text-[#0076C0]">상황 발생</h4>
+                            <p class="text-4xl leading-relaxed text-gray-700 font-medium">
+                                "철수야(지하 5층),<br>영희(지하 3층)랑 만나야지?"<br>
+                                <span class="text-gray-500 text-3xl mt-4 block">→ 층수가 달라서 만날 수 없음.</span>
+                            </p>
                         </div>
-                        <p class="text-xl text-gray-600 mt-4 text-left">
-                            더 깊이 있는 녀석을 끄집어 올려서 <strong>같은 층</strong>에 세웁니다.<br>
-                            (큰 점프부터 시도)
-                        </p>
+                        <div class="bg-gray-100 p-10 rounded-3xl">
+                            <h4 class="text-4xl font-bold mb-6 text-gray-800">해결책</h4>
+                            <p class="text-4xl leading-relaxed text-gray-700 font-medium">
+                                더 깊은 곳에 있는 친구를<br>
+                                <strong>엘리베이터 태워서 위로 올림!</strong>
+                            </p>
+                        </div>
                     </div>
 
-                    <!-- Step 2 -->
-                    <div class="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-lg flex flex-col">
-                        <div class="bg-[#0076C0] text-white text-2xl font-bold py-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">2</div>
-                        <h4 class="text-2xl font-bold mb-4">같이 점프하기</h4>
-                        <div class="flex-1 bg-gray-50 rounded-lg p-4 flex items-center justify-center text-6xl">
-                            🏃💨 🏃💨
+                    <!-- 시각 자료 -->
+                    <div class="flex justify-center items-end space-x-12 h-80 pb-8 bg-white rounded-2xl border-4 border-gray-200 shadow-xl relative">
+                        <div class="absolute top-6 right-6 text-gray-400 font-mono text-2xl">Depth Equalization</div>
+                        
+                        <!-- 영희 -->
+                        <div class="flex flex-col items-center w-32">
+                            <div class="text-3xl font-bold mb-4">영희</div>
+                            <div class="w-full h-40 bg-gray-300 rounded-t-xl flex items-center justify-center text-white text-4xl font-bold">B</div>
+                            <div class="mt-4 text-gray-500 text-2xl font-bold">3층</div>
                         </div>
-                        <p class="text-xl text-gray-600 mt-4 text-left">
-                            두 노드가 <strong>다를 때만</strong> 위로 점프합니다.<br>
-                            (만나기 <strong>직전</strong>까지 이동)
-                        </p>
-                    </div>
 
-                    <!-- Step 3 -->
-                    <div class="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-lg flex flex-col">
-                        <div class="bg-[#0076C0] text-white text-2xl font-bold py-2 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">3</div>
-                        <h4 class="text-2xl font-bold mb-4">정답 찾기</h4>
-                        <div class="flex-1 bg-gray-50 rounded-lg p-4 flex items-center justify-center text-6xl">
-                            🏁
+                        <!-- 철수 (이동) -->
+                        <div class="flex flex-col items-center w-32 relative">
+                            <div class="absolute -top-24 text-[#0076C0] font-bold text-3xl animate-bounce">⬆ 올라갓!</div>
+                            <div class="text-3xl font-bold mb-4 text-[#0076C0]">철수</div>
+                            <div class="w-full h-40 bg-[#0076C0] rounded-t-xl flex items-center justify-center text-white text-4xl font-bold shadow-[0_0_30px_rgba(0,118,192,0.6)]">A</div>
+                            <div class="mt-4 text-[#0076C0] text-2xl font-bold">3층 (도착)</div>
                         </div>
-                        <p class="text-xl text-gray-600 mt-4 text-left">
-                            도착한 곳의 <strong>바로 위 부모</strong>가 진짜 공통 조상(LCA)입니다.
-                        </p>
                     </div>
-
                 </div>
             </div>
         `
     },
 
-    // --- [심화 분석] 6. 코드 연결 ---
+    // --- [심화 분석 5-2] 2단계: 눈치 게임 (핵심) ---
     {
         type: 'explanation_slide',
-        title: '심화 분석 6: 코드로 구현하기 (3단계)',
+        title: '심화 분석 5-2: 2단계 - 점프 눈치 게임',
+        content: `
+            <div class="flex flex-col h-full">
+                <h3 class="text-5xl font-bold text-gray-800 mb-10">👀 "만날 듯 말 듯... 눈치 챙겨!"</h3>
+                <p class="text-4xl text-gray-600 mb-12 font-medium">이제 동시에 점프합니다. <strong>단, 마주치지 않아야 올라갑니다.</strong></p>
+                
+                <div class="grid grid-cols-2 gap-16 h-full">
+                    <!-- Case 1: 실패 -->
+                    <div class="bg-red-50 border-[6px] border-red-200 rounded-[2rem] p-10 flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-red-500 text-white px-8 py-3 rounded-bl-2xl font-bold text-3xl">CASE A</div>
+                        <div class="flex-1 flex flex-col justify-center items-center text-center">
+                            <div class="text-[8rem] mb-8">🤝</div>
+                            <h4 class="text-5xl font-bold text-red-600 mb-6">"어? 조상이 같네?"</h4>
+                            <p class="text-3xl text-gray-800 font-medium leading-relaxed">
+                                너무 높이 뛰어서<br>
+                                <strong>지나쳐 버렸다! (Overshooting)</strong>
+                            </p>
+                        </div>
+                        <div class="mt-10 bg-white p-8 rounded-2xl text-center shadow-md">
+                            <span class="text-red-600 font-bold text-4xl">행동: 멈춤 (STOP) 🚫</span>
+                        </div>
+                    </div>
+
+                    <!-- Case 2: 성공 (야호) -->
+                    <div class="bg-green-50 border-[6px] border-green-200 rounded-[2rem] p-10 flex flex-col relative overflow-hidden shadow-2xl scale-105 transform transition-transform">
+                        <div class="absolute top-0 right-0 bg-green-500 text-white px-8 py-3 rounded-bl-2xl font-bold text-3xl">CASE B</div>
+                        <div class="flex-1 flex flex-col justify-center items-center text-center">
+                            <div class="text-[8rem] mb-8">🥳</div>
+                            <h4 class="text-5xl font-bold text-green-600 mb-6">"어? 아직 남남이네?"</h4>
+                            <p class="text-3xl text-gray-800 font-medium leading-relaxed">
+                                점프해도 안 만났음.<br>
+                                <strong>여기는 안전지대다!</strong>
+                            </p>
+                        </div>
+                        <div class="mt-10 bg-white p-8 rounded-2xl text-center shadow-lg border-4 border-green-100">
+                            <span class="text-green-600 font-bold text-4xl">행동: 야호! 올라가자! 🏃</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // --- [심화 분석 5-3] 3단계: 최종 정답 ---
+    {
+        type: 'explanation_slide',
+        title: '심화 분석 5-3: 3단계 - 최종 정답',
+        content: `
+            <div class="flex flex-col h-full justify-center items-center text-center">
+                <h3 class="text-6xl font-bold text-[#0076C0] mb-16">🏁 드디어 찾았다!</h3>
+                
+                <div class="bg-white border-[6px] border-gray-300 rounded-[3rem] p-20 shadow-2xl max-w-6xl w-full relative">
+                    <div class="text-4xl text-gray-800 leading-loose font-medium">
+                        <p class="mb-10">
+                            "야호!" 하며 안전한 곳까지 다 올라왔더니,<br>
+                            더 이상 갈 곳이 없습니다.
+                        </p>
+                        <hr class="border-gray-300 my-10 border-2">
+                        <p class="font-bold text-5xl text-gray-900">
+                            우리는 지금 <span class="text-red-600 underline decoration-4 underline-offset-8">정답 바로 아랫방</span>에 있습니다.
+                        </p>
+                    </div>
+
+                    <div class="mt-16 bg-[#282C34] text-white p-10 rounded-3xl font-mono text-4xl shadow-inner inline-block border-4 border-gray-700">
+                        <span class="text-[#C678DD]">return</span> parent[<span class="text-[#D19A66]">0</span>][a]; <span class="text-[#5C6370] ml-4">// 내 바로 윗집(1촌)</span>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+
+    // --- [심화 분석 6] 코드 연결 (통역) ---
+    {
+        type: 'explanation_slide',
+        title: '심화 분석 6: 코드로 통역하기',
         content: `
             <div class="flex flex-col h-full justify-center">
-                <h3 class="text-4xl font-bold text-[#0076C0] mb-8">💻 코드 구현 3단계 (요약)</h3>
+                <h3 class="text-5xl font-bold text-[#0076C0] mb-12">💻 "방금 그 작전, 코드로 보면?"</h3>
                 
-                <div class="space-y-6 text-2xl">
+                <div class="space-y-8">
                     
-                    <div class="flex items-center bg-gray-50 p-6 rounded-xl border-l-8 border-green-500 shadow-sm">
-                        <div class="font-bold w-32 text-green-700">STEP 1</div>
+                    <!-- 통역 1 -->
+                    <div class="flex items-center bg-white p-8 rounded-2xl border-l-[12px] border-blue-500 shadow-lg">
+                        <div class="w-[48%] font-mono text-3xl bg-[#282C34] text-white p-8 rounded-xl shadow-inner leading-normal">
+                            <span class="text-[#C678DD]">if</span> (depth[a] < depth[b])<br>
+                            &nbsp;&nbsp;swap(a, b);
+                        </div>
+                        <div class="mx-8 text-5xl animate-pulse">👉</div>
                         <div class="flex-1">
-                            <strong>DFS 탐색:</strong><br>
-                            누가 몇 층에 사는지, 1번째 부모는 누구인지 조사합니다.
-                            <code class="block mt-2 text-gray-500 text-xl font-mono">depth[node] = d; parent[0][node] = p;</code>
+                            <h4 class="font-bold text-blue-600 mb-2 text-4xl">1단계: 키 맞추기</h4>
+                            <span class="text-gray-700 text-3xl font-medium">"너가 더 밑에 있네? 올라와."</span>
                         </div>
                     </div>
 
-                    <div class="flex items-center bg-gray-50 p-6 rounded-xl border-l-8 border-blue-500 shadow-sm">
-                        <div class="font-bold w-32 text-blue-700">STEP 2</div>
+                    <!-- 통역 2 (핵심) -->
+                    <div class="flex items-center bg-white p-8 rounded-2xl border-l-[12px] border-yellow-400 shadow-lg">
+                        <div class="w-[48%] font-mono text-3xl bg-[#282C34] text-white p-8 rounded-xl shadow-inner leading-normal">
+                            <span class="text-[#C678DD]">if</span> (parent[i][a] != parent[i][b]) {<br>
+                            &nbsp;&nbsp;a = parent[i][a]; ...<br>
+                            }
+                        </div>
+                        <div class="mx-8 text-5xl animate-pulse">👉</div>
                         <div class="flex-1">
-                            <strong>족보 만들기 (DP):</strong> <span class="text-red-500 text-sm font-bold align-top">★핵심</span><br>
-                            점화식을 이용해 2의 k승번째 조상을 모두 채웁니다.
-                            <code class="block mt-2 text-blue-600 text-xl font-mono bg-blue-100 p-2 rounded">parent[k][n] = parent[k-1][ parent[k-1][n] ];</code>
-                            <span class="text-gray-500 text-lg">(내 8번째 위 = 내 4번째 위의 4번째 위)</span>
+                            <h4 class="font-bold text-yellow-600 mb-2 text-4xl">2단계: 야호! (눈치 게임)</h4>
+                            <span class="text-gray-700 text-3xl font-medium">"점프해도 안 만나네? <strong>야호! 올라가자!</strong>"</span>
                         </div>
                     </div>
 
-                    <div class="flex items-center bg-gray-50 p-6 rounded-xl border-l-8 border-purple-500 shadow-sm">
-                        <div class="font-bold w-32 text-purple-700">STEP 3</div>
+                    <!-- 통역 3 -->
+                    <div class="flex items-center bg-white p-8 rounded-2xl border-l-[12px] border-green-600 shadow-lg">
+                        <div class="w-[48%] font-mono text-3xl bg-[#282C34] text-white p-8 rounded-xl shadow-inner leading-normal">
+                            <span class="text-[#C678DD]">return</span> parent[<span class="text-[#D19A66]">0</span>][a];
+                        </div>
+                        <div class="mx-8 text-5xl animate-pulse">👉</div>
                         <div class="flex-1">
-                            <strong>LCA Query:</strong><br>
-                            입력이 들어오면 <strong>깊이를 맞추고</strong> &rarr; <strong>점프</strong>해서 정답을 출력!
+                            <h4 class="font-bold text-green-600 mb-2 text-4xl">3단계: 최종 도착</h4>
+                            <span class="text-gray-700 text-3xl font-medium">"갈 곳이 없네? 정답은 <strong>내 윗집!</strong>"</span>
                         </div>
                     </div>
 
