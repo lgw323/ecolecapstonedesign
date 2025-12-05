@@ -19,7 +19,7 @@ function renderSlides() {
     let globalSlideIndex = 0;
 
     presentationData.forEach((data) => {
-        // (1) 표지: Tailwind text class 대신 style로 고정 px 지정 (확대 영향 안 받음)
+        // (1) 표지
         if (data.type === 'title') {
             createSlide(globalSlideIndex++, `
                 <div class="slide-content-wrapper text-center">
@@ -33,7 +33,7 @@ function renderSlides() {
                 </div>
             `);
         }
-        // (2) 목차: 제목을 고정 px로 변경
+        // (2) 목차
         else if (data.type === 'toc') {
             createSlide(globalSlideIndex++, `
                 <div class="slide-content-wrapper">
@@ -119,6 +119,18 @@ function renderSlides() {
                 </div>
             `, 'code_view');
         }
+        // [NEW] 심화 설명 (전체화면 + 템플릿 사용)
+        else if (data.type === 'fullscreen_visual') {
+            const htmlContent = PRESENTATION_TEMPLATES[data.contentId] || `<div class="p-8 text-red-500">템플릿을 찾을 수 없습니다: ${data.contentId}</div>`;
+
+            // 일반 wrapper 대신 fullscreen wrapper 사용
+            createSlide(globalSlideIndex++, `
+                <div class="slide-fullscreen-wrapper">
+                    ${htmlContent}
+                </div>
+            `, 'explanation');
+        }
+        // 하위 호환성 유지
         else if (data.type === 'explanation_slide') {
             createSlide(globalSlideIndex++, `
                 <div class="slide-content-wrapper">

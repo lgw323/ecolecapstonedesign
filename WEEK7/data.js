@@ -1,3 +1,4 @@
+// data.js
 const presentationData = [
     {
         type: 'title',
@@ -360,33 +361,42 @@ console.log(maxLen * maxLen);`
         example_input_1: `3\n5 3\n3 2\n2 6`,
         example_output_1: `90`
     },
+
+    // [심화 1] 템플릿 참조형으로 변경
     {
-        type: 'explanation_slide',
-        title: '심화 분석: 행렬 곱셈 순서 (BOJ 11049)',
-        content: `
-            <div class="space-y-8 h-full flex flex-col justify-center">
-                <div class="p-8 bg-blue-50 rounded-2xl border border-blue-200 shadow-sm">
-                    <h3 class="text-3xl font-bold text-blue-800 mb-6">🤔 왜 순서가 중요할까?</h3>
-                    <p class="text-2xl leading-relaxed text-gray-700">
-                        행렬 A(10x100), B(100x5), C(5x50)을 곱할 때: <br><br>
-                        1. <strong>(AB)C</strong>: (10x100x5) + (10x5x50) = 5,000 + 2,500 = <strong>7,500번</strong><br>
-                        2. <strong>A(BC)</strong>: (100x5x50) + (10x100x50) = 25,000 + 50,000 = <strong>75,000번</strong><br><br>
-                        <span class="block mt-4 font-bold text-red-600 bg-red-50 p-4 rounded-lg inline-block">결과는 같지만 연산량은 10배 차이!</span>
-                    </p>
-                </div>
-                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-200 shadow-sm">
-                    <h3 class="text-3xl font-bold text-gray-800 mb-6">📐 DP 접근법</h3>
-                    <p class="text-2xl leading-relaxed text-gray-700 mb-6">
-                        구간 <strong>[i, j]</strong>의 최소 연산 횟수를 구하려면, 중간 지점 <strong>k</strong>를 기준으로 쪼개야 합니다.
-                    </p>
-                    <div class="bg-white p-6 rounded-xl border border-gray-300 font-mono text-2xl text-center text-indigo-700 shadow-inner">
-                        DP[i][j] = min( DP[i][k] + DP[k+1][j] + (A[i].r * A[k].c * A[j].c) )
-                    </div>
-                    <p class="text-xl text-gray-500 mt-4 text-center font-medium">(단, i <= k < j)</p>
-                </div>
-            </div>
-        `
+        type: 'fullscreen_visual',
+        title: '심화 1: 행렬 결합의 법칙',
+        contentId: 'DIMENSION_RULE'
     },
+
+    // [심화 2] 템플릿 참조형으로 변경
+    {
+        type: 'fullscreen_visual',
+        title: '심화 2: 계산의 정체',
+        contentId: 'SCALAR_PRODUCT'
+    },
+
+    // [심화 3] 템플릿 참조형으로 변경
+    {
+        type: 'fullscreen_visual',
+        title: '심화 3: 크기 비교',
+        contentId: 'SIZE_COMPARISON'
+    },
+
+    // [심화 4] 템플릿 참조형으로 변경 (New)
+    {
+        type: 'fullscreen_visual',
+        title: '심화 4: 전략 (DP Table)',
+        contentId: 'DP_STRATEGY'
+    },
+
+    // [심화 5] 템플릿 참조형으로 변경 (New)
+    {
+        type: 'fullscreen_visual',
+        title: '심화 5: 전술 (Optimal Split)',
+        contentId: 'OPTIMAL_SPLIT'
+    },
+
     {
         type: 'problem',
         title: '7. 행렬 곱셈 순서 (코드)',
