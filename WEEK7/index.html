@@ -5,33 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>알고리즘 13문제 (7주차) - BOJ Style</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- [수정] Highlight.js 테마 변경: Github(Light) -> Atom One Dark(Dark) -->
-    <!-- 배경색 #282c34와 어울리는 테마로 변경하여 코드가 선명하게 보입니다. -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <!-- Custom Style -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="bg-white overflow-hidden">
 
     <div id="presentation-root" class="relative w-screen h-screen">
-        <!-- 슬라이드가 렌더링될 컨테이너 -->
         <div id="presentation-container" class="w-full h-full flex flex-col"></div>
 
-        <!-- 네비게이션 영역 (클릭으로 이동) -->
         <div id="nav-left"
             class="absolute top-0 left-0 w-32 h-full z-50 cursor-pointer hidden md:block hover:bg-black/5 transition-colors">
         </div>
         <div id="nav-right"
             class="absolute top-0 right-0 w-32 h-full z-50 cursor-pointer hidden md:block hover:bg-black/5 transition-colors">
         </div>
+
+        <div id="font-controls"
+            class="fixed bottom-4 right-4 z-[100] flex gap-2 opacity-30 hover:opacity-100 transition-opacity duration-300">
+            <button id="btn-decrease" class="font-control-btn" title="글자 작게 (↓)">-</button>
+            <button id="btn-reset" class="font-control-btn" title="초기화">R</button>
+            <button id="btn-increase" class="font-control-btn" title="글자 크게 (↑)">+</button>
+        </div>
     </div>
 
-    <!-- Data & Logic Load -->
     <script src="data.js"></script>
     <script src="app.js"></script>
 </body>

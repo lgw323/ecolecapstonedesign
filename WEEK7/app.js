@@ -1,8 +1,9 @@
 const container = document.getElementById('presentation-container');
 let currentSlide = 0;
-let currentLang = 0; // 0: Java, 1: Python, 2: JS
+let currentLang = 0;
+let currentFontSize = 16;
+const DEFAULT_FONT_SIZE = 16;
 
-// HTML 특수문자 이스케이프 함수
 function escapeHtml(text) {
     if (!text) return text;
     return text
@@ -13,31 +14,30 @@ function escapeHtml(text) {
         .replace(/'/g, "&#039;");
 }
 
-// --- 1. 슬라이드 렌더링 로직 ---
 function renderSlides() {
     container.innerHTML = '';
     let globalSlideIndex = 0;
 
     presentationData.forEach((data) => {
-        // (1) 표지 (Title)
+        // (1) 표지: Tailwind text class 대신 style로 고정 px 지정 (확대 영향 안 받음)
         if (data.type === 'title') {
             createSlide(globalSlideIndex++, `
                 <div class="slide-content-wrapper text-center">
                     <div class="border-[8px] border-[#0076C0] rounded-[3rem] p-24 bg-white shadow-2xl inline-block mx-auto">
-                        <h1 class="text-9xl font-extrabold text-[#0076C0] mb-12">${data.title}</h1>
-                        <div class="text-5xl text-gray-600 font-medium">
+                        <h1 class="font-extrabold text-[#0076C0] mb-12" style="font-size: 128px; line-height: 1;">${data.title}</h1>
+                        <div class="text-gray-600 font-medium" style="font-size: 48px;">
                            <p class="mb-4">${data.author}</p>
-                           <p class="text-6xl font-bold text-black mt-8">${data.author_detail}</p>
+                           <p class="font-bold text-black mt-8" style="font-size: 60px;">${data.author_detail}</p>
                         </div>
                     </div>
                 </div>
             `);
         }
-        // (2) 목차 (TOC)
+        // (2) 목차: 제목을 고정 px로 변경
         else if (data.type === 'toc') {
             createSlide(globalSlideIndex++, `
                 <div class="slide-content-wrapper">
-                    <h2 class="text-8xl font-bold mb-16 text-[#0076C0] text-center border-b-[6px] border-[#0076C0] pb-6 mx-auto w-2/3">목 차</h2>
+                    <h2 class="font-bold mb-16 text-[#0076C0] text-center border-b-[6px] border-[#0076C0] pb-6 mx-auto w-2/3" style="font-size: 96px;">목 차</h2>
                     <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-8 w-full max-w-[80rem] mx-auto">
                         ${data.items.map((item, i) => `
                             <li class="toc-item flex items-center" onclick="goToProblem(${i})">
@@ -48,20 +48,17 @@ function renderSlides() {
                 </div>
             `);
         }
-        // (3) 문제 세트 - 설명 (Slide A)
         else if (data.type === 'problem_set') {
             createSlide(globalSlideIndex++, `
                 <div class="slide-content-wrapper">
                     <h2 class="slide-title">${data.title}</h2>
                     <div class="flex gap-10 flex-1 min-h-0">
-                        <!-- 왼쪽: 문제 설명 -->
                         <div class="flex-[3] flex flex-col">
                             <div class="boj-box">
                                 <h3 class="section-label">문제 설명</h3>
                                 <p class="content-text">${data.problem}</p>
                             </div>
                         </div>
-                        <!-- 오른쪽: 조건 -->
                         <div class="flex-[2] flex flex-col gap-6">
                             <div class="boj-box gray flex-1">
                                 <h3 class="section-label">입력 조건</h3>
@@ -76,10 +73,9 @@ function renderSlides() {
                 </div>
             `, 'problem_desc');
 
-            // 문제 세트 - 예제 (Slide B)
             createSlide(globalSlideIndex++, `
                 <div class="slide-content-wrapper">
-                    <h2 class="slide-title">${data.title} <span class="text-gray-400 font-light ml-4">(예제)</span></h2>
+                    <h2 class="slide-title">${data.title} <span class="text-gray-400 font-light ml-4" style="font-size: 0.8em;">(예제)</span></h2>
                     <div class="flex gap-12 flex-1 min-h-0 h-[80%]">
                         <div class="flex-1 flex flex-col">
                             <h3 class="section-label">예제 입력 1</h3>
@@ -93,17 +89,12 @@ function renderSlides() {
                 </div>
             `, 'problem_example');
         }
-        // (4) 코드 풀이 (Code)
         else if (data.type === 'problem') {
             const languages = ['java', 'python', 'javascript'];
             let codeViewsHtml = '';
 
             languages.forEach(lang => {
-                // 코드 데이터가 없으면 경고 메시지 표시
                 let rawCode = data.codes && data.codes[lang] ? data.codes[lang] : '// 코드가 준비되지 않았습니다.';
-                // 주석 제거 (간단한 라인 주석만 제거 시도, 복잡한 건 유지될 수 있음)
-                // rawCode = rawCode.replace(/\/\/.*$/gm, '').replace(/#.*$/gm, ''); 
-
                 let safeCode = escapeHtml(rawCode.trim());
 
                 codeViewsHtml += `
@@ -115,7 +106,7 @@ function renderSlides() {
             createSlide(globalSlideIndex++, `
                 <div class="slide-content-wrapper">
                     <div class="flex justify-between items-end border-b-2 border-gray-200 pb-4 mb-4 shrink-0">
-                        <h2 class="text-5xl font-bold text-gray-800 truncate pr-8">${data.title}</h2>
+                        <h2 class="font-bold text-gray-800 truncate pr-8" style="font-size: 48px;">${data.title}</h2>
                         <div class="flex space-x-6">
                             <span class="lang-btn java" onclick="setLanguage(0)">Java</span>
                             <span class="lang-btn python" onclick="setLanguage(1)">Python</span>
@@ -128,7 +119,6 @@ function renderSlides() {
                 </div>
             `, 'code_view');
         }
-        // (5) 심화 설명 (Explanation)
         else if (data.type === 'explanation_slide') {
             createSlide(globalSlideIndex++, `
                 <div class="slide-content-wrapper">
@@ -141,12 +131,10 @@ function renderSlides() {
         }
     });
 
-    // Highlight.js 적용
     document.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
     updateSlideState();
 }
 
-// --- 2. 헬퍼 함수 ---
 function createSlide(index, html, type = 'normal') {
     const div = document.createElement('div');
     div.className = 'slide';
@@ -161,7 +149,7 @@ function updateSlideState() {
     slides.forEach((slide, idx) => {
         if (idx === currentSlide) {
             slide.classList.add('active');
-            slide.style.display = 'flex'; // active일 때 flex 적용 보장
+            slide.style.display = 'flex';
         } else {
             slide.classList.remove('active');
             slide.style.display = 'none';
@@ -173,12 +161,10 @@ function updateSlideState() {
         const languages = ['java', 'python', 'javascript'];
         const currentLangName = languages[currentLang];
 
-        // 언어 버튼 활성화
         activeSlide.querySelectorAll('.lang-btn').forEach((btn, idx) => {
             btn.classList.toggle('active', idx === currentLang);
         });
 
-        // 코드 블록 보이기
         activeSlide.querySelectorAll('.code-view-wrapper').forEach(wrapper => {
             const isActive = wrapper.dataset.lang === currentLangName;
             wrapper.classList.toggle('visible', isActive);
@@ -192,9 +178,7 @@ function setLanguage(langIdx) {
 }
 
 function goToProblem(problemIndex) {
-    // Title(1) + TOC(1) = 2
     let targetSlide = 2 + (problemIndex * 3);
-    // 11049번(6번 인덱스) 이후는 심화 슬라이드 1장 추가됨
     if (problemIndex > 6) targetSlide += 1;
 
     currentSlide = targetSlide;
@@ -202,11 +186,20 @@ function goToProblem(problemIndex) {
     updateSlideState();
 }
 
-// --- 3. 이벤트 리스너 ---
+function adjustFontSize(delta) {
+    if (delta === 0) {
+        currentFontSize = DEFAULT_FONT_SIZE;
+    } else {
+        currentFontSize += delta;
+        if (currentFontSize < 10) currentFontSize = 10;
+        if (currentFontSize > 60) currentFontSize = 60;
+    }
+    document.documentElement.style.fontSize = `${currentFontSize}px`;
+}
+
 const goNext = () => {
     const activeSlide = document.querySelectorAll('.slide')[currentSlide];
 
-    // 코드 뷰에서 언어 순환
     if (activeSlide && activeSlide.dataset.type === 'code_view') {
         if (currentLang < 2) {
             currentLang++;
@@ -237,7 +230,7 @@ const goPrev = () => {
         currentSlide--;
         const prevSlide = document.querySelectorAll('.slide')[currentSlide];
         if (prevSlide && prevSlide.dataset.type === 'code_view') {
-            currentLang = 2; // 이전 슬라이드가 코드면 마지막 언어부터
+            currentLang = 2;
         } else {
             currentLang = 0;
         }
@@ -255,10 +248,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (['ArrowLeft', 'PageUp'].includes(e.key)) {
             e.preventDefault(); goPrev();
         }
+        if (e.key === 'ArrowUp') {
+            e.preventDefault(); adjustFontSize(2);
+        }
+        if (e.key === 'ArrowDown') {
+            e.preventDefault(); adjustFontSize(-2);
+        }
         if (e.key === 'Home') { currentSlide = 0; currentLang = 0; updateSlideState(); }
         if (e.key === 'End') { currentSlide = document.querySelectorAll('.slide').length - 1; updateSlideState(); }
     });
 
     document.getElementById('nav-left').addEventListener('click', goPrev);
     document.getElementById('nav-right').addEventListener('click', goNext);
+
+    const btnDecrease = document.getElementById('btn-decrease');
+    const btnReset = document.getElementById('btn-reset');
+    const btnIncrease = document.getElementById('btn-increase');
+
+    if (btnDecrease) btnDecrease.addEventListener('click', () => adjustFontSize(-2));
+    if (btnReset) btnReset.addEventListener('click', () => adjustFontSize(0));
+    if (btnIncrease) btnIncrease.addEventListener('click', () => adjustFontSize(2));
 });
